@@ -13,3 +13,5 @@ license = "MIT"
 
 links = "cef"
 build = "build.rs"
+
+exclude = [ "*~", "*.racertmp" ]
