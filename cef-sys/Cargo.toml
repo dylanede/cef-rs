@@ -3,4 +3,13 @@
 name = "cef-sys"
 version = "0.0.1"
 authors = ["Dylan Ede <dylanede@googlemail.com>"]
+
+description = "Chromium Embedded Framework raw bindings for Rust. Generated using rust-bindgen."
+repository = "https://github.com/dylanede/cef-rs.git"
+
+keywords = ["cef", "chrome", "chromium", "embedded", "web"]
+
+license = "MIT"
+
+links="cef"
 build = "build.rs"
