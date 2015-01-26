@@ -11,5 +11,5 @@ keywords = ["cef", "chrome", "chromium", "embedded", "web"]
 
 license = "MIT"
 
-links="cef"
+links = "cef"
 build = "build.rs"
