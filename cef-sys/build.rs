@@ -4,6 +4,7 @@ use std::borrow::ToOwned;
 
 #[cfg(target_os="macos")]
 fn main() {
+    /*
     let cef_dir = os::getenv("CEF_PATH")
         .expect("CEF_PATH needs to point to the directory containing the CEF DLL.");
 
@@ -16,7 +17,7 @@ fn main() {
         panic!("Unable to find {} in {}", cef_lib, cef_dir.as_str().unwrap());
     }
     println!("cargo:rustc-flags= -L {}",
-             cef_dir.as_str().unwrap());
+             cef_dir.as_str().unwrap());*/
 }
 
 #[cfg(not(target_os="macos"))]
