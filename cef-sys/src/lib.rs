@@ -2286,7 +2286,6 @@ impl ::std::default::Default for Struct__cef_request_context_t {
     }
 }
 pub type cef_request_context_t = Struct__cef_request_context_t;
-pub enum Struct__cef_client_t { }
 #[repr(C)]
 #[derive(Copy)]
 pub struct Struct__cef_browser_t {
@@ -3824,6 +3823,1820 @@ impl ::std::default::Default for Struct__cef_app_t {
     fn default() -> Struct__cef_app_t { unsafe { ::std::mem::zeroed() } }
 }
 pub type cef_app_t = Struct__cef_app_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_auth_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_auth_callback_t,
+                                         username: *const cef_string_t,
+                                         password: *const cef_string_t)
+                                        -> ()>,
+    pub cancel: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_auth_callback_t)
+                                          -> ()>,
+}
+impl ::std::default::Default for Struct__cef_auth_callback_t {
+    fn default() -> Struct__cef_auth_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_auth_callback_t = Struct__cef_auth_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_menu_model_t {
+    pub base: cef_base_t,
+    pub clear: ::std::option::Option<extern "C" fn
+                                         (_self:
+                                              *mut Struct__cef_menu_model_t)
+                                         -> ::libc::c_int>,
+    pub get_count: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_menu_model_t)
+                                             -> ::libc::c_int>,
+    pub add_separator: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_menu_model_t)
+                                                 -> ::libc::c_int>,
+    pub add_item: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_menu_model_t,
+                                             command_id: ::libc::c_int,
+                                             label: *const cef_string_t)
+                                            -> ::libc::c_int>,
+    pub add_check_item: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_menu_model_t,
+                                                   command_id: ::libc::c_int,
+                                                   label: *const cef_string_t)
+                                                  -> ::libc::c_int>,
+    pub add_radio_item: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_menu_model_t,
+                                                   command_id: ::libc::c_int,
+                                                   label: *const cef_string_t,
+                                                   group_id: ::libc::c_int)
+                                                  -> ::libc::c_int>,
+    pub add_sub_menu: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 command_id: ::libc::c_int,
+                                                 label: *const cef_string_t)
+                                                ->
+                                                    *mut Struct__cef_menu_model_t>,
+    pub insert_separator_at: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_menu_model_t,
+                                                        index: ::libc::c_int)
+                                                       -> ::libc::c_int>,
+    pub insert_item_at: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_menu_model_t,
+                                                   index: ::libc::c_int,
+                                                   command_id: ::libc::c_int,
+                                                   label: *const cef_string_t)
+                                                  -> ::libc::c_int>,
+    pub insert_check_item_at: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_menu_model_t,
+                                                         index: ::libc::c_int,
+                                                         command_id:
+                                                             ::libc::c_int,
+                                                         label:
+                                                             *const cef_string_t)
+                                                        -> ::libc::c_int>,
+    pub insert_radio_item_at: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_menu_model_t,
+                                                         index: ::libc::c_int,
+                                                         command_id:
+                                                             ::libc::c_int,
+                                                         label:
+                                                             *const cef_string_t,
+                                                         group_id:
+                                                             ::libc::c_int)
+                                                        -> ::libc::c_int>,
+    pub insert_sub_menu_at: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_menu_model_t,
+                                                       index: ::libc::c_int,
+                                                       command_id:
+                                                           ::libc::c_int,
+                                                       label:
+                                                           *const cef_string_t)
+                                                      ->
+                                                          *mut Struct__cef_menu_model_t>,
+    pub remove: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_menu_model_t,
+                                           command_id: ::libc::c_int)
+                                          -> ::libc::c_int>,
+    pub remove_at: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_menu_model_t,
+                                              index: ::libc::c_int)
+                                             -> ::libc::c_int>,
+    pub get_index_of: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 command_id: ::libc::c_int)
+                                                -> ::libc::c_int>,
+    pub get_command_id_at: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_menu_model_t,
+                                                      index: ::libc::c_int)
+                                                     -> ::libc::c_int>,
+    pub set_command_id_at: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_menu_model_t,
+                                                      index: ::libc::c_int,
+                                                      command_id:
+                                                          ::libc::c_int)
+                                                     -> ::libc::c_int>,
+    pub get_label: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_menu_model_t,
+                                              command_id: ::libc::c_int)
+                                             -> cef_string_userfree_t>,
+    pub get_label_at: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 index: ::libc::c_int)
+                                                -> cef_string_userfree_t>,
+    pub set_label: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_menu_model_t,
+                                              command_id: ::libc::c_int,
+                                              label: *const cef_string_t)
+                                             -> ::libc::c_int>,
+    pub set_label_at: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 index: ::libc::c_int,
+                                                 label: *const cef_string_t)
+                                                -> ::libc::c_int>,
+    pub get_type: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_menu_model_t,
+                                             command_id: ::libc::c_int)
+                                            -> cef_menu_item_type_t>,
+    pub get_type_at: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_menu_model_t,
+                                                index: ::libc::c_int)
+                                               -> cef_menu_item_type_t>,
+    pub get_group_id: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 command_id: ::libc::c_int)
+                                                -> ::libc::c_int>,
+    pub get_group_id_at: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_menu_model_t,
+                                                    index: ::libc::c_int)
+                                                   -> ::libc::c_int>,
+    pub set_group_id: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 command_id: ::libc::c_int,
+                                                 group_id: ::libc::c_int)
+                                                -> ::libc::c_int>,
+    pub set_group_id_at: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_menu_model_t,
+                                                    index: ::libc::c_int,
+                                                    group_id: ::libc::c_int)
+                                                   -> ::libc::c_int>,
+    pub get_sub_menu: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_menu_model_t,
+                                                 command_id: ::libc::c_int)
+                                                ->
+                                                    *mut Struct__cef_menu_model_t>,
+    pub get_sub_menu_at: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_menu_model_t,
+                                                    index: ::libc::c_int)
+                                                   ->
+                                                       *mut Struct__cef_menu_model_t>,
+    pub is_visible: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_menu_model_t,
+                                               command_id: ::libc::c_int)
+                                              -> ::libc::c_int>,
+    pub is_visible_at: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_menu_model_t,
+                                                  index: ::libc::c_int)
+                                                 -> ::libc::c_int>,
+    pub set_visible: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_menu_model_t,
+                                                command_id: ::libc::c_int,
+                                                visible: ::libc::c_int)
+                                               -> ::libc::c_int>,
+    pub set_visible_at: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_menu_model_t,
+                                                   index: ::libc::c_int,
+                                                   visible: ::libc::c_int)
+                                                  -> ::libc::c_int>,
+    pub is_enabled: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_menu_model_t,
+                                               command_id: ::libc::c_int)
+                                              -> ::libc::c_int>,
+    pub is_enabled_at: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_menu_model_t,
+                                                  index: ::libc::c_int)
+                                                 -> ::libc::c_int>,
+    pub set_enabled: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_menu_model_t,
+                                                command_id: ::libc::c_int,
+                                                enabled: ::libc::c_int)
+                                               -> ::libc::c_int>,
+    pub set_enabled_at: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_menu_model_t,
+                                                   index: ::libc::c_int,
+                                                   enabled: ::libc::c_int)
+                                                  -> ::libc::c_int>,
+    pub is_checked: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_menu_model_t,
+                                               command_id: ::libc::c_int)
+                                              -> ::libc::c_int>,
+    pub is_checked_at: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_menu_model_t,
+                                                  index: ::libc::c_int)
+                                                 -> ::libc::c_int>,
+    pub set_checked: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_menu_model_t,
+                                                command_id: ::libc::c_int,
+                                                checked: ::libc::c_int)
+                                               -> ::libc::c_int>,
+    pub set_checked_at: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_menu_model_t,
+                                                   index: ::libc::c_int,
+                                                   checked: ::libc::c_int)
+                                                  -> ::libc::c_int>,
+    pub has_accelerator: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_menu_model_t,
+                                                    command_id: ::libc::c_int)
+                                                   -> ::libc::c_int>,
+    pub has_accelerator_at: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_menu_model_t,
+                                                       index: ::libc::c_int)
+                                                      -> ::libc::c_int>,
+    pub set_accelerator: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_menu_model_t,
+                                                    command_id: ::libc::c_int,
+                                                    key_code: ::libc::c_int,
+                                                    shift_pressed:
+                                                        ::libc::c_int,
+                                                    ctrl_pressed:
+                                                        ::libc::c_int,
+                                                    alt_pressed:
+                                                        ::libc::c_int)
+                                                   -> ::libc::c_int>,
+    pub set_accelerator_at: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_menu_model_t,
+                                                       index: ::libc::c_int,
+                                                       key_code:
+                                                           ::libc::c_int,
+                                                       shift_pressed:
+                                                           ::libc::c_int,
+                                                       ctrl_pressed:
+                                                           ::libc::c_int,
+                                                       alt_pressed:
+                                                           ::libc::c_int)
+                                                      -> ::libc::c_int>,
+    pub remove_accelerator: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_menu_model_t,
+                                                       command_id:
+                                                           ::libc::c_int)
+                                                      -> ::libc::c_int>,
+    pub remove_accelerator_at: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_menu_model_t,
+                                                          index:
+                                                              ::libc::c_int)
+                                                         -> ::libc::c_int>,
+    pub get_accelerator: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_menu_model_t,
+                                                    command_id: ::libc::c_int,
+                                                    key_code:
+                                                        *mut ::libc::c_int,
+                                                    shift_pressed:
+                                                        *mut ::libc::c_int,
+                                                    ctrl_pressed:
+                                                        *mut ::libc::c_int,
+                                                    alt_pressed:
+                                                        *mut ::libc::c_int)
+                                                   -> ::libc::c_int>,
+    pub get_accelerator_at: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_menu_model_t,
+                                                       index: ::libc::c_int,
+                                                       key_code:
+                                                           *mut ::libc::c_int,
+                                                       shift_pressed:
+                                                           *mut ::libc::c_int,
+                                                       ctrl_pressed:
+                                                           *mut ::libc::c_int,
+                                                       alt_pressed:
+                                                           *mut ::libc::c_int)
+                                                      -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_menu_model_t {
+    fn default() -> Struct__cef_menu_model_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_menu_model_t = Struct__cef_menu_model_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_context_menu_handler_t {
+    pub base: cef_base_t,
+    pub on_before_context_menu: ::std::option::Option<extern "C" fn
+                                                          (_self:
+                                                               *mut Struct__cef_context_menu_handler_t,
+                                                           browser:
+                                                               *mut Struct__cef_browser_t,
+                                                           frame:
+                                                               *mut Struct__cef_frame_t,
+                                                           params:
+                                                               *mut Struct__cef_context_menu_params_t,
+                                                           model:
+                                                               *mut Struct__cef_menu_model_t)
+                                                          -> ()>,
+    pub on_context_menu_command: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_context_menu_handler_t,
+                                                            browser:
+                                                                *mut Struct__cef_browser_t,
+                                                            frame:
+                                                                *mut Struct__cef_frame_t,
+                                                            params:
+                                                                *mut Struct__cef_context_menu_params_t,
+                                                            command_id:
+                                                                ::libc::c_int,
+                                                            event_flags:
+                                                                cef_event_flags_t)
+                                                           -> ::libc::c_int>,
+    pub on_context_menu_dismissed: ::std::option::Option<extern "C" fn
+                                                             (_self:
+                                                                  *mut Struct__cef_context_menu_handler_t,
+                                                              browser:
+                                                                  *mut Struct__cef_browser_t,
+                                                              frame:
+                                                                  *mut Struct__cef_frame_t)
+                                                             -> ()>,
+}
+impl ::std::default::Default for Struct__cef_context_menu_handler_t {
+    fn default() -> Struct__cef_context_menu_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_context_menu_handler_t = Struct__cef_context_menu_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_context_menu_params_t {
+    pub base: cef_base_t,
+    pub get_xcoord: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_context_menu_params_t)
+                                              -> ::libc::c_int>,
+    pub get_ycoord: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_context_menu_params_t)
+                                              -> ::libc::c_int>,
+    pub get_type_flags: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_context_menu_params_t)
+                                                  ->
+                                                      cef_context_menu_type_flags_t>,
+    pub get_link_url: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_context_menu_params_t)
+                                                -> cef_string_userfree_t>,
+    pub get_unfiltered_link_url: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_context_menu_params_t)
+                                                           ->
+                                                               cef_string_userfree_t>,
+    pub get_source_url: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_context_menu_params_t)
+                                                  -> cef_string_userfree_t>,
+    pub has_image_contents: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_context_menu_params_t)
+                                                      -> ::libc::c_int>,
+    pub get_page_url: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_context_menu_params_t)
+                                                -> cef_string_userfree_t>,
+    pub get_frame_url: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_context_menu_params_t)
+                                                 -> cef_string_userfree_t>,
+    pub get_frame_charset: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_context_menu_params_t)
+                                                     ->
+                                                         cef_string_userfree_t>,
+    pub get_media_type: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_context_menu_params_t)
+                                                  ->
+                                                      cef_context_menu_media_type_t>,
+    pub get_media_state_flags: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_context_menu_params_t)
+                                                         ->
+                                                             cef_context_menu_media_state_flags_t>,
+    pub get_selection_text: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_context_menu_params_t)
+                                                      ->
+                                                          cef_string_userfree_t>,
+    pub get_misspelled_word: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_context_menu_params_t)
+                                                       ->
+                                                           cef_string_userfree_t>,
+    pub get_misspelling_hash: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_context_menu_params_t)
+                                                        -> ::libc::c_int>,
+    pub get_dictionary_suggestions: ::std::option::Option<extern "C" fn
+                                                              (_self:
+                                                                   *mut Struct__cef_context_menu_params_t,
+                                                               suggestions:
+                                                                   cef_string_list_t)
+                                                              ->
+                                                                  ::libc::c_int>,
+    pub is_editable: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_context_menu_params_t)
+                                               -> ::libc::c_int>,
+    pub is_spell_check_enabled: ::std::option::Option<extern "C" fn
+                                                          (_self:
+                                                               *mut Struct__cef_context_menu_params_t)
+                                                          -> ::libc::c_int>,
+    pub get_edit_state_flags: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_context_menu_params_t)
+                                                        ->
+                                                            cef_context_menu_edit_state_flags_t>,
+}
+impl ::std::default::Default for Struct__cef_context_menu_params_t {
+    fn default() -> Struct__cef_context_menu_params_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_context_menu_params_t = Struct__cef_context_menu_params_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_file_dialog_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_file_dialog_callback_t,
+                                         selected_accept_filter:
+                                             ::libc::c_int,
+                                         file_paths: cef_string_list_t)
+                                        -> ()>,
+    pub cancel: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_file_dialog_callback_t)
+                                          -> ()>,
+}
+impl ::std::default::Default for Struct__cef_file_dialog_callback_t {
+    fn default() -> Struct__cef_file_dialog_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_file_dialog_callback_t = Struct__cef_file_dialog_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_dialog_handler_t {
+    pub base: cef_base_t,
+    pub on_file_dialog: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_dialog_handler_t,
+                                                   browser:
+                                                       *mut Struct__cef_browser_t,
+                                                   mode:
+                                                       cef_file_dialog_mode_t,
+                                                   title: *const cef_string_t,
+                                                   default_file_path:
+                                                       *const cef_string_t,
+                                                   accept_filters:
+                                                       cef_string_list_t,
+                                                   selected_accept_filter:
+                                                       ::libc::c_int,
+                                                   callback:
+                                                       *mut Struct__cef_file_dialog_callback_t)
+                                                  -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_dialog_handler_t {
+    fn default() -> Struct__cef_dialog_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_dialog_handler_t = Struct__cef_dialog_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_display_handler_t {
+    pub base: cef_base_t,
+    pub on_address_change: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_display_handler_t,
+                                                      browser:
+                                                          *mut Struct__cef_browser_t,
+                                                      frame:
+                                                          *mut Struct__cef_frame_t,
+                                                      url:
+                                                          *const cef_string_t)
+                                                     -> ()>,
+    pub on_title_change: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_display_handler_t,
+                                                    browser:
+                                                        *mut Struct__cef_browser_t,
+                                                    title:
+                                                        *const cef_string_t)
+                                                   -> ()>,
+    pub on_favicon_urlchange: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_display_handler_t,
+                                                         browser:
+                                                             *mut Struct__cef_browser_t,
+                                                         icon_urls:
+                                                             cef_string_list_t)
+                                                        -> ()>,
+    pub on_tooltip: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_display_handler_t,
+                                               browser:
+                                                   *mut Struct__cef_browser_t,
+                                               text: *mut cef_string_t)
+                                              -> ::libc::c_int>,
+    pub on_status_message: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_display_handler_t,
+                                                      browser:
+                                                          *mut Struct__cef_browser_t,
+                                                      value:
+                                                          *const cef_string_t)
+                                                     -> ()>,
+    pub on_console_message: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_display_handler_t,
+                                                       browser:
+                                                           *mut Struct__cef_browser_t,
+                                                       message:
+                                                           *const cef_string_t,
+                                                       source:
+                                                           *const cef_string_t,
+                                                       line: ::libc::c_int)
+                                                      -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_display_handler_t {
+    fn default() -> Struct__cef_display_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_display_handler_t = Struct__cef_display_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_download_item_t {
+    pub base: cef_base_t,
+    pub is_valid: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_download_item_t)
+                                            -> ::libc::c_int>,
+    pub is_in_progress: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_download_item_t)
+                                                  -> ::libc::c_int>,
+    pub is_complete: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_download_item_t)
+                                               -> ::libc::c_int>,
+    pub is_canceled: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_download_item_t)
+                                               -> ::libc::c_int>,
+    pub get_current_speed: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_download_item_t)
+                                                     -> int64>,
+    pub get_percent_complete: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_download_item_t)
+                                                        -> ::libc::c_int>,
+    pub get_total_bytes: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_download_item_t)
+                                                   -> int64>,
+    pub get_received_bytes: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_download_item_t)
+                                                      -> int64>,
+    pub get_start_time: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_download_item_t)
+                                                  -> cef_time_t>,
+    pub get_end_time: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_download_item_t)
+                                                -> cef_time_t>,
+    pub get_full_path: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_download_item_t)
+                                                 -> cef_string_userfree_t>,
+    pub get_id: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_download_item_t)
+                                          -> uint32>,
+    pub get_url: ::std::option::Option<extern "C" fn
+                                           (_self:
+                                                *mut Struct__cef_download_item_t)
+                                           -> cef_string_userfree_t>,
+    pub get_original_url: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_download_item_t)
+                                                    -> cef_string_userfree_t>,
+    pub get_suggested_file_name: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_download_item_t)
+                                                           ->
+                                                               cef_string_userfree_t>,
+    pub get_content_disposition: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_download_item_t)
+                                                           ->
+                                                               cef_string_userfree_t>,
+    pub get_mime_type: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_download_item_t)
+                                                 -> cef_string_userfree_t>,
+}
+impl ::std::default::Default for Struct__cef_download_item_t {
+    fn default() -> Struct__cef_download_item_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_download_item_t = Struct__cef_download_item_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_before_download_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_before_download_callback_t,
+                                         download_path: *const cef_string_t,
+                                         show_dialog: ::libc::c_int) -> ()>,
+}
+impl ::std::default::Default for Struct__cef_before_download_callback_t {
+    fn default() -> Struct__cef_before_download_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_before_download_callback_t =
+    Struct__cef_before_download_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_download_item_callback_t {
+    pub base: cef_base_t,
+    pub cancel: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_download_item_callback_t)
+                                          -> ()>,
+    pub pause: ::std::option::Option<extern "C" fn
+                                         (_self:
+                                              *mut Struct__cef_download_item_callback_t)
+                                         -> ()>,
+    pub resume: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_download_item_callback_t)
+                                          -> ()>,
+}
+impl ::std::default::Default for Struct__cef_download_item_callback_t {
+    fn default() -> Struct__cef_download_item_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_download_item_callback_t = Struct__cef_download_item_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_download_handler_t {
+    pub base: cef_base_t,
+    pub on_before_download: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_download_handler_t,
+                                                       browser:
+                                                           *mut Struct__cef_browser_t,
+                                                       download_item:
+                                                           *mut Struct__cef_download_item_t,
+                                                       suggested_name:
+                                                           *const cef_string_t,
+                                                       callback:
+                                                           *mut Struct__cef_before_download_callback_t)
+                                                      -> ()>,
+    pub on_download_updated: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_download_handler_t,
+                                                        browser:
+                                                            *mut Struct__cef_browser_t,
+                                                        download_item:
+                                                            *mut Struct__cef_download_item_t,
+                                                        callback:
+                                                            *mut Struct__cef_download_item_callback_t)
+                                                       -> ()>,
+}
+impl ::std::default::Default for Struct__cef_download_handler_t {
+    fn default() -> Struct__cef_download_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_download_handler_t = Struct__cef_download_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_drag_handler_t {
+    pub base: cef_base_t,
+    pub on_drag_enter: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_drag_handler_t,
+                                                  browser:
+                                                      *mut Struct__cef_browser_t,
+                                                  dragData:
+                                                      *mut Struct__cef_drag_data_t,
+                                                  mask:
+                                                      cef_drag_operations_mask_t)
+                                                 -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_drag_handler_t {
+    fn default() -> Struct__cef_drag_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_drag_handler_t = Struct__cef_drag_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_find_handler_t {
+    pub base: cef_base_t,
+    pub on_find_result: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_find_handler_t,
+                                                   browser:
+                                                       *mut Struct__cef_browser_t,
+                                                   identifier: ::libc::c_int,
+                                                   count: ::libc::c_int,
+                                                   selectionRect:
+                                                       *const cef_rect_t,
+                                                   activeMatchOrdinal:
+                                                       ::libc::c_int,
+                                                   finalUpdate: ::libc::c_int)
+                                                  -> ()>,
+}
+impl ::std::default::Default for Struct__cef_find_handler_t {
+    fn default() -> Struct__cef_find_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_find_handler_t = Struct__cef_find_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_focus_handler_t {
+    pub base: cef_base_t,
+    pub on_take_focus: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_focus_handler_t,
+                                                  browser:
+                                                      *mut Struct__cef_browser_t,
+                                                  next: ::libc::c_int) -> ()>,
+    pub on_set_focus: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_focus_handler_t,
+                                                 browser:
+                                                     *mut Struct__cef_browser_t,
+                                                 source: cef_focus_source_t)
+                                                -> ::libc::c_int>,
+    pub on_got_focus: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_focus_handler_t,
+                                                 browser:
+                                                     *mut Struct__cef_browser_t)
+                                                -> ()>,
+}
+impl ::std::default::Default for Struct__cef_focus_handler_t {
+    fn default() -> Struct__cef_focus_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_focus_handler_t = Struct__cef_focus_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_geolocation_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_geolocation_callback_t,
+                                         allow: ::libc::c_int) -> ()>,
+}
+impl ::std::default::Default for Struct__cef_geolocation_callback_t {
+    fn default() -> Struct__cef_geolocation_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_geolocation_callback_t = Struct__cef_geolocation_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_geolocation_handler_t {
+    pub base: cef_base_t,
+    pub on_request_geolocation_permission: ::std::option::Option<extern "C" fn
+                                                                     (_self:
+                                                                          *mut Struct__cef_geolocation_handler_t,
+                                                                      browser:
+                                                                          *mut Struct__cef_browser_t,
+                                                                      requesting_url:
+                                                                          *const cef_string_t,
+                                                                      request_id:
+                                                                          ::libc::c_int,
+                                                                      callback:
+                                                                          *mut Struct__cef_geolocation_callback_t)
+                                                                     ->
+                                                                         ::libc::c_int>,
+    pub on_cancel_geolocation_permission: ::std::option::Option<extern "C" fn
+                                                                    (_self:
+                                                                         *mut Struct__cef_geolocation_handler_t,
+                                                                     browser:
+                                                                         *mut Struct__cef_browser_t,
+                                                                     requesting_url:
+                                                                         *const cef_string_t,
+                                                                     request_id:
+                                                                         ::libc::c_int)
+                                                                    -> ()>,
+}
+impl ::std::default::Default for Struct__cef_geolocation_handler_t {
+    fn default() -> Struct__cef_geolocation_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_geolocation_handler_t = Struct__cef_geolocation_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_jsdialog_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_jsdialog_callback_t,
+                                         success: ::libc::c_int,
+                                         user_input: *const cef_string_t)
+                                        -> ()>,
+}
+impl ::std::default::Default for Struct__cef_jsdialog_callback_t {
+    fn default() -> Struct__cef_jsdialog_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_jsdialog_callback_t = Struct__cef_jsdialog_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_jsdialog_handler_t {
+    pub base: cef_base_t,
+    pub on_jsdialog: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_jsdialog_handler_t,
+                                                browser:
+                                                    *mut Struct__cef_browser_t,
+                                                origin_url:
+                                                    *const cef_string_t,
+                                                accept_lang:
+                                                    *const cef_string_t,
+                                                dialog_type:
+                                                    cef_jsdialog_type_t,
+                                                message_text:
+                                                    *const cef_string_t,
+                                                default_prompt_text:
+                                                    *const cef_string_t,
+                                                callback:
+                                                    *mut Struct__cef_jsdialog_callback_t,
+                                                suppress_message:
+                                                    *mut ::libc::c_int)
+                                               -> ::libc::c_int>,
+    pub on_before_unload_dialog: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_jsdialog_handler_t,
+                                                            browser:
+                                                                *mut Struct__cef_browser_t,
+                                                            message_text:
+                                                                *const cef_string_t,
+                                                            is_reload:
+                                                                ::libc::c_int,
+                                                            callback:
+                                                                *mut Struct__cef_jsdialog_callback_t)
+                                                           -> ::libc::c_int>,
+    pub on_reset_dialog_state: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_jsdialog_handler_t,
+                                                          browser:
+                                                              *mut Struct__cef_browser_t)
+                                                         -> ()>,
+    pub on_dialog_closed: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_jsdialog_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t)
+                                                    -> ()>,
+}
+impl ::std::default::Default for Struct__cef_jsdialog_handler_t {
+    fn default() -> Struct__cef_jsdialog_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_jsdialog_handler_t = Struct__cef_jsdialog_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_keyboard_handler_t {
+    pub base: cef_base_t,
+    pub on_pre_key_event: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_keyboard_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t,
+                                                     event:
+                                                         *const Struct__cef_key_event_t,
+                                                     os_event:
+                                                         *mut ::libc::c_void,
+                                                     is_keyboard_shortcut:
+                                                         *mut ::libc::c_int)
+                                                    -> ::libc::c_int>,
+    pub on_key_event: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_keyboard_handler_t,
+                                                 browser:
+                                                     *mut Struct__cef_browser_t,
+                                                 event:
+                                                     *const Struct__cef_key_event_t,
+                                                 os_event:
+                                                     *mut ::libc::c_void)
+                                                -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_keyboard_handler_t {
+    fn default() -> Struct__cef_keyboard_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_keyboard_handler_t = Struct__cef_keyboard_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_life_span_handler_t {
+    pub base: cef_base_t,
+    pub on_before_popup: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_life_span_handler_t,
+                                                    browser:
+                                                        *mut Struct__cef_browser_t,
+                                                    frame:
+                                                        *mut Struct__cef_frame_t,
+                                                    target_url:
+                                                        *const cef_string_t,
+                                                    target_frame_name:
+                                                        *const cef_string_t,
+                                                    popupFeatures:
+                                                        *const Struct__cef_popup_features_t,
+                                                    windowInfo:
+                                                        *mut Struct__cef_window_info_t,
+                                                    client:
+                                                        *mut *mut Struct__cef_client_t,
+                                                    settings:
+                                                        *mut Struct__cef_browser_settings_t,
+                                                    no_javascript_access:
+                                                        *mut ::libc::c_int)
+                                                   -> ::libc::c_int>,
+    pub on_after_created: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_life_span_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t)
+                                                    -> ()>,
+    pub run_modal: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_life_span_handler_t,
+                                              browser:
+                                                  *mut Struct__cef_browser_t)
+                                             -> ::libc::c_int>,
+    pub do_close: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_life_span_handler_t,
+                                             browser:
+                                                 *mut Struct__cef_browser_t)
+                                            -> ::libc::c_int>,
+    pub on_before_close: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_life_span_handler_t,
+                                                    browser:
+                                                        *mut Struct__cef_browser_t)
+                                                   -> ()>,
+}
+impl ::std::default::Default for Struct__cef_life_span_handler_t {
+    fn default() -> Struct__cef_life_span_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_life_span_handler_t = Struct__cef_life_span_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_render_handler_t {
+    pub base: cef_base_t,
+    pub get_root_screen_rect: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_render_handler_t,
+                                                         browser:
+                                                             *mut Struct__cef_browser_t,
+                                                         rect:
+                                                             *mut cef_rect_t)
+                                                        -> ::libc::c_int>,
+    pub get_view_rect: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_render_handler_t,
+                                                  browser:
+                                                      *mut Struct__cef_browser_t,
+                                                  rect: *mut cef_rect_t)
+                                                 -> ::libc::c_int>,
+    pub get_screen_point: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_render_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t,
+                                                     viewX: ::libc::c_int,
+                                                     viewY: ::libc::c_int,
+                                                     screenX:
+                                                         *mut ::libc::c_int,
+                                                     screenY:
+                                                         *mut ::libc::c_int)
+                                                    -> ::libc::c_int>,
+    pub get_screen_info: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_render_handler_t,
+                                                    browser:
+                                                        *mut Struct__cef_browser_t,
+                                                    screen_info:
+                                                        *mut Struct__cef_screen_info_t)
+                                                   -> ::libc::c_int>,
+    pub on_popup_show: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_render_handler_t,
+                                                  browser:
+                                                      *mut Struct__cef_browser_t,
+                                                  show: ::libc::c_int) -> ()>,
+    pub on_popup_size: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_render_handler_t,
+                                                  browser:
+                                                      *mut Struct__cef_browser_t,
+                                                  rect: *const cef_rect_t)
+                                                 -> ()>,
+    pub on_paint: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_render_handler_t,
+                                             browser:
+                                                 *mut Struct__cef_browser_t,
+                                             _type: cef_paint_element_type_t,
+                                             dirtyRectsCount: size_t,
+                                             dirtyRects: *const cef_rect_t,
+                                             buffer: *const ::libc::c_void,
+                                             width: ::libc::c_int,
+                                             height: ::libc::c_int) -> ()>,
+    pub on_cursor_change: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_render_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t,
+                                                     cursor:
+                                                         *mut ::libc::c_void,
+                                                     _type: cef_cursor_type_t,
+                                                     custom_cursor_info:
+                                                         *const Struct__cef_cursor_info_t)
+                                                    -> ()>,
+    pub start_dragging: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_render_handler_t,
+                                                   browser:
+                                                       *mut Struct__cef_browser_t,
+                                                   drag_data:
+                                                       *mut Struct__cef_drag_data_t,
+                                                   allowed_ops:
+                                                       cef_drag_operations_mask_t,
+                                                   x: ::libc::c_int,
+                                                   y: ::libc::c_int)
+                                                  -> ::libc::c_int>,
+    pub update_drag_cursor: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_render_handler_t,
+                                                       browser:
+                                                           *mut Struct__cef_browser_t,
+                                                       operation:
+                                                           cef_drag_operations_mask_t)
+                                                      -> ()>,
+    pub on_scroll_offset_changed: ::std::option::Option<extern "C" fn
+                                                            (_self:
+                                                                 *mut Struct__cef_render_handler_t,
+                                                             browser:
+                                                                 *mut Struct__cef_browser_t)
+                                                            -> ()>,
+}
+impl ::std::default::Default for Struct__cef_render_handler_t {
+    fn default() -> Struct__cef_render_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_render_handler_t = Struct__cef_render_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_web_plugin_info_t {
+    pub base: cef_base_t,
+    pub get_name: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_web_plugin_info_t)
+                                            -> cef_string_userfree_t>,
+    pub get_path: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_web_plugin_info_t)
+                                            -> cef_string_userfree_t>,
+    pub get_version: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_web_plugin_info_t)
+                                               -> cef_string_userfree_t>,
+    pub get_description: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_web_plugin_info_t)
+                                                   -> cef_string_userfree_t>,
+}
+impl ::std::default::Default for Struct__cef_web_plugin_info_t {
+    fn default() -> Struct__cef_web_plugin_info_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_web_plugin_info_t = Struct__cef_web_plugin_info_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_web_plugin_info_visitor_t {
+    pub base: cef_base_t,
+    pub visit: ::std::option::Option<extern "C" fn
+                                         (_self:
+                                              *mut Struct__cef_web_plugin_info_visitor_t,
+                                          info:
+                                              *mut Struct__cef_web_plugin_info_t,
+                                          count: ::libc::c_int,
+                                          total: ::libc::c_int)
+                                         -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_web_plugin_info_visitor_t {
+    fn default() -> Struct__cef_web_plugin_info_visitor_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_web_plugin_info_visitor_t =
+    Struct__cef_web_plugin_info_visitor_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_web_plugin_unstable_callback_t {
+    pub base: cef_base_t,
+    pub is_unstable: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_web_plugin_unstable_callback_t,
+                                                path: *const cef_string_t,
+                                                unstable: ::libc::c_int)
+                                               -> ()>,
+}
+impl ::std::default::Default for Struct__cef_web_plugin_unstable_callback_t {
+    fn default() -> Struct__cef_web_plugin_unstable_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_web_plugin_unstable_callback_t =
+    Struct__cef_web_plugin_unstable_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_quota_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_quota_callback_t,
+                                         allow: ::libc::c_int) -> ()>,
+    pub cancel: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_quota_callback_t)
+                                          -> ()>,
+}
+impl ::std::default::Default for Struct__cef_quota_callback_t {
+    fn default() -> Struct__cef_quota_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_quota_callback_t = Struct__cef_quota_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_allow_certificate_error_callback_t {
+    pub base: cef_base_t,
+    pub cont: ::std::option::Option<extern "C" fn
+                                        (_self:
+                                             *mut Struct__cef_allow_certificate_error_callback_t,
+                                         allow: ::libc::c_int) -> ()>,
+}
+impl ::std::default::Default for
+ Struct__cef_allow_certificate_error_callback_t {
+    fn default() -> Struct__cef_allow_certificate_error_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_allow_certificate_error_callback_t =
+    Struct__cef_allow_certificate_error_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_request_handler_t {
+    pub base: cef_base_t,
+    pub on_before_browse: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_request_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t,
+                                                     frame:
+                                                         *mut Struct__cef_frame_t,
+                                                     request:
+                                                         *mut Struct__cef_request_t,
+                                                     is_redirect:
+                                                         ::libc::c_int)
+                                                    -> ::libc::c_int>,
+    pub on_before_resource_load: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_request_handler_t,
+                                                            browser:
+                                                                *mut Struct__cef_browser_t,
+                                                            frame:
+                                                                *mut Struct__cef_frame_t,
+                                                            request:
+                                                                *mut Struct__cef_request_t)
+                                                           -> ::libc::c_int>,
+    pub get_resource_handler: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_request_handler_t,
+                                                         browser:
+                                                             *mut Struct__cef_browser_t,
+                                                         frame:
+                                                             *mut Struct__cef_frame_t,
+                                                         request:
+                                                             *mut Struct__cef_request_t)
+                                                        ->
+                                                            *mut Struct__cef_resource_handler_t>,
+    pub on_resource_redirect: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_request_handler_t,
+                                                         browser:
+                                                             *mut Struct__cef_browser_t,
+                                                         frame:
+                                                             *mut Struct__cef_frame_t,
+                                                         old_url:
+                                                             *const cef_string_t,
+                                                         new_url:
+                                                             *mut cef_string_t)
+                                                        -> ()>,
+    pub get_auth_credentials: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_request_handler_t,
+                                                         browser:
+                                                             *mut Struct__cef_browser_t,
+                                                         frame:
+                                                             *mut Struct__cef_frame_t,
+                                                         isProxy:
+                                                             ::libc::c_int,
+                                                         host:
+                                                             *const cef_string_t,
+                                                         port: ::libc::c_int,
+                                                         realm:
+                                                             *const cef_string_t,
+                                                         scheme:
+                                                             *const cef_string_t,
+                                                         callback:
+                                                             *mut Struct__cef_auth_callback_t)
+                                                        -> ::libc::c_int>,
+    pub on_quota_request: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_request_handler_t,
+                                                     browser:
+                                                         *mut Struct__cef_browser_t,
+                                                     origin_url:
+                                                         *const cef_string_t,
+                                                     new_size: int64,
+                                                     callback:
+                                                         *mut Struct__cef_quota_callback_t)
+                                                    -> ::libc::c_int>,
+    pub on_protocol_execution: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_request_handler_t,
+                                                          browser:
+                                                              *mut Struct__cef_browser_t,
+                                                          url:
+                                                              *const cef_string_t,
+                                                          allow_os_execution:
+                                                              *mut ::libc::c_int)
+                                                         -> ()>,
+    pub on_certificate_error: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_request_handler_t,
+                                                         cert_error:
+                                                             cef_errorcode_t,
+                                                         request_url:
+                                                             *const cef_string_t,
+                                                         callback:
+                                                             *mut Struct__cef_allow_certificate_error_callback_t)
+                                                        -> ::libc::c_int>,
+    pub on_before_plugin_load: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_request_handler_t,
+                                                          browser:
+                                                              *mut Struct__cef_browser_t,
+                                                          url:
+                                                              *const cef_string_t,
+                                                          policy_url:
+                                                              *const cef_string_t,
+                                                          info:
+                                                              *mut Struct__cef_web_plugin_info_t)
+                                                         -> ::libc::c_int>,
+    pub on_plugin_crashed: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_request_handler_t,
+                                                      browser:
+                                                          *mut Struct__cef_browser_t,
+                                                      plugin_path:
+                                                          *const cef_string_t)
+                                                     -> ()>,
+    pub on_render_process_terminated: ::std::option::Option<extern "C" fn
+                                                                (_self:
+                                                                     *mut Struct__cef_request_handler_t,
+                                                                 browser:
+                                                                     *mut Struct__cef_browser_t,
+                                                                 status:
+                                                                     cef_termination_status_t)
+                                                                -> ()>,
+}
+impl ::std::default::Default for Struct__cef_request_handler_t {
+    fn default() -> Struct__cef_request_handler_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_request_handler_t = Struct__cef_request_handler_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_client_t {
+    pub base: cef_base_t,
+    pub get_context_menu_handler: ::std::option::Option<extern "C" fn
+                                                            (_self:
+                                                                 *mut Struct__cef_client_t)
+                                                            ->
+                                                                *mut Struct__cef_context_menu_handler_t>,
+    pub get_dialog_handler: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_client_t)
+                                                      ->
+                                                          *mut Struct__cef_dialog_handler_t>,
+    pub get_display_handler: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_client_t)
+                                                       ->
+                                                           *mut Struct__cef_display_handler_t>,
+    pub get_download_handler: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_client_t)
+                                                        ->
+                                                            *mut Struct__cef_download_handler_t>,
+    pub get_drag_handler: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_client_t)
+                                                    ->
+                                                        *mut Struct__cef_drag_handler_t>,
+    pub get_find_handler: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_client_t)
+                                                    ->
+                                                        *mut Struct__cef_find_handler_t>,
+    pub get_focus_handler: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_client_t)
+                                                     ->
+                                                         *mut Struct__cef_focus_handler_t>,
+    pub get_geolocation_handler: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_client_t)
+                                                           ->
+                                                               *mut Struct__cef_geolocation_handler_t>,
+    pub get_jsdialog_handler: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_client_t)
+                                                        ->
+                                                            *mut Struct__cef_jsdialog_handler_t>,
+    pub get_keyboard_handler: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_client_t)
+                                                        ->
+                                                            *mut Struct__cef_keyboard_handler_t>,
+    pub get_life_span_handler: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_client_t)
+                                                         ->
+                                                             *mut Struct__cef_life_span_handler_t>,
+    pub get_load_handler: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_client_t)
+                                                    ->
+                                                        *mut Struct__cef_load_handler_t>,
+    pub get_render_handler: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_client_t)
+                                                      ->
+                                                          *mut Struct__cef_render_handler_t>,
+    pub get_request_handler: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_client_t)
+                                                       ->
+                                                           *mut Struct__cef_request_handler_t>,
+    pub on_process_message_received: ::std::option::Option<extern "C" fn
+                                                               (_self:
+                                                                    *mut Struct__cef_client_t,
+                                                                browser:
+                                                                    *mut Struct__cef_browser_t,
+                                                                source_process:
+                                                                    cef_process_id_t,
+                                                                message:
+                                                                    *mut Struct__cef_process_message_t)
+                                                               ->
+                                                                   ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_client_t {
+    fn default() -> Struct__cef_client_t { unsafe { ::std::mem::zeroed() } }
+}
+pub type cef_client_t = Struct__cef_client_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_get_geolocation_callback_t {
+    pub base: cef_base_t,
+    pub on_location_update: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_get_geolocation_callback_t,
+                                                       position:
+                                                           *const Struct__cef_geoposition_t)
+                                                      -> ()>,
+}
+impl ::std::default::Default for Struct__cef_get_geolocation_callback_t {
+    fn default() -> Struct__cef_get_geolocation_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_get_geolocation_callback_t =
+    Struct__cef_get_geolocation_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_end_tracing_callback_t {
+    pub base: cef_base_t,
+    pub on_end_tracing_complete: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_end_tracing_callback_t,
+                                                            tracing_file:
+                                                                *const cef_string_t)
+                                                           -> ()>,
+}
+impl ::std::default::Default for Struct__cef_end_tracing_callback_t {
+    fn default() -> Struct__cef_end_tracing_callback_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_end_tracing_callback_t = Struct__cef_end_tracing_callback_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_urlrequest_t {
+    pub base: cef_base_t,
+    pub get_request: ::std::option::Option<extern "C" fn
+                                               (_self:
+                                                    *mut Struct__cef_urlrequest_t)
+                                               -> *mut Struct__cef_request_t>,
+    pub get_client: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_urlrequest_t)
+                                              ->
+                                                  *mut Struct__cef_urlrequest_client_t>,
+    pub get_request_status: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_urlrequest_t)
+                                                      ->
+                                                          cef_urlrequest_status_t>,
+    pub get_request_error: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_urlrequest_t)
+                                                     -> cef_errorcode_t>,
+    pub get_response: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_urlrequest_t)
+                                                ->
+                                                    *mut Struct__cef_response_t>,
+    pub cancel: ::std::option::Option<extern "C" fn
+                                          (_self:
+                                               *mut Struct__cef_urlrequest_t)
+                                          -> ()>,
+}
+impl ::std::default::Default for Struct__cef_urlrequest_t {
+    fn default() -> Struct__cef_urlrequest_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_urlrequest_t = Struct__cef_urlrequest_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_urlrequest_client_t {
+    pub base: cef_base_t,
+    pub on_request_complete: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_urlrequest_client_t,
+                                                        request:
+                                                            *mut Struct__cef_urlrequest_t)
+                                                       -> ()>,
+    pub on_upload_progress: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_urlrequest_client_t,
+                                                       request:
+                                                           *mut Struct__cef_urlrequest_t,
+                                                       current: int64,
+                                                       total: int64) -> ()>,
+    pub on_download_progress: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_urlrequest_client_t,
+                                                         request:
+                                                             *mut Struct__cef_urlrequest_t,
+                                                         current: int64,
+                                                         total: int64) -> ()>,
+    pub on_download_data: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_urlrequest_client_t,
+                                                     request:
+                                                         *mut Struct__cef_urlrequest_t,
+                                                     data:
+                                                         *const ::libc::c_void,
+                                                     data_length: size_t)
+                                                    -> ()>,
+    pub get_auth_credentials: ::std::option::Option<extern "C" fn
+                                                        (_self:
+                                                             *mut Struct__cef_urlrequest_client_t,
+                                                         isProxy:
+                                                             ::libc::c_int,
+                                                         host:
+                                                             *const cef_string_t,
+                                                         port: ::libc::c_int,
+                                                         realm:
+                                                             *const cef_string_t,
+                                                         scheme:
+                                                             *const cef_string_t,
+                                                         callback:
+                                                             *mut Struct__cef_auth_callback_t)
+                                                        -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_urlrequest_client_t {
+    fn default() -> Struct__cef_urlrequest_client_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_urlrequest_client_t = Struct__cef_urlrequest_client_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_xml_reader_t {
+    pub base: cef_base_t,
+    pub move_to_next_node: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_xml_reader_t)
+                                                     -> ::libc::c_int>,
+    pub close: ::std::option::Option<extern "C" fn
+                                         (_self:
+                                              *mut Struct__cef_xml_reader_t)
+                                         -> ::libc::c_int>,
+    pub has_error: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_xml_reader_t)
+                                             -> ::libc::c_int>,
+    pub get_error: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_xml_reader_t)
+                                             -> cef_string_userfree_t>,
+    pub get_type: ::std::option::Option<extern "C" fn
+                                            (_self:
+                                                 *mut Struct__cef_xml_reader_t)
+                                            -> cef_xml_node_type_t>,
+    pub get_depth: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_xml_reader_t)
+                                             -> ::libc::c_int>,
+    pub get_local_name: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_xml_reader_t)
+                                                  -> cef_string_userfree_t>,
+    pub get_prefix: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_xml_reader_t)
+                                              -> cef_string_userfree_t>,
+    pub get_qualified_name: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_xml_reader_t)
+                                                      ->
+                                                          cef_string_userfree_t>,
+    pub get_namespace_uri: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_xml_reader_t)
+                                                     ->
+                                                         cef_string_userfree_t>,
+    pub get_base_uri: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_xml_reader_t)
+                                                -> cef_string_userfree_t>,
+    pub get_xml_lang: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_xml_reader_t)
+                                                -> cef_string_userfree_t>,
+    pub is_empty_element: ::std::option::Option<extern "C" fn
+                                                    (_self:
+                                                         *mut Struct__cef_xml_reader_t)
+                                                    -> ::libc::c_int>,
+    pub has_value: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_xml_reader_t)
+                                             -> ::libc::c_int>,
+    pub get_value: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_xml_reader_t)
+                                             -> cef_string_userfree_t>,
+    pub has_attributes: ::std::option::Option<extern "C" fn
+                                                  (_self:
+                                                       *mut Struct__cef_xml_reader_t)
+                                                  -> ::libc::c_int>,
+    pub get_attribute_count: ::std::option::Option<extern "C" fn
+                                                       (_self:
+                                                            *mut Struct__cef_xml_reader_t)
+                                                       -> size_t>,
+    pub get_attribute_byindex: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_xml_reader_t,
+                                                          index:
+                                                              ::libc::c_int)
+                                                         ->
+                                                             cef_string_userfree_t>,
+    pub get_attribute_byqname: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_xml_reader_t,
+                                                          qualifiedName:
+                                                              *const cef_string_t)
+                                                         ->
+                                                             cef_string_userfree_t>,
+    pub get_attribute_bylname: ::std::option::Option<extern "C" fn
+                                                         (_self:
+                                                              *mut Struct__cef_xml_reader_t,
+                                                          localName:
+                                                              *const cef_string_t,
+                                                          namespaceURI:
+                                                              *const cef_string_t)
+                                                         ->
+                                                             cef_string_userfree_t>,
+    pub get_inner_xml: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_xml_reader_t)
+                                                 -> cef_string_userfree_t>,
+    pub get_outer_xml: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_xml_reader_t)
+                                                 -> cef_string_userfree_t>,
+    pub get_line_number: ::std::option::Option<extern "C" fn
+                                                   (_self:
+                                                        *mut Struct__cef_xml_reader_t)
+                                                   -> ::libc::c_int>,
+    pub move_to_attribute_byindex: ::std::option::Option<extern "C" fn
+                                                             (_self:
+                                                                  *mut Struct__cef_xml_reader_t,
+                                                              index:
+                                                                  ::libc::c_int)
+                                                             ->
+                                                                 ::libc::c_int>,
+    pub move_to_attribute_byqname: ::std::option::Option<extern "C" fn
+                                                             (_self:
+                                                                  *mut Struct__cef_xml_reader_t,
+                                                              qualifiedName:
+                                                                  *const cef_string_t)
+                                                             ->
+                                                                 ::libc::c_int>,
+    pub move_to_attribute_bylname: ::std::option::Option<extern "C" fn
+                                                             (_self:
+                                                                  *mut Struct__cef_xml_reader_t,
+                                                              localName:
+                                                                  *const cef_string_t,
+                                                              namespaceURI:
+                                                                  *const cef_string_t)
+                                                             ->
+                                                                 ::libc::c_int>,
+    pub move_to_first_attribute: ::std::option::Option<extern "C" fn
+                                                           (_self:
+                                                                *mut Struct__cef_xml_reader_t)
+                                                           -> ::libc::c_int>,
+    pub move_to_next_attribute: ::std::option::Option<extern "C" fn
+                                                          (_self:
+                                                               *mut Struct__cef_xml_reader_t)
+                                                          -> ::libc::c_int>,
+    pub move_to_carrying_element: ::std::option::Option<extern "C" fn
+                                                            (_self:
+                                                                 *mut Struct__cef_xml_reader_t)
+                                                            -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_xml_reader_t {
+    fn default() -> Struct__cef_xml_reader_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_xml_reader_t = Struct__cef_xml_reader_t;
+#[repr(C)]
+#[derive(Copy)]
+pub struct Struct__cef_zip_reader_t {
+    pub base: cef_base_t,
+    pub move_to_first_file: ::std::option::Option<extern "C" fn
+                                                      (_self:
+                                                           *mut Struct__cef_zip_reader_t)
+                                                      -> ::libc::c_int>,
+    pub move_to_next_file: ::std::option::Option<extern "C" fn
+                                                     (_self:
+                                                          *mut Struct__cef_zip_reader_t)
+                                                     -> ::libc::c_int>,
+    pub move_to_file: ::std::option::Option<extern "C" fn
+                                                (_self:
+                                                     *mut Struct__cef_zip_reader_t,
+                                                 fileName:
+                                                     *const cef_string_t,
+                                                 caseSensitive: ::libc::c_int)
+                                                -> ::libc::c_int>,
+    pub close: ::std::option::Option<extern "C" fn
+                                         (_self:
+                                              *mut Struct__cef_zip_reader_t)
+                                         -> ::libc::c_int>,
+    pub get_file_name: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_zip_reader_t)
+                                                 -> cef_string_userfree_t>,
+    pub get_file_size: ::std::option::Option<extern "C" fn
+                                                 (_self:
+                                                      *mut Struct__cef_zip_reader_t)
+                                                 -> int64>,
+    pub get_file_last_modified: ::std::option::Option<extern "C" fn
+                                                          (_self:
+                                                               *mut Struct__cef_zip_reader_t)
+                                                          -> time_t>,
+    pub open_file: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_zip_reader_t,
+                                              password: *const cef_string_t)
+                                             -> ::libc::c_int>,
+    pub close_file: ::std::option::Option<extern "C" fn
+                                              (_self:
+                                                   *mut Struct__cef_zip_reader_t)
+                                              -> ::libc::c_int>,
+    pub read_file: ::std::option::Option<extern "C" fn
+                                             (_self:
+                                                  *mut Struct__cef_zip_reader_t,
+                                              buffer: *mut ::libc::c_void,
+                                              bufferSize: size_t)
+                                             -> ::libc::c_int>,
+    pub tell: ::std::option::Option<extern "C" fn
+                                        (_self: *mut Struct__cef_zip_reader_t)
+                                        -> int64>,
+    pub eof: ::std::option::Option<extern "C" fn
+                                       (_self: *mut Struct__cef_zip_reader_t)
+                                       -> ::libc::c_int>,
+}
+impl ::std::default::Default for Struct__cef_zip_reader_t {
+    fn default() -> Struct__cef_zip_reader_t {
+        unsafe { ::std::mem::zeroed() }
+    }
+}
+pub type cef_zip_reader_t = Struct__cef_zip_reader_t;
 #[link(name = "Chromium Embedded Framework", kind = "framework")]
 extern "C" {
     pub fn cef_string_wide_set(src: *const wchar_t, src_len: size_t,
@@ -4061,4 +5874,69 @@ extern "C" {
     pub fn cef_run_message_loop() -> ();
     pub fn cef_quit_message_loop() -> ();
     pub fn cef_set_osmodal_loop(osModalLoop: ::libc::c_int) -> ();
+    pub fn cef_visit_web_plugin_info(visitor:
+                                         *mut cef_web_plugin_info_visitor_t)
+     -> ();
+    pub fn cef_refresh_web_plugins() -> ();
+    pub fn cef_add_web_plugin_path(path: *const cef_string_t) -> ();
+    pub fn cef_add_web_plugin_directory(dir: *const cef_string_t) -> ();
+    pub fn cef_remove_web_plugin_path(path: *const cef_string_t) -> ();
+    pub fn cef_unregister_internal_web_plugin(path: *const cef_string_t)
+     -> ();
+    pub fn cef_force_web_plugin_shutdown(path: *const cef_string_t) -> ();
+    pub fn cef_register_web_plugin_crash(path: *const cef_string_t) -> ();
+    pub fn cef_is_web_plugin_unstable(path: *const cef_string_t,
+                                      callback:
+                                          *mut cef_web_plugin_unstable_callback_t)
+     -> ();
+    pub fn cef_get_geolocation(callback: *mut cef_get_geolocation_callback_t)
+     -> ::libc::c_int;
+    pub fn cef_add_cross_origin_whitelist_entry(source_origin:
+                                                    *const cef_string_t,
+                                                target_protocol:
+                                                    *const cef_string_t,
+                                                target_domain:
+                                                    *const cef_string_t,
+                                                allow_target_subdomains:
+                                                    ::libc::c_int)
+     -> ::libc::c_int;
+    pub fn cef_remove_cross_origin_whitelist_entry(source_origin:
+                                                       *const cef_string_t,
+                                                   target_protocol:
+                                                       *const cef_string_t,
+                                                   target_domain:
+                                                       *const cef_string_t,
+                                                   allow_target_subdomains:
+                                                       ::libc::c_int)
+     -> ::libc::c_int;
+    pub fn cef_clear_cross_origin_whitelist() -> ::libc::c_int;
+    pub fn cef_get_path(key: cef_path_key_t, path: *mut cef_string_t)
+     -> ::libc::c_int;
+    pub fn cef_launch_process(command_line: *mut Struct__cef_command_line_t)
+     -> ::libc::c_int;
+    pub fn cef_begin_tracing(categories: *const cef_string_t,
+                             callback: *mut Struct__cef_completion_callback_t)
+     -> ::libc::c_int;
+    pub fn cef_end_tracing(tracing_file: *const cef_string_t,
+                           callback: *mut cef_end_tracing_callback_t)
+     -> ::libc::c_int;
+    pub fn cef_now_from_system_trace_time() -> int64;
+    pub fn cef_parse_url(url: *const cef_string_t,
+                         parts: *mut Struct__cef_urlparts_t) -> ::libc::c_int;
+    pub fn cef_create_url(parts: *const Struct__cef_urlparts_t,
+                          url: *mut cef_string_t) -> ::libc::c_int;
+    pub fn cef_get_mime_type(extension: *const cef_string_t)
+     -> cef_string_userfree_t;
+    pub fn cef_get_extensions_for_mime_type(mime_type: *const cef_string_t,
+                                            extensions: cef_string_list_t)
+     -> ();
+    pub fn cef_urlrequest_create(request: *mut Struct__cef_request_t,
+                                 client: *mut Struct__cef_urlrequest_client_t)
+     -> *mut cef_urlrequest_t;
+    pub fn cef_xml_reader_create(stream: *mut Struct__cef_stream_reader_t,
+                                 encodingType: cef_xml_encoding_type_t,
+                                 URI: *const cef_string_t)
+     -> *mut cef_xml_reader_t;
+    pub fn cef_zip_reader_create(stream: *mut Struct__cef_stream_reader_t)
+     -> *mut cef_zip_reader_t;
 }
