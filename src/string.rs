@@ -2,7 +2,8 @@ use ffi;
 use std::slice;
 use std::mem::transmute;
 use std::mem;
-use alloc::heap::{EMPTY, allocate, reallocate, deallocate};
+use alloc::heap::{allocate, deallocate};
+use std::ptr::null_mut;
 use std::num::Int;
 use libc;
 
@@ -71,7 +72,7 @@ impl CefString {
         let data: Vec<u16> = s.utf16_units().collect();
 
         let (ptr, size) = if data.len() == 0 {
-            (EMPTY as *mut u16, 0)
+            (null_mut(), 0)
         } else {
             let size = data.len().checked_mul(mem::size_of::<u16>()).and_then(|x| x.checked_add(mem::size_of::<usize>())).expect("capacity overflow");
             let ptr = unsafe { allocate(size, mem::min_align_of::<usize>()) };
@@ -83,10 +84,10 @@ impl CefString {
             *ptr = size;
             ptr = ptr.offset(1);
         }
-        let mut ptr = ptr as *mut u16;
+        let ptr = ptr as *mut u16;
         unsafe { copy_nonoverlapping_memory(ptr, data.as_ptr(), data.len()) };
         extern fn release(str: *mut u16) {
-            if str as *mut _ == EMPTY { return; }
+            if str == null_mut() { return; }
             unsafe {
                 let mut ptr = str as *mut usize;
                 ptr = ptr.offset(-1);

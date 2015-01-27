@@ -3,9 +3,7 @@ use ffi;
 use Is;
 use CefRc;
 use unsafe_downcast_mut;
-use upcast_ptr;
-use Void;
-use std::mem::{transmute, zeroed};
+use std::mem::zeroed;
 
 #[repr(C)]
 pub struct App<T : Callback> {
@@ -19,6 +17,7 @@ impl<T: Callback> Is<ffi::cef_app_t> for App<T> {}
 //impl Is<ffi::cef_browser_process_handler_t> for ffi::cef_browser_process_handler_t {}
 //impl Is<ffi::cef_render_process_handler_t> for ffi::cef_render_process_handler_t {}
 
+#[allow(unused_variables)]
 pub trait Callback {
     type ResourceBundleHandler : Is<ffi::cef_base_t>;// + Is<ffi::cef_resource_bundle_handler_t>;
     type BrowserProcessHandler : Is<ffi::cef_base_t>;// + Is<ffi::cef_browser_process_handler_t>;
@@ -33,12 +32,13 @@ pub trait Callback {
     fn get_render_process_handler(&mut self) -> Option<CefRc<Self::RenderProcessHandler>> { None }
 }
 
+#[allow(missing_copy_implementations)]
 pub struct DefaultCallback;
 
 impl Callback for DefaultCallback {
-    type ResourceBundleHandler = Void;
-    type BrowserProcessHandler = Void;
-    type RenderProcessHandler = Void;
+    type ResourceBundleHandler = ();
+    type BrowserProcessHandler = ();
+    type RenderProcessHandler = ();
 }
 
 impl<T : Callback> App<T> {
