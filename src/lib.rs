@@ -1,20 +1,21 @@
 #![feature(unsafe_destructor, box_syntax)]
+#![allow(unstable)]
 
 extern crate "cef-sys" as ffi;
 extern crate libc;
 extern crate alloc;
 
-use std::mem::{transmute, drop, size_of, forget, zeroed};
+use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
-use std::borrow::ToOwned;
 
 pub mod app;
 pub mod string;
 
 pub use app::App;
-pub use string::CefString;
-
-pub enum Void {}
+pub fn shutdown() {
+    unsafe { ffi::cef_shutdown() }
+}
+use string::CefString;
 
 unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
     transmute(x)
@@ -24,22 +25,11 @@ fn upcast_mut<'a, T1 : Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
 }
 
 fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_base_t> {
-    unsafe {
-        let result = transmute(x.inner);
-        forget(x);
-        result
-    }
+    unsafe { transmute(x) }
 }
 
-/*
-unsafe fn transmute_mut_ref<'a, T1, T2>(x: &'a mut T1) -> &'a mut T2 {
-    transmute(x)
-}
-unsafe fn transmute_ref<'a, T1, T2>(x: &'a T1) -> &'a T2 {
-    transmute(x)
-}
-*/
 #[repr(C)]
+#[unsafe_no_drop_flag]
 pub struct CefRc<T: Is<ffi::cef_base_t>> {
     inner: *mut T
 }
@@ -47,7 +37,7 @@ pub struct CefRc<T: Is<ffi::cef_base_t>> {
 pub trait Is<T> {}
 
 impl Is<ffi::cef_base_t> for ffi::cef_base_t {}
-impl<T> Is<T> for Void {}
+impl<T> Is<T> for () {}
 trait CefBase : Is<ffi::cef_base_t> {
     fn add_ref(&mut self);
     fn release(&mut self) -> libc::c_int;
@@ -65,7 +55,7 @@ impl<T: Is<ffi::cef_base_t>> CefBase for T {
 }
 
 impl<T: Is<ffi::cef_base_t>> CefRc<T> {
-    fn make<F: FnOnce(ffi::cef_base_t) -> T>(mut f: F) -> CefRc<T> {
+    fn make<F: FnOnce(ffi::cef_base_t) -> T>(f: F) -> CefRc<T> {
         #[repr(C)]
         struct RefCounted<T> {
             v: T,
@@ -124,7 +114,7 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
     }
 }
 
-fn execute_process<T>(app: CefRc<T>) -> libc::c_int
+pub fn execute_process<T>(app: Option<CefRc<T>>) -> libc::c_int
     where T : Is<ffi::cef_app_t> + Is<ffi::cef_base_t>
 {
     use std::ffi::CString;
@@ -132,20 +122,25 @@ fn execute_process<T>(app: CefRc<T>) -> libc::c_int
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
     let args = &args[];
     let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
-    unsafe{ ffi::cef_execute_process(&args as *const _, upcast_ptr(app), zeroed()) }
+    unsafe{
+        ffi::cef_execute_process(
+            &args as *const _,
+            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()),
+            zeroed())
+    }
 }
 
 #[repr(C)]
 pub struct Settings {
     pub size: ::libc::size_t,
-    pub single_process: ::libc::c_int,
-    pub no_sandbox: ::libc::c_int,
+    single_process: ::libc::c_int,
+    no_sandbox: ::libc::c_int,
     pub browser_subprocess_path: CefString,
-    pub multi_threaded_message_loop: ::libc::c_int,
-    pub windowless_rendering_enabled: ::libc::c_int,
-    pub command_line_args_disabled: ::libc::c_int,
+    multi_threaded_message_loop: ::libc::c_int,
+    windowless_rendering_enabled: ::libc::c_int,
+    command_line_args_disabled: ::libc::c_int,
     pub cache_path: CefString,
-    pub persist_session_cookies: ::libc::c_int,
+    persist_session_cookies: ::libc::c_int,
     pub user_agent: CefString,
     pub product_version: CefString,
     pub locale: CefString,
@@ -154,29 +149,80 @@ pub struct Settings {
     pub javascript_flags: CefString,
     pub resources_dir_path: CefString,
     pub locales_dir_path: CefString,
-    pub pack_loading_disabled: ::libc::c_int,
+    pack_loading_disabled: ::libc::c_int,
     pub remote_debugging_port: ::libc::c_int,
     pub uncaught_exception_stack_size: ::libc::c_int,
-    pub context_safety_implementation: ::libc::c_int,
-    pub ignore_certificate_errors: ::libc::c_int,
+    context_safety_implementation: ::libc::c_int,
+    ignore_certificate_errors: ::libc::c_int,
     pub background_color: ffi::cef_color_t,
 }
 
 impl Settings {
     pub fn new() -> Settings {
-        use std::default::Default;
-
         let mut x: Settings = unsafe { zeroed() };
         x.size = size_of::<ffi::cef_settings_t>() as libc::size_t;
         x.no_sandbox = 1;
+        x.command_line_args_disabled = 1;
         x
     }
     fn settings<'a>(&'a self) -> &'a ffi::cef_settings_t {
         unsafe{ transmute::<&'a Settings, &'a ffi::cef_settings_t>(self) }
     }
+
+    pub fn set_windowless_rendering(&mut self, enabled: bool) {
+        self.windowless_rendering_enabled = enabled as libc::c_int;
+    }
 }
 
-fn initialize<T>(settings: &Settings, app: CefRc<T>) -> libc::c_int
+#[test]
+fn settings_size_check() {
+    use std::mem::size_of;
+    assert!(size_of::<Settings>() == size_of::<ffi::cef_settings_t>());
+}
+
+#[repr(C)]
+pub struct WindowInfo {
+    pub window_name: CefString,
+    pub x: ::libc::c_int,
+    pub y: ::libc::c_int,
+    pub width: ::libc::c_int,
+    pub height: ::libc::c_int,
+    hidden: ::libc::c_int,
+    pub parent_view: *mut ::libc::c_void,
+    windowless_rendering_enabled: ::libc::c_int,
+    transparent_painting_enabled: ::libc::c_int,
+    pub view: *mut ::libc::c_void,
+}
+
+#[test]
+fn window_size_check() {
+    use std::mem::size_of;
+    assert!(size_of::<WindowInfo>() == size_of::<ffi::cef_window_info_t>());
+}
+
+impl WindowInfo {
+    pub fn new() -> WindowInfo {
+        let x: WindowInfo = unsafe { zeroed() };
+        x
+    }
+    fn info<'a>(&'a self) -> &'a ffi::cef_window_info_t {
+        unsafe{ transmute::<&'a WindowInfo, &'a ffi::cef_window_info_t>(self) }
+    }
+
+    pub fn set_windowless_rendering(&mut self, enabled: bool) {
+        self.windowless_rendering_enabled = enabled as libc::c_int;
+    }
+
+    pub fn set_transparent_painting(&mut self, enabled: bool) {
+        self.transparent_painting_enabled = enabled as libc::c_int;
+    }
+
+    pub fn set_hidden(&mut self, hidden: bool) {
+        self.hidden = hidden as libc::c_int;
+    }
+}
+
+pub fn initialize<T>(settings: &Settings, app: Option<CefRc<T>>) -> bool
     where T : Is<ffi::cef_app_t> + Is<ffi::cef_base_t>
 {
     use std::ffi::CString;
@@ -184,13 +230,26 @@ fn initialize<T>(settings: &Settings, app: CefRc<T>) -> libc::c_int
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
     let args = &args[];
     let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
-    unsafe{ ffi::cef_initialize(&args as *const _, settings.settings() as *const _, upcast_ptr(app), zeroed()) }
+    let result = unsafe{
+        ffi::cef_initialize(
+            &args as *const _,
+            settings.settings() as *const _,
+            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()), zeroed()) };
+    match result {
+        0 => false,
+        _ => true
+    }
 }
 
 #[unsafe_destructor]
 impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
     fn drop(&mut self) {
-        unsafe{ (*self.inner).release() };
+        unsafe{
+            if self.inner != std::ptr::null_mut() {
+                (*self.inner).release();
+                self.inner = std::ptr::null_mut();
+            }
+        };
     }
 }
 
@@ -199,21 +258,4 @@ impl<T: Is<ffi::cef_base_t>> Clone for CefRc<T> {
         unsafe{ (*self.inner).add_ref() };
         CefRc { inner: self.inner }
     }
-}
-
-#[test]
-fn it_works() {
-    let app = App::new(app::DefaultCallback);
-
-    if execute_process(app.clone()) >= 0 {
-        return;
-    }
-
-    let mut settings = Settings::new();
-    settings.log_file = CefString::from_str("log2.log");
-    settings.locale = CefString::from_str("en_GB");
-    println!("initialising");
-    println!("{}", initialize(&settings, app));
-    panic!();
-
 }
