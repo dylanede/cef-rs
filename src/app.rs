@@ -4,6 +4,7 @@ use Is;
 use CefRc;
 use unsafe_downcast_mut;
 use std::mem::zeroed;
+use std::ops::{Deref, DerefMut};
 
 trait ResourceBundleHandler {}
 impl ResourceBundleHandler for () {}
@@ -39,11 +40,24 @@ pub struct AppWrapper<T : App> {
     callback: T
 }
 
-impl<T: App> Is<ffi::cef_base_t> for AppWrapper<T> {}
-impl<T: App> Is<ffi::cef_app_t> for AppWrapper<T> {}
+impl<T : App> Deref for AppWrapper<T> {
+    type Target = T;
+    fn deref<'a>(&'a self) -> &'a T {
+        &self.callback
+    }
+}
+
+impl<T : App> DerefMut for AppWrapper<T> {
+    fn deref_mut<'a>(&'a mut self) -> &'a mut T {
+        &mut self.callback
+    }
+}
+
+unsafe impl<T: App> Is<ffi::cef_base_t> for AppWrapper<T> {}
+unsafe impl<T: App> Is<ffi::cef_app_t> for AppWrapper<T> {}
 
 impl<T : App> AppWrapper<T> {
-    pub fn new(callback: T) -> CefRc<AppWrapper<T>> {
+    pub fn new(wrapped: T) -> CefRc<AppWrapper<T>> {
         extern fn obclp<T : App>(_self: *mut ffi::cef_app_t,
                         process_type: *const ffi::cef_string_t,
                         command_line: *mut ffi::cef_command_line_t) {
@@ -91,7 +105,7 @@ impl<T : App> AppWrapper<T> {
                     get_browser_process_handler: Some(gbph::<T>),
                     get_render_process_handler: Some(grph::<T>)
                 },
-                callback: callback
+                callback: wrapped
             }
         })
     }
