@@ -8,10 +8,13 @@ extern crate alloc;
 use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
 
-pub mod app;
+mod app;
 pub mod string;
+mod browser_client;
 
 pub use app::App;
+pub use browser_client::BrowserClient;
+
 pub fn shutdown() {
     unsafe { ffi::cef_shutdown() }
 }
@@ -114,9 +117,7 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
     }
 }
 
-pub fn execute_process<T>(app: Option<CefRc<T>>) -> libc::c_int
-    where T : Is<ffi::cef_app_t> + Is<ffi::cef_base_t>
-{
+pub fn execute_process<T : App>(app: Option<T>) -> libc::c_int {
     use std::ffi::CString;
     let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
@@ -125,7 +126,7 @@ pub fn execute_process<T>(app: Option<CefRc<T>>) -> libc::c_int
     unsafe{
         ffi::cef_execute_process(
             &args as *const _,
-            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()),
+            app.map(|x| upcast_ptr(app::AppWrapper::new(x))).unwrap_or_else(|| zeroed()),
             zeroed())
     }
 }
@@ -222,9 +223,7 @@ impl WindowInfo {
     }
 }
 
-pub fn initialize<T>(settings: &Settings, app: Option<CefRc<T>>) -> bool
-    where T : Is<ffi::cef_app_t> + Is<ffi::cef_base_t>
-{
+pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
     use std::ffi::CString;
     let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
@@ -234,7 +233,7 @@ pub fn initialize<T>(settings: &Settings, app: Option<CefRc<T>>) -> bool
         ffi::cef_initialize(
             &args as *const _,
             settings.settings() as *const _,
-            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()), zeroed()) };
+            app.map(|x| upcast_ptr(app::AppWrapper::new(x))).unwrap_or_else(|| zeroed()), zeroed()) };
     match result {
         0 => false,
         _ => true
