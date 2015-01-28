@@ -13,7 +13,7 @@ trait RenderProcessHandler {}
 impl RenderProcessHandler for () {}
 
 #[allow(unused_variables)]
-pub trait App {
+pub trait App : 'static {
     type OutResourceBundleHandler : ResourceBundleHandler = ();
     type OutBrowserProcessHandler : BrowserProcessHandler = ();
     type OutRenderProcessHandler : RenderProcessHandler = ();

@@ -34,7 +34,7 @@ trait RequestHandler {}
 impl RequestHandler for () {}
 
 #[allow(unused_variables)]
-pub trait BrowserClient {
+pub trait BrowserClient : 'static {
     type OutContextMenuHandler : ContextMenuHandler = ();
     type OutDialogHandler : DialogHandler = ();
     type OutDisplayHandler : DisplayHandler = ();
