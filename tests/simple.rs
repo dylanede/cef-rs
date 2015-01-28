@@ -6,7 +6,9 @@ use cef::string::CefString;
 
 #[test]
 fn initialisation() {
-    if cef::execute_process::<()>(None) >= 0 {
+    let result_code = cef::execute_process::<()>(None);
+    if result_code >= 0 {
+        std::os::set_exit_status(result_code as isize);
         return;
     }
 
