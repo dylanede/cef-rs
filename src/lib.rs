@@ -59,32 +59,35 @@ impl<T: Is<ffi::cef_base_t>> CefBase for T {
 
 impl<T: Is<ffi::cef_base_t>> CefRc<T> {
     fn make<F: FnOnce(ffi::cef_base_t) -> T>(f: F) -> CefRc<T> {
+        use std::sync::atomic::AtomicUsize;
+        use std::sync::atomic::Ordering;
+        use std::sync::atomic;
         #[repr(C)]
         struct RefCounted<T> {
             v: T,
-            count: libc::c_int
+            count: AtomicUsize
         }
         impl<T> Is<ffi::cef_base_t> for RefCounted<T> {}
 
         extern fn add_ref<T>(_self: *mut ffi::cef_base_t) {
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
-            cell.count += 1;
+            cell.count.fetch_add(1, Ordering::Relaxed);
         }
         extern fn release<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
             unsafe {
                 let cell: *mut RefCounted<T> = transmute(_self);
-                (*cell).count -= 1;
-                let count = (*cell).count;
-                if count == 0 {
+                let old_count = (*cell).count.fetch_sub(1, Ordering::Release);
+                if old_count == 1 {
+                    atomic::fence(Ordering::Acquire);
                     let cell: Box<RefCounted<T>> = transmute(cell);
                     drop(cell);
                 }
-                count
+                if old_count == 1 { 1 } else { 0 }
             }
         }
         extern fn has_one_ref<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
-            if cell.count == 1 { 1 } else { 0 }
+            if cell.count.load(Ordering::SeqCst) == 1 { 1 } else { 0 }
         }
         CefRc {
             inner: unsafe { transmute(box RefCounted {
@@ -94,7 +97,7 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
                     release: Some(release::<T>),
                     has_one_ref: Some(has_one_ref::<T>)
                 }),
-                count: 1
+                count: AtomicUsize::new(1)
             })}
         }
     }
