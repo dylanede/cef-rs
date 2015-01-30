@@ -1,3 +1,4 @@
+#![feature(libc)]
 #![allow(non_camel_case_types, non_snake_case, raw_pointer_derive, missing_copy_implementations)]
 extern crate libc;
 use libc::size_t;

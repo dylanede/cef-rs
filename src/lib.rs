@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, box_syntax)]
+#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, os, std_misc)]
 #![allow(unstable)]
 
 extern crate "cef-sys" as ffi;
@@ -11,14 +11,28 @@ use std::ops::{Deref, DerefMut};
 mod app;
 pub mod string;
 mod browser_client;
+mod browser;
+mod browser_host;
 
 pub use app::App;
+pub use app::AppWrapper;
 pub use browser_client::BrowserClient;
+pub use browser_client::BrowserClientWrapper;
+pub use browser::Browser;
+pub use browser_host::BrowserHost;
+pub use browser_host::BrowserSettings;
+pub use string::CefString;
+
+#[repr(C)]
+pub enum State {
+    Default,
+    Enabled,
+    Disabled
+}
 
 pub fn shutdown() {
     unsafe { ffi::cef_shutdown() }
 }
-use string::CefString;
 
 unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
     transmute(x)
@@ -26,9 +40,28 @@ unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 
 fn upcast_mut<'a, T1 : Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
     unsafe{ transmute(x) }
 }
+fn upcast<'a, T1 : Is<T2>, T2>(x: &'a T1) -> &'a T2 {
+    unsafe{ transmute(x) }
+}
 
 fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_base_t> {
     unsafe { transmute(x) }
+}
+
+unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+    transmute(x)
+}
+
+fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
+    unsafe{ transmute(x) }
+}
+
+fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
+    unsafe{ transmute(x) }
+}
+
+unsafe fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+    transmute(x)
 }
 
 #[repr(C)]
@@ -37,10 +70,11 @@ pub struct CefRc<T: Is<ffi::cef_base_t>> {
     inner: *mut T
 }
 
-pub trait Is<T> {}
+pub unsafe trait Is<T> {}
+pub unsafe trait Interface<T> {}
 
-impl Is<ffi::cef_base_t> for ffi::cef_base_t {}
-impl<T> Is<T> for () {}
+unsafe impl Is<ffi::cef_base_t> for ffi::cef_base_t {}
+unsafe impl<T> Is<T> for () {}
 trait CefBase : Is<ffi::cef_base_t> {
     fn add_ref(&mut self);
     fn release(&mut self) -> libc::c_int;
@@ -67,7 +101,7 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
             v: T,
             count: AtomicUsize
         }
-        impl<T> Is<ffi::cef_base_t> for RefCounted<T> {}
+        unsafe impl<T> Is<ffi::cef_base_t> for RefCounted<T> {}
 
         extern fn add_ref<T>(_self: *mut ffi::cef_base_t) {
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
@@ -120,7 +154,7 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
     }
 }
 
-pub fn execute_process<T : App>(app: Option<T>) -> libc::c_int {
+pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_int {
     use std::ffi::CString;
     let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
@@ -129,7 +163,7 @@ pub fn execute_process<T : App>(app: Option<T>) -> libc::c_int {
     unsafe{
         ffi::cef_execute_process(
             &args as *const _,
-            app.map(|x| upcast_ptr(app::AppWrapper::new(x))).unwrap_or_else(|| zeroed()),
+            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()),
             zeroed())
     }
 }
@@ -161,16 +195,18 @@ pub struct Settings {
     pub background_color: ffi::cef_color_t,
 }
 
+unsafe impl Is<ffi::cef_settings_t> for Settings {}
+
 impl Settings {
     pub fn new() -> Settings {
         let mut x: Settings = unsafe { zeroed() };
         x.size = size_of::<ffi::cef_settings_t>() as libc::size_t;
         x.no_sandbox = 1;
-        x.command_line_args_disabled = 1;
+        //x.command_line_args_disabled = 1;
         x
     }
     fn settings<'a>(&'a self) -> &'a ffi::cef_settings_t {
-        unsafe{ transmute::<&'a Settings, &'a ffi::cef_settings_t>(self) }
+        upcast(self)
     }
 
     pub fn set_windowless_rendering(&mut self, enabled: bool) {
@@ -197,6 +233,7 @@ pub struct WindowInfo {
     transparent_painting_enabled: ::libc::c_int,
     pub view: *mut ::libc::c_void,
 }
+unsafe impl Is<ffi::cef_window_info_t> for WindowInfo {}
 
 #[test]
 fn window_size_check() {
@@ -210,7 +247,7 @@ impl WindowInfo {
         x
     }
     fn info<'a>(&'a self) -> &'a ffi::cef_window_info_t {
-        unsafe{ transmute::<&'a WindowInfo, &'a ffi::cef_window_info_t>(self) }
+        upcast(self)
     }
 
     pub fn set_windowless_rendering(&mut self, enabled: bool) {
@@ -226,7 +263,7 @@ impl WindowInfo {
     }
 }
 
-pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
+pub fn initialize<T : App>(settings: &Settings, app: Option<CefRc<AppWrapper<T>>>) -> bool {
     use std::ffi::CString;
     let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
@@ -236,11 +273,15 @@ pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
         ffi::cef_initialize(
             &args as *const _,
             settings.settings() as *const _,
-            app.map(|x| upcast_ptr(app::AppWrapper::new(x))).unwrap_or_else(|| zeroed()), zeroed()) };
+            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()), zeroed()) };
     match result {
         0 => false,
         _ => true
     }
+}
+
+pub fn run_message_loop() {
+    unsafe { ffi::cef_run_message_loop() }
 }
 
 #[unsafe_destructor]
