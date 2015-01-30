@@ -28,7 +28,12 @@ fn main() {
     //window_info.set_transparent_painting(true);
     let settings = BrowserSettings::new();
     let url = CefString::from_str("http://www.google.com");
-    let browser = BrowserHost::create_browser_sync(&window_info, BrowserClientWrapper::new(()), &url, &settings, None);
+    let browser = BrowserHost::create_browser_sync(
+        &window_info,
+        BrowserClientWrapper::new(()),
+        &url,
+        &settings,
+        None);
 
     cef::run_message_loop();
 

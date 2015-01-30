@@ -1,5 +1,5 @@
 use std::os;
-use std::io::fs::PathExtensions;
+use std::old_io::fs::PathExtensions;
 use std::borrow::ToOwned;
 
 #[cfg(target_os="macos")]
