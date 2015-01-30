@@ -1,6 +1,7 @@
+#![feature(os, io, path)]
+
 use std::os;
 use std::old_io::fs::PathExtensions;
-use std::borrow::ToOwned;
 
 #[cfg(target_os="macos")]
 fn main() {
