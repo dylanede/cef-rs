@@ -5637,7 +5637,14 @@ impl ::std::default::Default for Struct__cef_zip_reader_t {
     }
 }
 pub type cef_zip_reader_t = Struct__cef_zip_reader_t;
+#[cfg(target_os="macos")]
 #[link(name = "Chromium Embedded Framework", kind = "framework")]
+extern "C" {}
+
+#[cfg(target_os="windows")]
+#[link(name = "libcef")]
+extern {}
+
 extern "C" {
     pub fn cef_string_wide_set(src: *const wchar_t, src_len: size_t,
                                output: *mut cef_string_wide_t,
