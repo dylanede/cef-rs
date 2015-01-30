@@ -175,6 +175,7 @@ pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_in
 }
 
 #[repr(i32)]
+#[derive(Copy)]
 pub enum CBool {
     False = 0,
     True = 1
