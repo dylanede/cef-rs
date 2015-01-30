@@ -136,6 +136,7 @@ impl CefString {
         }
         let ptr = ptr as *mut u16;
         unsafe { copy_nonoverlapping_memory(ptr, data.as_ptr(), data.len()) };
+        #[stdcall_win]
         extern fn release(str: *mut u16) {
             if str == null_mut() { return; }
             unsafe {

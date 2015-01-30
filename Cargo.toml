@@ -7,3 +7,7 @@ authors = ["Dylan Ede <dylanede@googlemail.com>"]
 [dependencies]
 
 cef-sys = "*"
+
+[dependencies.callc]
+
+git = "https://github.com/dylanede/callc.git"

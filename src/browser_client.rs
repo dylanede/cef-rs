@@ -108,48 +108,63 @@ impl<T : BrowserClient> BrowserClientWrapper<T> {
         use std::mem::zeroed;
         use unsafe_downcast_mut;
         use cast_mut_ref;
+        #[stdcall_win]
         extern fn _1(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_context_menu_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _2(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_dialog_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _3(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_display_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _4(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_download_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _5(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_drag_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _6(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_find_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _7(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_focus_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _8(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_geolocation_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _9(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_jsdialog_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _10(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_keyboard_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _11(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_life_span_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _12(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_load_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _13(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_render_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _14(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_request_handler_t {
             unsafe { zeroed() }
         }
+        #[stdcall_win]
         extern fn _15<T : BrowserClient>(_self: *mut ffi::cef_client_t,
                       browser: *mut ffi::cef_browser_t,
                       source_process: ffi::cef_process_id_t,

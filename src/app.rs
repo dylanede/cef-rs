@@ -58,6 +58,7 @@ unsafe impl<T: App> Is<ffi::cef_app_t> for AppWrapper<T> {}
 
 impl<T : App> AppWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<AppWrapper<T>> {
+        #[stdcall_win]
         extern fn obclp<T : App>(_self: *mut ffi::cef_app_t,
                         process_type: *const ffi::cef_string_t,
                         command_line: *mut ffi::cef_command_line_t) {
@@ -66,6 +67,7 @@ impl<T : App> AppWrapper<T> {
                 this.callback.on_before_command_line_processing(&*process_type, &mut *command_line);
             }
         }
+        #[stdcall_win]
         extern fn orcs<T : App>(_self: *mut ffi::cef_app_t,
                                      registrar: *mut ffi::cef_scheme_registrar_t) {
             unsafe {
@@ -73,7 +75,7 @@ impl<T : App> AppWrapper<T> {
                 this.callback.on_register_custom_schemes(&mut *registrar);
             }
         }
-
+        #[stdcall_win]
         extern fn grbh<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_resource_bundle_handler_t {
             unsafe {
                 zeroed()
@@ -81,6 +83,7 @@ impl<T : App> AppWrapper<T> {
                 //this.callback.get_resource_bundle_handler().map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed())
             }
         }
+        #[stdcall_win]
         extern fn gbph<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_browser_process_handler_t {
             unsafe {
                 zeroed()
@@ -88,6 +91,7 @@ impl<T : App> AppWrapper<T> {
                 //this.callback.get_browser_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
         }
+        #[stdcall_win]
         extern fn grph<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_render_process_handler_t {
             unsafe {
                 zeroed()

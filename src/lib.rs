@@ -1,7 +1,9 @@
-#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, os, std_misc)]
-#![allow(unstable)]
+#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, os, std_misc, plugin)]
 
 extern crate "cef-sys" as ffi;
+#[plugin]
+#[no_link]
+extern crate callc;
 extern crate libc;
 extern crate alloc;
 
@@ -24,6 +26,7 @@ pub use browser_host::BrowserSettings;
 pub use string::CefString;
 
 #[repr(C)]
+#[derive(Copy)]
 pub enum State {
     Default,
     Enabled,
@@ -103,11 +106,13 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
         }
         unsafe impl<T> Is<ffi::cef_base_t> for RefCounted<T> {}
 
-        extern fn add_ref<T>(_self: *mut ffi::cef_base_t) {
+        #[stdcall_win]
+        extern "C" fn add_ref<T>(_self: *mut ffi::cef_base_t) {
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
             cell.count.fetch_add(1, Ordering::Relaxed);
         }
-        extern fn release<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
+        #[stdcall_win]
+        extern "C" fn release<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
             unsafe {
                 let cell: *mut RefCounted<T> = transmute(_self);
                 let old_count = (*cell).count.fetch_sub(1, Ordering::Release);
@@ -119,7 +124,8 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
                 if old_count == 1 { 1 } else { 0 }
             }
         }
-        extern fn has_one_ref<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
+        #[stdcall_win]
+        extern "C" fn has_one_ref<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
             if cell.count.load(Ordering::SeqCst) == 1 { 1 } else { 0 }
         }
