@@ -174,17 +174,44 @@ pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_in
     }
 }
 
+#[repr(i32)]
+pub enum CBool {
+    False = 0,
+    True = 1
+}
+pub use CBool::*;
+impl CBool {
+    pub fn new(v: bool) -> CBool {
+        match v {
+            true => True,
+            false => False
+        }
+    }
+    pub fn set(&mut self, v: bool) {
+        *self = match v {
+            true => True,
+            false => False
+        }
+    }
+}
+
+#[test]
+fn check_size_c_bool() {
+    use std::mem::size_of;
+    assert!(size_of::<CBool>() == size_of::<libc::c_int>());
+}
+
 #[repr(C)]
 pub struct Settings {
     pub size: ::libc::size_t,
-    single_process: ::libc::c_int,
-    no_sandbox: ::libc::c_int,
+    pub single_process: CBool,
+    pub no_sandbox: CBool,
     pub browser_subprocess_path: CefString,
-    multi_threaded_message_loop: ::libc::c_int,
-    windowless_rendering_enabled: ::libc::c_int,
-    command_line_args_disabled: ::libc::c_int,
+    multi_threaded_message_loop: CBool,
+    windowless_rendering_enabled: CBool,
+    command_line_args_disabled: CBool,
     pub cache_path: CefString,
-    persist_session_cookies: ::libc::c_int,
+    persist_session_cookies: CBool,
     pub user_agent: CefString,
     pub product_version: CefString,
     pub locale: CefString,
@@ -193,11 +220,11 @@ pub struct Settings {
     pub javascript_flags: CefString,
     pub resources_dir_path: CefString,
     pub locales_dir_path: CefString,
-    pack_loading_disabled: ::libc::c_int,
+    pub pack_loading_disabled: CBool,
     pub remote_debugging_port: ::libc::c_int,
     pub uncaught_exception_stack_size: ::libc::c_int,
-    context_safety_implementation: ::libc::c_int,
-    ignore_certificate_errors: ::libc::c_int,
+    pub context_safety_implementation: CBool,
+    pub ignore_certificate_errors: CBool,
     pub background_color: ffi::cef_color_t,
 }
 
@@ -207,7 +234,7 @@ impl Settings {
     pub fn new() -> Settings {
         let mut x: Settings = unsafe { zeroed() };
         x.size = size_of::<ffi::cef_settings_t>() as libc::size_t;
-        x.no_sandbox = 1;
+        x.no_sandbox = True;
         //x.command_line_args_disabled = 1;
         x
     }
@@ -216,7 +243,7 @@ impl Settings {
     }
 
     pub fn set_windowless_rendering(&mut self, enabled: bool) {
-        self.windowless_rendering_enabled = enabled as libc::c_int;
+        self.windowless_rendering_enabled = CBool::new(enabled);
     }
 }
 
@@ -233,10 +260,10 @@ pub struct WindowInfo {
     pub y: ::libc::c_int,
     pub width: ::libc::c_int,
     pub height: ::libc::c_int,
-    hidden: ::libc::c_int,
+    pub hidden: CBool,
     pub parent_view: *mut ::libc::c_void,
-    windowless_rendering_enabled: ::libc::c_int,
-    transparent_painting_enabled: ::libc::c_int,
+    pub windowless_rendering_enabled: CBool,
+    pub transparent_painting_enabled: CBool,
     pub view: *mut ::libc::c_void,
 }
 unsafe impl Is<ffi::cef_window_info_t> for WindowInfo {}
@@ -254,18 +281,6 @@ impl WindowInfo {
     }
     fn info<'a>(&'a self) -> &'a ffi::cef_window_info_t {
         upcast(self)
-    }
-
-    pub fn set_windowless_rendering(&mut self, enabled: bool) {
-        self.windowless_rendering_enabled = enabled as libc::c_int;
-    }
-
-    pub fn set_transparent_painting(&mut self, enabled: bool) {
-        self.transparent_painting_enabled = enabled as libc::c_int;
-    }
-
-    pub fn set_hidden(&mut self, hidden: bool) {
-        self.hidden = hidden as libc::c_int;
     }
 }
 
