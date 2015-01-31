@@ -100,18 +100,16 @@ impl<T : App> AppWrapper<T> {
                 //this.callback.get_render_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
         }
-        CefRc::make(move |base| {
-            AppWrapper {
-                vtable: ffi::cef_app_t {
-                    base: base,
-                    on_before_command_line_processing: Some(obclp::<T>),
-                    on_register_custom_schemes: Some(orcs::<T>),
-                    get_resource_bundle_handler: Some(grbh::<T>),
-                    get_browser_process_handler: Some(gbph::<T>),
-                    get_render_process_handler: Some(grph::<T>)
-                },
-                callback: wrapped
-            }
+        CefRc::make(move |base| AppWrapper {
+            vtable: ffi::cef_app_t {
+                base: base,
+                on_before_command_line_processing: Some(obclp::<T>),
+                on_register_custom_schemes: Some(orcs::<T>),
+                get_resource_bundle_handler: Some(grbh::<T>),
+                get_browser_process_handler: Some(gbph::<T>),
+                get_render_process_handler: Some(grph::<T>)
+            },
+            callback: wrapped
         })
     }
 }
