@@ -23,6 +23,11 @@ pub use app::App;
 pub use app::AppWrapper;
 pub use browser_client::{BrowserClient, BrowserClientWrapper};
 pub use browser_client::render_handler::{
+    Rect,
+    Point,
+    Size,
+    CursorHandle,
+    DragOperationsMask,
     RenderHandler,
     RenderHandlerWrapper,
     PaintElementType,

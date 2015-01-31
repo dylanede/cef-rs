@@ -8,9 +8,11 @@ use Void;
 
 use Browser;
 
+use upcast_ptr;
+
 pub mod render_handler;
 //pub use self::render_handler::{RenderHandler, RenderHandlerWrapper};
-use self::render_handler::RenderHandler;
+use self::render_handler::{RenderHandler, RenderHandlerWrapper};
 
 struct ProcessMessage;
 unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
@@ -162,11 +164,16 @@ impl<T : BrowserClient> BrowserClientWrapper<T> {
             unsafe { zeroed() }
         }
         #[stdcall_win]
-        extern fn _13(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_render_handler_t {
-            unsafe { zeroed() }
+        extern fn _13<T : BrowserClient>(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_render_handler_t {
+            unsafe {
+                let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
+                this.callback.get_render_handler()
+                    .map(|x| upcast_ptr(RenderHandlerWrapper::new(x)))
+                    .unwrap_or_else(|| zeroed())
+            }
         }
         #[stdcall_win]
-        extern fn _14(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_request_handler_t {
+        extern fn _14<T : BrowserClient>(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_request_handler_t {
             unsafe { zeroed() }
         }
         #[stdcall_win]
@@ -198,8 +205,8 @@ impl<T : BrowserClient> BrowserClientWrapper<T> {
                     get_keyboard_handler: Some(_10),
                     get_life_span_handler: Some(_11),
                     get_load_handler: Some(_12),
-                    get_render_handler: Some(_13),
-                    get_request_handler: Some(_14),
+                    get_render_handler: Some(_13::<T>),
+                    get_request_handler: Some(_14::<T>),
                     on_process_message_received: Some(_15::<T>)
                 },
                 callback: wrapped
