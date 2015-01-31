@@ -7,6 +7,9 @@ extern crate callc;
 extern crate libc;
 extern crate alloc;
 
+#[allow(missing_copy_implementations)]
+pub enum Void {}
+
 use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
 
@@ -18,8 +21,16 @@ mod browser_host;
 
 pub use app::App;
 pub use app::AppWrapper;
-pub use browser_client::BrowserClient;
-pub use browser_client::BrowserClientWrapper;
+pub use browser_client::{BrowserClient, BrowserClientWrapper};
+pub use browser_client::render_handler::{
+    RenderHandler,
+    RenderHandlerWrapper,
+    PaintElementType,
+    CursorDirection,
+    CursorBidirection,
+    Cursor,
+    CustomCursorInfo,
+};
 pub use browser::Browser;
 pub use browser_host::BrowserHost;
 pub use browser_host::BrowserSettings;

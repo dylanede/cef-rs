@@ -4,40 +4,45 @@ use CefRc;
 use libc;
 
 use Interface;
+use Void;
 
 use Browser;
+
+pub mod render_handler;
+//pub use self::render_handler::{RenderHandler, RenderHandlerWrapper};
+use self::render_handler::RenderHandler;
 
 struct ProcessMessage;
 unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
 
 trait ContextMenuHandler {}
-impl ContextMenuHandler for () {}
+impl ContextMenuHandler for Void {}
 trait DialogHandler {}
-impl DialogHandler for () {}
+impl DialogHandler for Void {}
 trait DisplayHandler {}
-impl DisplayHandler for () {}
+impl DisplayHandler for Void {}
 trait DownloadHandler {}
-impl DownloadHandler for () {}
+impl DownloadHandler for Void {}
 trait DragHandler {}
-impl DragHandler for () {}
+impl DragHandler for Void {}
 trait FindHandler {}
-impl FindHandler for () {}
+impl FindHandler for Void {}
 trait FocusHandler {}
-impl FocusHandler for () {}
+impl FocusHandler for Void {}
 trait GeolocationHandler {}
-impl GeolocationHandler for () {}
+impl GeolocationHandler for Void {}
 trait JSDialogHandler {}
-impl JSDialogHandler for () {}
+impl JSDialogHandler for Void {}
 trait KeyboardHandler {}
-impl KeyboardHandler for () {}
+impl KeyboardHandler for Void {}
 trait LifeSpanHandler {}
-impl LifeSpanHandler for () {}
+impl LifeSpanHandler for Void {}
 trait LoadHandler {}
-impl LoadHandler for () {}
-trait RenderHandler {}
-impl RenderHandler for () {}
+impl LoadHandler for Void {}
+//trait RenderHandler {}
+//impl RenderHandler for Void {}
 trait RequestHandler {}
-impl RequestHandler for () {}
+impl RequestHandler for Void {}
 
 #[allow(unused_variables)]
 pub trait BrowserClient : 'static {
@@ -77,21 +82,21 @@ pub trait BrowserClient : 'static {
         message: &mut ProcessMessage) -> bool { false }
 }
 
-impl BrowserClient for () {
-    type OutContextMenuHandler = ();
-    type OutDialogHandler = ();
-    type OutDisplayHandler = ();
-    type OutDownloadHandler = ();
-    type OutDragHandler = ();
-    type OutFindHandler = ();
-    type OutFocusHandler = ();
-    type OutGeolocationHandler = ();
-    type OutJSDialogHandler = ();
-    type OutKeyboardHandler = ();
-    type OutLifeSpanHandler = ();
-    type OutLoadHandler = ();
-    type OutRenderHandler = ();
-    type OutRequestHandler = ();
+impl BrowserClient for Void {
+    type OutContextMenuHandler = Void;
+    type OutDialogHandler = Void;
+    type OutDisplayHandler = Void;
+    type OutDownloadHandler = Void;
+    type OutDragHandler = Void;
+    type OutFindHandler = Void;
+    type OutFocusHandler = Void;
+    type OutGeolocationHandler = Void;
+    type OutJSDialogHandler = Void;
+    type OutKeyboardHandler = Void;
+    type OutLifeSpanHandler = Void;
+    type OutLoadHandler = Void;
+    type OutRenderHandler = Void;
+    type OutRequestHandler = Void;
 }
 
 #[repr(C)]

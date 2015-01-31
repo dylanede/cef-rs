@@ -1,5 +1,6 @@
 use ffi;
 
+use Void;
 use Is;
 use CefRc;
 use unsafe_downcast_mut;
@@ -7,17 +8,17 @@ use std::mem::zeroed;
 use std::ops::{Deref, DerefMut};
 
 trait ResourceBundleHandler {}
-impl ResourceBundleHandler for () {}
+impl ResourceBundleHandler for Void {}
 trait BrowserProcessHandler {}
-impl BrowserProcessHandler for () {}
+impl BrowserProcessHandler for Void {}
 trait RenderProcessHandler {}
-impl RenderProcessHandler for () {}
+impl RenderProcessHandler for Void {}
 
 #[allow(unused_variables)]
 pub trait App : 'static {
-    type OutResourceBundleHandler : ResourceBundleHandler = ();
-    type OutBrowserProcessHandler : BrowserProcessHandler = ();
-    type OutRenderProcessHandler : RenderProcessHandler = ();
+    type OutResourceBundleHandler : ResourceBundleHandler = Void;
+    type OutBrowserProcessHandler : BrowserProcessHandler = Void;
+    type OutRenderProcessHandler : RenderProcessHandler = Void;
 
     fn on_before_command_line_processing(&mut self,
                                          process_type: &ffi::cef_string_t,
@@ -28,10 +29,10 @@ pub trait App : 'static {
     fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
 }
 
-impl App for () {
-    type OutResourceBundleHandler = ();
-    type OutBrowserProcessHandler = ();
-    type OutRenderProcessHandler= ();
+impl App for Void {
+    type OutResourceBundleHandler = Void;
+    type OutBrowserProcessHandler = Void;
+    type OutRenderProcessHandler = Void;
 }
 
 #[repr(C)]
