@@ -8,9 +8,10 @@ use cef::BrowserSettings;
 use cef::CefRc;
 use cef::Browser;
 use cef::string::CefString;
+use cef::Void;
 
 fn main() {
-    let result_code = cef::execute_process::<()>(None);
+    let result_code = cef::execute_process::<Void>(None);
     if result_code >= 0 {
         std::os::set_exit_status(result_code as isize);
         return;
@@ -20,7 +21,7 @@ fn main() {
     settings.log_file = CefString::from_str("log.log");
     settings.locale = CefString::from_str("en_GB");
     println!("initialising");
-    if !cef::initialize::<()>(&settings, None) {
+    if !cef::initialize::<Void>(&settings, None) {
         panic!("Initialising CEF failed. Please check the logfile.")
     }
     let mut window_info = WindowInfo::new();
@@ -28,6 +29,7 @@ fn main() {
     //window_info.transparent_painting_enabled.set(true);
     let settings = BrowserSettings::new();
     let url = CefString::from_str("http://www.google.com");
+    struct MyClient;
     let browser = BrowserHost::create_browser_sync(
         &window_info,
         BrowserClientWrapper::new(()),
