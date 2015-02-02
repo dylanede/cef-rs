@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, plugin)]
+#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, plugin, os, std_misc)]
 
 extern crate "cef-sys" as ffi;
 #[plugin]
@@ -348,7 +348,7 @@ impl<'a> WindowInfo<'a> {
                 info.style = 0x16CF0000;
             }
         }
-        #[cfg(target_os="mac")]
+        #[cfg(target_os="macos")]
         fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
 
         }
