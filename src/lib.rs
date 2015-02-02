@@ -15,6 +15,7 @@ pub enum Void {}
 
 use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
+use std::default::Default;
 
 mod app;
 pub mod string;
@@ -216,57 +217,95 @@ fn check_size_c_bool() {
     assert!(size_of::<CBool>() == size_of::<libc::c_int>());
 }
 
-#[repr(C)]
-pub struct Settings {
-    pub size: ::libc::size_t,
-    pub single_process: CBool,
-    pub no_sandbox: CBool,
-    pub browser_subprocess_path: CefString,
-    pub multi_threaded_message_loop: CBool,
-    pub windowless_rendering_enabled: CBool,
-    pub command_line_args_disabled: CBool,
-    pub cache_path: CefString,
-    pub persist_session_cookies: CBool,
-    pub user_agent: CefString,
-    pub product_version: CefString,
-    pub locale: CefString,
-    pub log_file: CefString,
+pub struct Settings<'a> {
+    pub single_process: bool,
+    pub no_sandbox: bool,
+    pub browser_subprocess_path: Option<&'a str>,
+    pub multi_threaded_message_loop: bool,
+    pub windowless_rendering_enabled: bool,
+    pub command_line_args_disabled: bool,
+    pub cache_path: Option<&'a str>,
+    pub persist_session_cookies: bool,
+    pub user_agent: Option<&'a str>,
+    pub product_version: Option<&'a str>,
+    pub locale: Option<&'a str>,
+    pub log_file: Option<&'a str>,
     pub log_severity: ffi::cef_log_severity_t,
-    pub javascript_flags: CefString,
-    pub resources_dir_path: CefString,
-    pub locales_dir_path: CefString,
-    pub pack_loading_disabled: CBool,
-    pub remote_debugging_port: ::libc::c_int,
-    pub uncaught_exception_stack_size: ::libc::c_int,
-    pub context_safety_implementation: CBool,
-    pub ignore_certificate_errors: CBool,
+    pub javascript_flags: Option<&'a str>,
+    pub resources_dir_path: Option<&'a str>,
+    pub locales_dir_path: Option<&'a str>,
+    pub pack_loading_disabled: bool,
+    pub remote_debugging_port: Option<i32>,
+    pub uncaught_exception_stack_size: Option<i32>,
+    pub context_safety_implementation: bool,
+    pub ignore_certificate_errors: bool,
     pub background_color: ffi::cef_color_t,
 }
 
-unsafe impl Is<ffi::cef_settings_t> for Settings {}
-
-impl Settings {
-    pub fn new() -> Settings {
-        let mut x: Settings = unsafe { zeroed() };
-        x.size = size_of::<ffi::cef_settings_t>() as libc::size_t;
-        x.no_sandbox = True;
-        //x.command_line_args_disabled = 1;
-        x
-    }
-    fn settings<'a>(&'a self) -> &'a ffi::cef_settings_t {
-        upcast(self)
+impl<'a> Default for Settings<'a> {
+    fn default() -> Settings<'a> {
+        Settings {
+            single_process: false,
+            no_sandbox: true,
+            browser_subprocess_path: None,
+            multi_threaded_message_loop: false,
+            windowless_rendering_enabled: false,
+            command_line_args_disabled: false,
+            cache_path: None,
+            persist_session_cookies: false,
+            user_agent: None,
+            product_version: None,
+            locale: None,
+            log_file: None,
+            log_severity: Default::default(),
+            javascript_flags: None,
+            resources_dir_path: None,
+            locales_dir_path: None,
+            pack_loading_disabled: false,
+            remote_debugging_port: None,
+            uncaught_exception_stack_size: None,
+            context_safety_implementation: false,
+            ignore_certificate_errors: false,
+            background_color: Default::default()
+        }
     }
 }
 
-#[test]
-fn settings_size_check() {
-    use std::mem::size_of;
-    assert!(size_of::<Settings>() == size_of::<ffi::cef_settings_t>());
+impl<'a> Settings<'a> {
+    fn to_cef(&self) -> ffi::cef_settings_t {
+        fn to_cef_str<'a>(s: Option<&'a str>) -> ffi::cef_string_t {
+            s.map(|x| CefString::from_str(x).cast()).unwrap_or_else(|| unsafe { zeroed() })
+        }
+        ffi::cef_settings_t {
+            size: size_of::<ffi::cef_settings_t>() as libc::size_t,
+            single_process: self.single_process as libc::c_int,
+            no_sandbox: self.no_sandbox as libc::c_int,
+            browser_subprocess_path: to_cef_str(self.browser_subprocess_path),
+            multi_threaded_message_loop: self.multi_threaded_message_loop as libc::c_int,
+            windowless_rendering_enabled: self.windowless_rendering_enabled as libc::c_int,
+            command_line_args_disabled: self.command_line_args_disabled as libc::c_int,
+            cache_path: to_cef_str(self.cache_path),
+            persist_session_cookies: self.persist_session_cookies as libc::c_int,
+            user_agent: to_cef_str(self.user_agent),
+            product_version: to_cef_str(self.product_version),
+            locale: to_cef_str(self.locale),
+            log_file: to_cef_str(self.log_file),
+            log_severity: self.log_severity,
+            javascript_flags: to_cef_str(self.javascript_flags),
+            resources_dir_path: to_cef_str(self.resources_dir_path),
+            locales_dir_path: to_cef_str(self.locales_dir_path),
+            pack_loading_disabled: self.pack_loading_disabled as libc::c_int,
+            remote_debugging_port: self.remote_debugging_port.unwrap_or(0),
+            uncaught_exception_stack_size: self.uncaught_exception_stack_size.unwrap_or(0),
+            context_safety_implementation: self.context_safety_implementation as libc::c_int,
+            ignore_certificate_errors: self.ignore_certificate_errors as libc::c_int,
+            background_color: self.background_color
+        }
+    }
 }
 
-#[repr(C)]
-pub struct WindowInfo {
-    pub window_name: Option<String>,
+pub struct WindowInfo<'a> {
+    pub window_name: Option<&'a str>,
     pub x: i32,
     pub y: i32,
     pub width: i32,
@@ -275,8 +314,8 @@ pub struct WindowInfo {
     pub transparent_painting_enabled: bool,
 }
 
-impl WindowInfo {
-    pub fn new() -> WindowInfo {
+impl<'a> Default for WindowInfo<'a> {
+    fn default() -> WindowInfo<'a> {
         WindowInfo {
             window_name: None,
             x: 0,
@@ -287,7 +326,10 @@ impl WindowInfo {
             transparent_painting_enabled: false
         }
     }
-    fn to_cef(self) -> ffi::cef_window_info_t {
+}
+
+impl<'a> WindowInfo<'a> {
+    fn to_cef(&self) -> ffi::cef_window_info_t {
         use std::default::Default;
         let mut info: ffi::cef_window_info_t = Default::default();
         info.x = self.x;
@@ -297,7 +339,7 @@ impl WindowInfo {
         info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
         info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
         if let Some(name) = self.window_name {
-            info.window_name = string::cast_to(CefString::from_str(&name[]))
+            info.window_name = CefString::from_str(name).cast()
         }
         #[cfg(target_os="windows")]
         fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
@@ -335,22 +377,24 @@ fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     f(args_)
 }
 
-pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_int {
+pub fn execute_process<T : App>(app: Option<T>) -> isize {
     with_args(move |args| unsafe {
         ffi::cef_execute_process(
             &args as *const _,
-            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()),
-            zeroed())
+            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(|| zeroed()),
+            zeroed()) as isize
     })
 }
 
-pub fn initialize<T : App>(settings: &Settings, app: Option<CefRc<AppWrapper<T>>>) -> bool {
+pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
+    let settings = settings.to_cef();
     let result = with_args(move |args| unsafe{
         ffi::cef_initialize(
             &args as *const _,
-            settings.settings() as *const _,
-            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()), zeroed())
+            &settings as *const _,
+            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(|| zeroed()), zeroed())
     });
+    drop(settings);
     match result {
         0 => false,
         _ => true
