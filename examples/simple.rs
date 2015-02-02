@@ -10,6 +10,8 @@ use cef::Browser;
 use cef::string::CefString;
 use cef::Void;
 
+use std::borrow::ToOwned;
+
 fn main() {
     //let app = cef::AppWrapper::new(());
     let result_code = cef::execute_process::<()>(None);
@@ -26,6 +28,7 @@ fn main() {
     }
     println!("Initialised");
     let mut window_info = WindowInfo::new();
+    window_info.window_name = Some("Hello CEF".to_owned());
     window_info.width = 1024;
     window_info.height = 1024;
     //window_info.windowless_rendering_enabled = true;

@@ -266,7 +266,7 @@ fn settings_size_check() {
 
 #[repr(C)]
 pub struct WindowInfo {
-    pub window_name: String,
+    pub window_name: Option<String>,
     pub x: i32,
     pub y: i32,
     pub width: i32,
@@ -277,21 +277,40 @@ pub struct WindowInfo {
 
 impl WindowInfo {
     pub fn new() -> WindowInfo {
-        let x: WindowInfo = unsafe { zeroed() };
-        x
+        WindowInfo {
+            window_name: None,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            windowless_rendering_enabled: false,
+            transparent_painting_enabled: false
+        }
     }
     fn to_cef(self) -> ffi::cef_window_info_t {
         use std::default::Default;
         let mut info: ffi::cef_window_info_t = Default::default();
-/*
-        info.window_name = string::cast_to(CefString::from_str(&self.window_name[]));
-*/
         info.x = self.x;
         info.y = self.y;
         info.width = self.width;
         info.height = self.height;
         info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
         info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
+        if let Some(name) = self.window_name {
+            info.window_name = string::cast_to(CefString::from_str(&name[]))
+        }
+        #[cfg(target_os="windows")]
+        fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
+            if !windowless {
+                // WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE
+                info.style = 0x16CF0000;
+            }
+        }
+        #[cfg(target_os="mac")]
+        fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
+
+        }
+        os_specific(&mut info, self.windowless_rendering_enabled);
         info
     }
 }
