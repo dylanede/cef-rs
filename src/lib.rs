@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, os, std_misc, plugin)]
+#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, plugin, os, std_misc)]
 
 extern crate "cef-sys" as ffi;
 #[plugin]
@@ -7,8 +7,15 @@ extern crate callc;
 extern crate libc;
 extern crate alloc;
 
+#[cfg(target_os="windows")]
+extern crate "kernel32-sys" as kernel32;
+
+#[allow(missing_copy_implementations)]
+pub enum Void {}
+
 use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
+use std::default::Default;
 
 mod app;
 pub mod string;
@@ -18,8 +25,21 @@ mod browser_host;
 
 pub use app::App;
 pub use app::AppWrapper;
-pub use browser_client::BrowserClient;
-pub use browser_client::BrowserClientWrapper;
+pub use browser_client::{BrowserClient, BrowserClientWrapper};
+pub use browser_client::render_handler::{
+    Rect,
+    Point,
+    Size,
+    CursorHandle,
+    DragOperationsMask,
+    RenderHandler,
+    RenderHandlerWrapper,
+    PaintElementType,
+    CursorDirection,
+    CursorBidirection,
+    Cursor,
+    CustomCursorInfo,
+};
 pub use browser::Browser;
 pub use browser_host::BrowserHost;
 pub use browser_host::BrowserSettings;
@@ -96,9 +116,12 @@ impl<T: Is<ffi::cef_base_t>> CefBase for T {
 
 impl<T: Is<ffi::cef_base_t>> CefRc<T> {
     fn make<F: FnOnce(ffi::cef_base_t) -> T>(f: F) -> CefRc<T> {
+        use std::mem::size_of;
         use std::sync::atomic::AtomicUsize;
         use std::sync::atomic::Ordering;
         use std::sync::atomic;
+
+        //println!("making {:?}", size_of::<T>());
         #[repr(C)]
         struct RefCounted<T> {
             v: T,
@@ -108,15 +131,18 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
 
         #[stdcall_win]
         extern "C" fn add_ref<T>(_self: *mut ffi::cef_base_t) {
+            //println!("add {:?}", size_of::<T>());
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
             cell.count.fetch_add(1, Ordering::Relaxed);
         }
         #[stdcall_win]
         extern "C" fn release<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
+            //println!("release {:?}", size_of::<T>());
             unsafe {
                 let cell: *mut RefCounted<T> = transmute(_self);
                 let old_count = (*cell).count.fetch_sub(1, Ordering::Release);
                 if old_count == 1 {
+                    //println!("dropping {:?}", size_of::<T>());
                     atomic::fence(Ordering::Acquire);
                     let cell: Box<RefCounted<T>> = transmute(cell);
                     drop(cell);
@@ -160,20 +186,6 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
     }
 }
 
-pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_int {
-    use std::ffi::CString;
-    let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
-    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
-    let args = &args[];
-    let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
-    unsafe{
-        ffi::cef_execute_process(
-            &args as *const _,
-            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()),
-            zeroed())
-    }
-}
-
 #[repr(i32)]
 #[derive(Copy)]
 pub enum CBool {
@@ -194,6 +206,9 @@ impl CBool {
             false => False
         }
     }
+    pub fn to_cef(self) -> libc::c_int {
+        unsafe{ transmute(self) }
+    }
 }
 
 #[test]
@@ -202,100 +217,184 @@ fn check_size_c_bool() {
     assert!(size_of::<CBool>() == size_of::<libc::c_int>());
 }
 
-#[repr(C)]
-pub struct Settings {
-    pub size: ::libc::size_t,
-    pub single_process: CBool,
-    pub no_sandbox: CBool,
-    pub browser_subprocess_path: CefString,
-    multi_threaded_message_loop: CBool,
-    windowless_rendering_enabled: CBool,
-    command_line_args_disabled: CBool,
-    pub cache_path: CefString,
-    persist_session_cookies: CBool,
-    pub user_agent: CefString,
-    pub product_version: CefString,
-    pub locale: CefString,
-    pub log_file: CefString,
+pub struct Settings<'a> {
+    pub single_process: bool,
+    pub no_sandbox: bool,
+    pub browser_subprocess_path: Option<&'a str>,
+    pub multi_threaded_message_loop: bool,
+    pub windowless_rendering_enabled: bool,
+    pub command_line_args_disabled: bool,
+    pub cache_path: Option<&'a str>,
+    pub persist_session_cookies: bool,
+    pub user_agent: Option<&'a str>,
+    pub product_version: Option<&'a str>,
+    pub locale: Option<&'a str>,
+    pub log_file: Option<&'a str>,
     pub log_severity: ffi::cef_log_severity_t,
-    pub javascript_flags: CefString,
-    pub resources_dir_path: CefString,
-    pub locales_dir_path: CefString,
-    pub pack_loading_disabled: CBool,
-    pub remote_debugging_port: ::libc::c_int,
-    pub uncaught_exception_stack_size: ::libc::c_int,
-    pub context_safety_implementation: CBool,
-    pub ignore_certificate_errors: CBool,
+    pub javascript_flags: Option<&'a str>,
+    pub resources_dir_path: Option<&'a str>,
+    pub locales_dir_path: Option<&'a str>,
+    pub pack_loading_disabled: bool,
+    pub remote_debugging_port: Option<i32>,
+    pub uncaught_exception_stack_size: Option<i32>,
+    pub context_safety_implementation: bool,
+    pub ignore_certificate_errors: bool,
     pub background_color: ffi::cef_color_t,
 }
 
-unsafe impl Is<ffi::cef_settings_t> for Settings {}
-
-impl Settings {
-    pub fn new() -> Settings {
-        let mut x: Settings = unsafe { zeroed() };
-        x.size = size_of::<ffi::cef_settings_t>() as libc::size_t;
-        x.no_sandbox = True;
-        //x.command_line_args_disabled = 1;
-        x
-    }
-    fn settings<'a>(&'a self) -> &'a ffi::cef_settings_t {
-        upcast(self)
-    }
-
-    pub fn set_windowless_rendering(&mut self, enabled: bool) {
-        self.windowless_rendering_enabled = CBool::new(enabled);
-    }
-}
-
-#[test]
-fn settings_size_check() {
-    use std::mem::size_of;
-    assert!(size_of::<Settings>() == size_of::<ffi::cef_settings_t>());
-}
-
-#[repr(C)]
-pub struct WindowInfo {
-    pub window_name: CefString,
-    pub x: ::libc::c_int,
-    pub y: ::libc::c_int,
-    pub width: ::libc::c_int,
-    pub height: ::libc::c_int,
-    pub hidden: CBool,
-    pub parent_view: *mut ::libc::c_void,
-    pub windowless_rendering_enabled: CBool,
-    pub transparent_painting_enabled: CBool,
-    pub view: *mut ::libc::c_void,
-}
-unsafe impl Is<ffi::cef_window_info_t> for WindowInfo {}
-
-#[test]
-fn window_size_check() {
-    use std::mem::size_of;
-    assert!(size_of::<WindowInfo>() == size_of::<ffi::cef_window_info_t>());
-}
-
-impl WindowInfo {
-    pub fn new() -> WindowInfo {
-        let x: WindowInfo = unsafe { zeroed() };
-        x
-    }
-    fn info<'a>(&'a self) -> &'a ffi::cef_window_info_t {
-        upcast(self)
+impl<'a> Default for Settings<'a> {
+    fn default() -> Settings<'a> {
+        Settings {
+            single_process: false,
+            no_sandbox: true,
+            browser_subprocess_path: None,
+            multi_threaded_message_loop: false,
+            windowless_rendering_enabled: false,
+            command_line_args_disabled: false,
+            cache_path: None,
+            persist_session_cookies: false,
+            user_agent: None,
+            product_version: None,
+            locale: None,
+            log_file: None,
+            log_severity: Default::default(),
+            javascript_flags: None,
+            resources_dir_path: None,
+            locales_dir_path: None,
+            pack_loading_disabled: false,
+            remote_debugging_port: None,
+            uncaught_exception_stack_size: None,
+            context_safety_implementation: false,
+            ignore_certificate_errors: false,
+            background_color: Default::default()
+        }
     }
 }
 
-pub fn initialize<T : App>(settings: &Settings, app: Option<CefRc<AppWrapper<T>>>) -> bool {
+impl<'a> Settings<'a> {
+    fn to_cef(&self) -> ffi::cef_settings_t {
+        fn to_cef_str<'a>(s: Option<&'a str>) -> ffi::cef_string_t {
+            s.map(|x| CefString::from_str(x).cast()).unwrap_or_else(|| unsafe { zeroed() })
+        }
+        ffi::cef_settings_t {
+            size: size_of::<ffi::cef_settings_t>() as libc::size_t,
+            single_process: self.single_process as libc::c_int,
+            no_sandbox: self.no_sandbox as libc::c_int,
+            browser_subprocess_path: to_cef_str(self.browser_subprocess_path),
+            multi_threaded_message_loop: self.multi_threaded_message_loop as libc::c_int,
+            windowless_rendering_enabled: self.windowless_rendering_enabled as libc::c_int,
+            command_line_args_disabled: self.command_line_args_disabled as libc::c_int,
+            cache_path: to_cef_str(self.cache_path),
+            persist_session_cookies: self.persist_session_cookies as libc::c_int,
+            user_agent: to_cef_str(self.user_agent),
+            product_version: to_cef_str(self.product_version),
+            locale: to_cef_str(self.locale),
+            log_file: to_cef_str(self.log_file),
+            log_severity: self.log_severity,
+            javascript_flags: to_cef_str(self.javascript_flags),
+            resources_dir_path: to_cef_str(self.resources_dir_path),
+            locales_dir_path: to_cef_str(self.locales_dir_path),
+            pack_loading_disabled: self.pack_loading_disabled as libc::c_int,
+            remote_debugging_port: self.remote_debugging_port.unwrap_or(0),
+            uncaught_exception_stack_size: self.uncaught_exception_stack_size.unwrap_or(0),
+            context_safety_implementation: self.context_safety_implementation as libc::c_int,
+            ignore_certificate_errors: self.ignore_certificate_errors as libc::c_int,
+            background_color: self.background_color
+        }
+    }
+}
+
+pub struct WindowInfo<'a> {
+    pub window_name: Option<&'a str>,
+    pub x: i32,
+    pub y: i32,
+    pub width: i32,
+    pub height: i32,
+    pub windowless_rendering_enabled: bool,
+    pub transparent_painting_enabled: bool,
+}
+
+impl<'a> Default for WindowInfo<'a> {
+    fn default() -> WindowInfo<'a> {
+        WindowInfo {
+            window_name: None,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            windowless_rendering_enabled: false,
+            transparent_painting_enabled: false
+        }
+    }
+}
+
+impl<'a> WindowInfo<'a> {
+    fn to_cef(&self) -> ffi::cef_window_info_t {
+        use std::default::Default;
+        let mut info: ffi::cef_window_info_t = Default::default();
+        info.x = self.x;
+        info.y = self.y;
+        info.width = self.width;
+        info.height = self.height;
+        info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
+        info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
+        if let Some(name) = self.window_name {
+            info.window_name = CefString::from_str(name).cast()
+        }
+        #[cfg(target_os="windows")]
+        fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
+            if !windowless {
+                // WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE
+                info.style = 0x16CF0000;
+            }
+        }
+        #[cfg(target_os="macos")]
+        fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
+
+        }
+        os_specific(&mut info, self.windowless_rendering_enabled);
+        info
+    }
+}
+
+#[cfg(not(target_os="windows"))]
+fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ffi::CString;
     let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
+    println!("{:?}", args);
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
     let args = &args[];
-    let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
-    let result = unsafe{
+    let args_ = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
+    let result = f(args_);
+    drop(args);
+    result
+}
+
+#[cfg(target_os="windows")]
+fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
+    use std::ptr::null;
+    let args_ = ffi::cef_main_args_t { instance: unsafe { kernel32::GetModuleHandleW(null()) } as ffi::HINSTANCE };
+    f(args_)
+}
+
+pub fn execute_process<T : App>(app: Option<T>) -> isize {
+    with_args(move |args| unsafe {
+        ffi::cef_execute_process(
+            &args as *const _,
+            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(|| zeroed()),
+            zeroed()) as isize
+    })
+}
+
+pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
+    let settings = settings.to_cef();
+    let result = with_args(move |args| unsafe{
         ffi::cef_initialize(
             &args as *const _,
-            settings.settings() as *const _,
-            app.map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed()), zeroed()) };
+            &settings as *const _,
+            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(|| zeroed()), zeroed())
+    });
+    drop(settings);
     match result {
         0 => false,
         _ => true
@@ -304,6 +403,10 @@ pub fn initialize<T : App>(settings: &Settings, app: Option<CefRc<AppWrapper<T>>
 
 pub fn run_message_loop() {
     unsafe { ffi::cef_run_message_loop() }
+}
+
+pub fn do_message_loop_work() {
+    unsafe { ffi::cef_do_message_loop_work() }
 }
 
 #[unsafe_destructor]

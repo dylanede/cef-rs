@@ -14,7 +14,7 @@ fn get_platform() -> Platform {
         "win32" | "windows" => Platform::Windows,
         "darwin" => Platform::Mac,
         "linux" => Platform::Linux,
-        other => panic!("Sorry, platform \"{}\" is not supported by cef-sys.", other)
+        other => panic!("Sorry, platform \"{}\" is not supported by CEF.", other)
     }
 }
 
@@ -22,7 +22,9 @@ fn main() {
     let dll_name = match get_platform() {
         Platform::Mac => return, // CEF_PATH is not necessarily needed for Mac
         Platform::Windows => "libcef",
-        Platform::Linux => "cef"
+        Platform::Linux => panic!(
+            "Sorry, Linux is not supported until bindings for CEF for that platform are generated.")
+            //"cef"
     };
     let dll_file_name = os::dll_filename(dll_name);
     let cef_dir = Path::new(os::getenv("CEF_PATH")

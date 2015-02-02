@@ -114,6 +114,9 @@ pub fn cast_userfree<T : OwnableString>(s: *mut T) -> OwnedStringPtr<T> {
 }
 
 impl CefString {
+    pub fn cast(self) -> ffi::cef_string_t {
+        unsafe { transmute(self) }
+    }
     pub fn from_str(s: &str) -> CefString {
         use std::ptr::copy_nonoverlapping_memory;
 

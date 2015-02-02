@@ -11,3 +11,9 @@ cef-sys = "*"
 [dependencies.callc]
 
 git = "https://github.com/dylanede/callc.git"
+
+[target.x86_64-pc-windows-gnu.dependencies]
+kernel32-sys = "0.0.5"
+
+[target.x86-pc-windows-gnu.dependencies]
+kernel32-sys = "0.0.5"
