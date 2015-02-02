@@ -55,6 +55,10 @@ pub fn cast_from(s: ffi::cef_string_t) -> CefString {
     unsafe { transmute(s) }
 }
 
+pub fn cast_to(s: CefString) -> ffi::cef_string_t {
+    unsafe { transmute(s) }
+}
+
 pub fn cast_from_userfree_ptr(s: ffi::cef_string_userfree_t) -> CefStringUserFreePtr {
     unsafe { transmute(s) }
 }
