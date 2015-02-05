@@ -6,14 +6,20 @@ authors = ["Dylan Ede <dylanede@googlemail.com>"]
 
 [dependencies]
 
-cef-sys = "*"
+bitflags = "0.1"
+
+[dependencies.cef-sys]
+
+git = "https://github.com/dylanede/cef-rs.git"
 
 [dependencies.callc]
 
 git = "https://github.com/dylanede/callc.git"
 
 [target.x86_64-pc-windows-gnu.dependencies]
-kernel32-sys = "0.0.5"
+
+kernel32-sys = "0.0.6"
 
 [target.x86-pc-windows-gnu.dependencies]
-kernel32-sys = "0.0.5"
+
+kernel32-sys = "0.0.6"
