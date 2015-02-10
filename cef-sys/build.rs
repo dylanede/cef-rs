@@ -22,9 +22,7 @@ fn main() {
     let dll_name = match get_platform() {
         Platform::Mac => return, // CEF_PATH is not necessarily needed for Mac
         Platform::Windows => "libcef",
-        Platform::Linux => panic!(
-            "Sorry, Linux is not supported until bindings for CEF for that platform are generated.")
-            //"cef"
+        Platform::Linux => "cef"
     };
     let dll_file_name = os::dll_filename(dll_name);
     let cef_dir = Path::new(os::getenv("CEF_PATH")
@@ -38,7 +36,7 @@ fn main() {
 
 /*
 fn main() {
-    
+
     let cef_dir = os::getenv("CEF_PATH")
         .expect("CEF_PATH needs to point to the directory containing the CEF DLL.");
 
