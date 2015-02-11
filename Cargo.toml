@@ -10,7 +10,7 @@ bitflags = "0.1"
 
 [dependencies.cef-sys]
 
-git = "https://github.com/dylanede/cef-rs.git"
+path = "cef-sys"
 
 [dependencies.callc]
 
