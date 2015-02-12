@@ -1,9 +1,7 @@
 #![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, plugin, os, std_misc)]
+#![plugin(callc)]
 
 extern crate "cef-sys" as ffi;
-#[plugin]
-#[no_link]
-extern crate callc;
 extern crate libc;
 extern crate alloc;
 
@@ -329,6 +327,19 @@ impl<'a> Default for WindowInfo<'a> {
 }
 
 impl<'a> WindowInfo<'a> {
+    #[cfg(target_os="linux")]
+    fn to_cef(&self) -> ffi::cef_window_info_t {
+        use std::default::Default;
+        let mut info: ffi::cef_window_info_t = Default::default();
+        info.x = self.x as u32;
+        info.y = self.y as u32;
+        info.width = self.width as u32;
+        info.height = self.height as u32;
+        info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
+        info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
+        info
+    }
+    #[cfg(target_os="macos")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
         use std::default::Default;
         let mut info: ffi::cef_window_info_t = Default::default();
@@ -341,18 +352,25 @@ impl<'a> WindowInfo<'a> {
         if let Some(name) = self.window_name {
             info.window_name = CefString::from_str(name).cast()
         }
-        #[cfg(target_os="windows")]
-        fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
-            if !windowless {
-                // WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE
-                info.style = 0x16CF0000;
-            }
+        info
+    }
+    #[cfg(target_os="windows")]
+    fn to_cef(&self) -> ffi::cef_window_info_t {
+        use std::default::Default;
+        let mut info: ffi::cef_window_info_t = Default::default();
+        info.x = self.x;
+        info.y = self.y;
+        info.width = self.width;
+        info.height = self.height;
+        info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
+        info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
+        if !self.windowless_rendering_enabled {
+            // WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE
+            info.style = 0x16CF0000;
         }
-        #[cfg(target_os="macos")]
-        fn os_specific(info: &mut ffi::cef_window_info_t, windowless: bool) {
-
+        if let Some(name) = self.window_name {
+            info.window_name = CefString::from_str(name).cast()
         }
-        os_specific(&mut info, self.windowless_rendering_enabled);
         info
     }
 }

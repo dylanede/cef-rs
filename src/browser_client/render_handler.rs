@@ -143,7 +143,7 @@ impl RenderHandler for Void {
                 _: i32) {
         unreachable!()
     }
-    
+
 }
 
 #[repr(C)]
@@ -300,6 +300,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                 this.callback.on_paint(browser, _type, dirty_rects, buffer, width, height);
             }
         }
+        #[cfg(not(target_os="linux"))]
         #[stdcall_win]
         extern fn on_cursor_change<T : RenderHandler>(
             _self: *mut ffi::cef_render_handler_t,
@@ -308,7 +309,17 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
             _type: ffi::cef_cursor_type_t,
             custom_cursor_info: *const ffi::cef_cursor_info_t)
         {
-            
+
+        }
+        #[cfg(target_os="linux")]
+        extern "C" fn on_cursor_change<T : RenderHandler>(
+            _self: *mut ffi::cef_render_handler_t,
+            browser: *mut ffi::cef_browser_t,
+            cursor: ::libc::c_ulong,
+            _type: ffi::cef_cursor_type_t,
+            custom_cursor_info: *const ffi::cef_cursor_info_t)
+        {
+
         }
         #[stdcall_win]
         extern fn start_dragging<T : RenderHandler>(
