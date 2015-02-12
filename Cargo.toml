@@ -10,7 +10,7 @@ bitflags = "0.1"
 
 [dependencies.cef-sys]
 
-git = "https://github.com/dylanede/cef-rs.git"
+path = "cef-sys"
 
 [dependencies.callc]
 
@@ -18,8 +18,8 @@ git = "https://github.com/dylanede/callc.git"
 
 [target.x86_64-pc-windows-gnu.dependencies]
 
-kernel32-sys = "0.0.6"
+kernel32-sys = "0.0.7"
 
 [target.x86-pc-windows-gnu.dependencies]
 
-kernel32-sys = "0.0.6"
+kernel32-sys = "0.0.7"

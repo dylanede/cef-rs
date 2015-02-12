@@ -16,7 +16,7 @@ pub trait UTF16Ext {
 impl UTF16Ext for ffi::cef_string_utf16_t {
     fn units<'a>(&'a self) -> &'a [u16] {
         unsafe {
-            slice::from_raw_buf(transmute::<&'a *mut u16, &'a *const u16>(&self._str), self.length as usize)
+            slice::from_raw_parts(self._str, self.length as usize)
         }
     }
     fn to_string(&self) -> String {

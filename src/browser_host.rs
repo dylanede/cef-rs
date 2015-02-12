@@ -18,11 +18,13 @@ pub struct BrowserHost;
 pub enum RequestContext {}
 
 impl BrowserHost {
-    pub fn create_browser_sync<T: BrowserClient>(window_info: &WindowInfo,
-                                             client: T,
-                                             url: &str,
-                                             settings: &BrowserSettings,
-                                                 request_context: Option<RequestContext>) -> CefRc<Browser> {
+    pub fn create_browser_sync<T: BrowserClient>(
+        window_info: &WindowInfo,
+        client: T,
+        url: &str,
+        settings: &BrowserSettings,
+        request_context: Option<RequestContext>) -> CefRc<Browser>
+    {
         use std::default::Default;
         let info = window_info.to_cef();
         let url = CefString::from_str(url);
