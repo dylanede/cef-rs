@@ -285,7 +285,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
             width: ::libc::c_int,
             height: ::libc::c_int)
         {
-            use std::slice::from_raw_buf;
+            use std::slice::from_raw_parts;
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
@@ -294,9 +294,9 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                     ffi::PET_POPUP => PaintElementType::Popup,
                     _ => unreachable!()
                 };
-                let dirty_rects = from_raw_buf(&dirty_rects, dirty_rects_count as usize);
+                let dirty_rects = from_raw_parts(dirty_rects, dirty_rects_count as usize);
                 let buffer = buffer as *const u8;
-                let buffer = from_raw_buf(&buffer, (width * height * 4) as usize);
+                let buffer = from_raw_parts(buffer, (width * height * 4) as usize);
                 this.callback.on_paint(browser, _type, dirty_rects, buffer, width, height);
             }
         }

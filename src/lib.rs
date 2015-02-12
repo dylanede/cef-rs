@@ -1,4 +1,4 @@
-#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, plugin, os, std_misc)]
+#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, plugin, os, std_misc, unsafe_no_drop_flag)]
 #![plugin(callc)]
 
 extern crate "cef-sys" as ffi;
