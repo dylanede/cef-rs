@@ -15,7 +15,7 @@ pub trait UTF16Ext {
 impl UTF16Ext for ffi::cef_string_utf16_t {
     fn units<'a>(&'a self) -> &'a [u16] {
         unsafe {
-            slice::from_raw_parts(transmute::<*mut u16, *const u16>(self._str), self.length as usize)
+            slice::from_raw_parts(self._str, self.length as usize)
         }
     }
     fn to_string(&self) -> String {
@@ -136,6 +136,9 @@ pub fn cast_userfree<T : OwnableString>(s: *mut T) -> OwnedStringPtr<T> {
 }
 
 impl CefString {
+    pub fn cast(self) -> ffi::cef_string_t {
+        unsafe { transmute(self) }
+    }
     pub fn from_str(s: &str) -> CefString {
         use std::ptr::copy_nonoverlapping;
 

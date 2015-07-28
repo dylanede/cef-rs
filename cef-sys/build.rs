@@ -14,7 +14,7 @@ fn get_platform() -> Platform {
         "win32" | "windows" => Platform::Windows,
         "darwin" => Platform::Mac,
         "linux" => Platform::Linux,
-        other => panic!("Sorry, platform \"{}\" is not supported by cef-sys.", other)
+        other => panic!("Sorry, platform \"{}\" is not supported by CEF.", other)
     }
 }
 

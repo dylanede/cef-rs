@@ -2,10 +2,15 @@
 #![allow(non_camel_case_types, non_snake_case, raw_pointer_derive, missing_copy_implementations)]
 extern crate libc;
 
-#[cfg(not(target_os="windows"))]
-mod default;
-#[cfg(not(target_os="windows"))]
-pub use default::*;
+#[cfg(target_os="linux")]
+mod linux;
+#[cfg(target_os="linux")]
+pub use linux::*;
+
+#[cfg(target_os="macos")]
+mod mac;
+#[cfg(target_os="macos")]
+pub use mac::*;
 
 #[cfg(target_os="windows")]
 mod windows;
@@ -24,7 +29,7 @@ extern "C" {}
 #[link(name = "libcef")]
 extern {}
 
-#[cfg(not(any(target_os="macos",target_os="windows")))]
+#[cfg(target_os="linux")]
 #[link(name = "cef")]
 extern {}
 

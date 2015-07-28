@@ -1,5 +1,6 @@
 use ffi;
 
+use Void;
 use Is;
 use CefRc;
 use unsafe_downcast_mut;
@@ -7,17 +8,17 @@ use std::mem::zeroed;
 use std::ops::{Deref, DerefMut};
 
 trait ResourceBundleHandler {}
-impl ResourceBundleHandler for () {}
+impl ResourceBundleHandler for Void {}
 trait BrowserProcessHandler {}
-impl BrowserProcessHandler for () {}
+impl BrowserProcessHandler for Void {}
 trait RenderProcessHandler {}
-impl RenderProcessHandler for () {}
+impl RenderProcessHandler for Void {}
 
 #[allow(unused_variables)]
 pub trait App : 'static {
-    type OutResourceBundleHandler : ResourceBundleHandler = ();
-    type OutBrowserProcessHandler : BrowserProcessHandler = ();
-    type OutRenderProcessHandler : RenderProcessHandler = ();
+    type OutResourceBundleHandler : ResourceBundleHandler = Void;
+    type OutBrowserProcessHandler : BrowserProcessHandler = Void;
+    type OutRenderProcessHandler : RenderProcessHandler = Void;
 
     fn on_before_command_line_processing(&mut self,
                                          process_type: &ffi::cef_string_t,
@@ -28,8 +29,7 @@ pub trait App : 'static {
     fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
 }
 
-impl App for () {
-}
+impl App for () {}
 
 #[repr(C)]
 pub struct AppWrapper<T : App> {
@@ -96,18 +96,16 @@ impl<T : App> AppWrapper<T> {
                 //this.callback.get_render_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
         }
-        CefRc::make(move |base| {
-            AppWrapper {
-                vtable: ffi::cef_app_t {
-                    base: base,
-                    on_before_command_line_processing: Some(obclp::<T>),
-                    on_register_custom_schemes: Some(orcs::<T>),
-                    get_resource_bundle_handler: Some(grbh::<T>),
-                    get_browser_process_handler: Some(gbph::<T>),
-                    get_render_process_handler: Some(grph::<T>)
-                },
-                callback: wrapped
-            }
+        CefRc::make(move |base| AppWrapper {
+            vtable: ffi::cef_app_t {
+                base: base,
+                on_before_command_line_processing: Some(obclp::<T>),
+                on_register_custom_schemes: Some(orcs::<T>),
+                get_resource_bundle_handler: Some(grbh::<T>),
+                get_browser_process_handler: Some(gbph::<T>),
+                get_render_process_handler: Some(grph::<T>)
+            },
+            callback: wrapped
         })
     }
 }

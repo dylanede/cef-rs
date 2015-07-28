@@ -12,23 +12,56 @@ use std::mem::{transmute, zeroed};
 use string;
 use cast_to_interface;
 
+use std::ptr::null_mut;
+
 pub struct BrowserHost;
 pub enum RequestContext {}
 
 impl BrowserHost {
-    pub fn create_browser_sync<T: BrowserClient>(window_info: &WindowInfo,
-                                             client: CefRc<BrowserClientWrapper<T>>,
-                                             url: &CefString,
-                                             settings: &BrowserSettings,
-                                             request_context: Option<RequestContext>) -> CefRc<Browser> {
+    pub fn create_browser_sync<T: BrowserClient>(
+        window_info: &WindowInfo,
+        client: T,
+        url: &str,
+        settings: &BrowserSettings,
+        request_context: Option<RequestContext>) -> CefRc<Browser>
+    {
+        use std::default::Default;
+        let info = window_info.to_cef();
+        let url = CefString::from_str(url);
         unsafe {
-            cast_to_interface(ffi::cef_browser_host_create_browser_sync(
-                window_info.info() as *const _,
-                upcast_ptr(client),
-                string::cast_to_ptr(url as *const _),
+            assert!(ffi::cef_currently_on(ffi::TID_UI) == 1);
+            let ptr = ffi::cef_browser_host_create_browser_sync(
+                &info as *const _,
+                upcast_ptr(BrowserClientWrapper::new(client)),
+                string::cast_to_ptr(&url as *const _),
                 settings.settings() as *const _,
-                zeroed()))
+                zeroed());
+            drop(info);
+            drop(url);
+            if ptr == null_mut() {
+                panic!("Generated browser is null!");
+            }
+            cast_to_interface(ptr)
         }
+    }
+    pub fn create_browser<T: BrowserClient + Send>(window_info: &WindowInfo,
+                                             client: T,
+                                             url: &str,
+                                             settings: &BrowserSettings,
+                                            request_context: Option<RequestContext>) -> bool {
+        let info = window_info.to_cef();
+        let url = CefString::from_str(url);
+        let result = unsafe {
+            ffi::cef_browser_host_create_browser(
+                &info as *const _,
+                upcast_ptr(BrowserClientWrapper::new(client)),
+                string::cast_to_ptr(&url as *const _),
+                settings.settings() as *const _,
+                zeroed()) != 0
+        };
+        drop(url);
+        drop(info);
+        result
     }
 }
 
