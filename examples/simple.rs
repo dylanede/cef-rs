@@ -12,10 +12,8 @@ use cef::string::CefString;
 fn main() {
     let result_code = cef::execute_process::<()>(None);
     if result_code >= 0 {
-        std::os::set_exit_status(result_code as isize);
-        return;
+        std::process::exit(result_code as i32);
     }
-
     let mut settings = Settings::new();
     settings.log_file = CefString::from_str("log.log");
     settings.locale = CefString::from_str("en_GB");
@@ -38,4 +36,5 @@ fn main() {
     cef::run_message_loop();
 
     cef::shutdown();
+    println!("Done!");
 }

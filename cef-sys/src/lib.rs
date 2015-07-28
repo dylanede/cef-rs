@@ -1,4 +1,4 @@
-#![feature(libc)]
+#![feature(libc, negate_unsigned)]
 #![allow(non_camel_case_types, non_snake_case, raw_pointer_derive, missing_copy_implementations)]
 extern crate libc;
 
@@ -24,7 +24,7 @@ extern "C" {}
 #[link(name = "libcef")]
 extern {}
 
-#[cfg(not(all(target_os="macos",target_os="windows")))]
+#[cfg(not(any(target_os="macos",target_os="windows")))]
 #[link(name = "cef")]
 extern {}
 

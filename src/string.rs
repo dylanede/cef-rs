@@ -4,7 +4,6 @@ use std::mem::{transmute, replace, forget};
 use std::mem;
 use alloc::heap::{allocate, deallocate};
 use std::ptr::null_mut;
-use std::num::Int;
 use libc;
 use std::ops::{Deref, DerefMut};
 
@@ -16,7 +15,7 @@ pub trait UTF16Ext {
 impl UTF16Ext for ffi::cef_string_utf16_t {
     fn units<'a>(&'a self) -> &'a [u16] {
         unsafe {
-            slice::from_raw_buf(transmute::<&'a *mut u16, &'a *const u16>(&self._str), self.length as usize)
+            slice::from_raw_parts(transmute::<*mut u16, *const u16>(self._str), self.length as usize)
         }
     }
     fn to_string(&self) -> String {
@@ -25,12 +24,24 @@ impl UTF16Ext for ffi::cef_string_utf16_t {
 }
 
 pub trait OwnableString {
+    unsafe fn alloc() -> *mut Self;
+    unsafe fn free(v: *mut Self);
     fn release(&mut self);
+    fn is_drop_fill(&self) -> bool;
 }
 
 impl OwnableString for ffi::cef_string_utf16_t {
+    unsafe fn alloc() -> *mut Self {
+        ffi::cef_string_userfree_utf16_alloc()
+    }
+    unsafe fn free(v: *mut Self) {
+        ffi::cef_string_userfree_utf16_free(v)
+    }
     fn release(&mut self) {
         self.dtor.map(|f| f(self._str));
+    }
+    fn is_drop_fill(&self) -> bool {
+        unsafe { transmute::<_, usize>(self._str) == ::std::mem::POST_DROP_USIZE }
     }
 }
 
@@ -40,11 +51,21 @@ pub struct OwnedString<T : OwnableString> {
     v: T
 }
 
-#[unsafe_destructor]
+impl<T: OwnableString> OwnedString<T> {
+    unsafe fn unwrap(mut self) -> T {
+        use std::mem::zeroed;
+        let out = replace(&mut self.v, zeroed());
+        forget(self);
+        out
+    }
+}
+
 impl<T : OwnableString> Drop for OwnedString<T> {
     fn drop(&mut self) {
         use std::mem::zeroed;
-        unsafe{ self.v.release(); self.v = zeroed() }
+        if !self.v.is_drop_fill() {
+            unsafe{ self.v.release(); self.v = zeroed() }
+        }
     }
 }
 
@@ -52,7 +73,7 @@ pub type OwnedString16 = OwnedString<ffi::cef_string_utf16_t>;
 pub type CefString = OwnedString16;
 
 pub fn cast_from(s: ffi::cef_string_t) -> CefString {
-    unsafe { transmute(s) }
+    unsafe { CefString{ v: transmute(s) } }
 }
 
 pub fn cast_from_userfree_ptr(s: ffi::cef_string_userfree_t) -> CefStringUserFreePtr {
@@ -71,26 +92,27 @@ pub struct OwnedStringPtr<T : OwnableString> {
 
 pub type CefStringUserFreePtr = OwnedStringPtr<ffi::cef_string_utf16_t>;
 
-impl CefStringUserFreePtr {
-    pub fn new(s: OwnedString<ffi::cef_string_utf16_t>) -> CefStringUserFreePtr {
+impl<T: OwnableString> OwnedStringPtr<T> {
+    pub fn new(s: OwnedString<T>) -> OwnedStringPtr<T> {
         unsafe {
-            let v = ffi::cef_string_userfree_utf16_alloc();
-            forget(replace(&mut *v, transmute(s)));
+            let v = T::alloc();
+            forget(replace(&mut *v, s.unwrap()));
             OwnedStringPtr { v: v }
         }
     }
 }
 
-#[unsafe_destructor]
-impl Drop for OwnedStringPtr<ffi::cef_string_utf16_t> {
+impl<T: OwnableString> Drop for OwnedStringPtr<T> {
     fn drop(&mut self) {
         use std::mem::zeroed;
         unsafe {
-            if self.v != null_mut() {
-                (*self.v).release();
+            if transmute::<_, usize>(self.v) != ::std::mem::POST_DROP_USIZE {
+                if self.v != null_mut() {
+                    (*self.v).release();
+                    T::free(self.v);
+                }
+                self.v = zeroed();
             }
-            ffi::cef_string_userfree_utf16_free(self.v);
-            self.v = zeroed();
         }
     }
 }
@@ -115,7 +137,7 @@ pub fn cast_userfree<T : OwnableString>(s: *mut T) -> OwnedStringPtr<T> {
 
 impl CefString {
     pub fn from_str(s: &str) -> CefString {
-        use std::ptr::copy_nonoverlapping_memory;
+        use std::ptr::copy_nonoverlapping;
 
         let data: Vec<u16> = s.utf16_units().collect();
 
@@ -125,7 +147,7 @@ impl CefString {
             let size = data.len().checked_mul(mem::size_of::<u16>())
                 .and_then(|x| x.checked_add(mem::size_of::<usize>()))
                 .expect("capacity overflow");
-            let ptr = unsafe { allocate(size, mem::min_align_of::<usize>()) };
+            let ptr = unsafe { allocate(size, mem::align_of::<usize>()) };
             if ptr.is_null() { ::alloc::oom() }
             (ptr as *mut u16, size)
         };
@@ -135,7 +157,7 @@ impl CefString {
             ptr = ptr.offset(1);
         }
         let ptr = ptr as *mut u16;
-        unsafe { copy_nonoverlapping_memory(ptr, data.as_ptr(), data.len()) };
+        unsafe { copy_nonoverlapping(data.as_ptr(), ptr, data.len()) };
         #[stdcall_win]
         extern fn release(str: *mut u16) {
             if str == null_mut() { return; }
@@ -143,7 +165,7 @@ impl CefString {
                 let mut ptr = str as *mut usize;
                 ptr = ptr.offset(-1);
                 let size = *ptr;
-                deallocate(ptr as *mut u8, size, mem::min_align_of::<usize>());
+                deallocate(ptr as *mut u8, size, mem::align_of::<usize>());
             }
         }
 

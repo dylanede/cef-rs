@@ -1,9 +1,7 @@
-#![feature(unsafe_destructor, box_syntax, libc, alloc, core, collections, os, std_misc, plugin)]
+#![feature(box_syntax, libc, alloc, plugin, unsafe_no_drop_flag, filling_drop, str_utf16, heap_api, oom)]
+#![plugin(callc)]
+extern crate cef_sys as ffi;
 
-extern crate "cef-sys" as ffi;
-#[plugin]
-#[no_link]
-extern crate callc;
 extern crate libc;
 extern crate alloc;
 
@@ -26,7 +24,7 @@ pub use browser_host::BrowserSettings;
 pub use string::CefString;
 
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum State {
     Default,
     Enabled,
@@ -162,10 +160,10 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
 
 pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_int {
     use std::ffi::CString;
-    let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
-    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
-    let args = &args[];
-    let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
+    let args: Vec<CString> = std::env::args().map(|x| CString::new(x).unwrap()).collect();
+    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_ptr() as *mut _).collect();
+    let args = &args;
+    let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args.as_ptr() as *mut _ };
     unsafe{
         ffi::cef_execute_process(
             &args as *const _,
@@ -175,6 +173,7 @@ pub fn execute_process<T : App>(app: Option<CefRc<AppWrapper<T>>>) -> libc::c_in
 }
 
 #[repr(C)]
+#[unsafe_no_drop_flag]
 pub struct Settings {
     pub size: ::libc::size_t,
     single_process: ::libc::c_int,
@@ -205,7 +204,7 @@ unsafe impl Is<ffi::cef_settings_t> for Settings {}
 
 impl Settings {
     pub fn new() -> Settings {
-        let mut x: Settings = unsafe { zeroed() };
+        let mut x: Settings = unsafe{std::mem::zeroed()};
         x.size = size_of::<ffi::cef_settings_t>() as libc::size_t;
         x.no_sandbox = 1;
         //x.command_line_args_disabled = 1;
@@ -271,10 +270,10 @@ impl WindowInfo {
 
 pub fn initialize<T : App>(settings: &Settings, app: Option<CefRc<AppWrapper<T>>>) -> bool {
     use std::ffi::CString;
-    let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
-    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
-    let args = &args[];
-    let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
+    let args: Vec<CString> = std::env::args().map(|x| CString::new(x).unwrap()).collect();
+    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_ptr() as *mut _).collect();
+    let args = &args;
+    let args = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args.as_ptr() as *mut _ };
     let result = unsafe{
         ffi::cef_initialize(
             &args as *const _,
@@ -290,11 +289,12 @@ pub fn run_message_loop() {
     unsafe { ffi::cef_run_message_loop() }
 }
 
-#[unsafe_destructor]
 impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
     fn drop(&mut self) {
         unsafe{
-            if self.inner != std::ptr::null_mut() {
+            if self.inner != std::ptr::null_mut()
+                && transmute::<_, usize>(self.inner) != ::std::mem::POST_DROP_USIZE
+            {
                 (*self.inner).release();
                 self.inner = std::ptr::null_mut();
             }

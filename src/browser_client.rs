@@ -77,22 +77,7 @@ pub trait BrowserClient : 'static {
         message: &mut ProcessMessage) -> bool { false }
 }
 
-impl BrowserClient for () {
-    type OutContextMenuHandler = ();
-    type OutDialogHandler = ();
-    type OutDisplayHandler = ();
-    type OutDownloadHandler = ();
-    type OutDragHandler = ();
-    type OutFindHandler = ();
-    type OutFocusHandler = ();
-    type OutGeolocationHandler = ();
-    type OutJSDialogHandler = ();
-    type OutKeyboardHandler = ();
-    type OutLifeSpanHandler = ();
-    type OutLoadHandler = ();
-    type OutRenderHandler = ();
-    type OutRequestHandler = ();
-}
+impl BrowserClient for () {}
 
 #[repr(C)]
 pub struct BrowserClientWrapper<T : BrowserClient> {

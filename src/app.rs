@@ -29,9 +29,6 @@ pub trait App : 'static {
 }
 
 impl App for () {
-    type OutResourceBundleHandler = ();
-    type OutBrowserProcessHandler = ();
-    type OutRenderProcessHandler= ();
 }
 
 #[repr(C)]
