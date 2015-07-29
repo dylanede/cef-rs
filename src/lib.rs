@@ -1,4 +1,12 @@
-#![feature(box_syntax, libc, alloc, plugin, unsafe_no_drop_flag, filling_drop, str_utf16, heap_api, oom)]
+#![feature(box_syntax,
+           libc,
+           alloc,
+           plugin,
+           unsafe_no_drop_flag,
+           filling_drop,
+           str_utf16,
+           heap_api,
+           oom)]
 #![plugin(callc)]
 extern crate cef_sys as ffi;
 extern crate libc;
@@ -7,7 +15,6 @@ extern crate alloc;
 #[cfg(target_os="windows")]
 extern crate kernel32_sys as kernel32;
 
-#[allow(missing_copy_implementations)]
 pub enum Void {}
 
 use std::mem::{transmute, drop, size_of, zeroed};
@@ -54,36 +61,6 @@ pub fn shutdown() {
     unsafe { ffi::cef_shutdown() }
 }
 
-unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
-    transmute(x)
-}
-fn upcast_mut<'a, T1 : Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
-    unsafe{ transmute(x) }
-}
-fn upcast<'a, T1 : Is<T2>, T2>(x: &'a T1) -> &'a T2 {
-    unsafe{ transmute(x) }
-}
-
-fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_base_t> {
-    unsafe { transmute(x) }
-}
-
-unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
-    transmute(x)
-}
-
-fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
-    unsafe{ transmute(x) }
-}
-
-fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
-    unsafe{ transmute(x) }
-}
-
-unsafe fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
-    transmute(x)
-}
-
 #[repr(C)]
 #[unsafe_no_drop_flag]
 pub struct CefRc<T: Is<ffi::cef_base_t>> {
@@ -94,7 +71,6 @@ pub unsafe trait Is<T> {}
 pub unsafe trait Interface<T> {}
 
 unsafe impl Is<ffi::cef_base_t> for ffi::cef_base_t {}
-unsafe impl<T> Is<T> for () {}
 trait CefBase : Is<ffi::cef_base_t> {
     fn add_ref(&mut self);
     fn release(&mut self) -> libc::c_int;
@@ -181,6 +157,36 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
     fn deref_mut<'a>(&'a mut self) -> &'a mut T {
         unsafe{ &mut *self.inner }
     }
+}
+
+unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
+    transmute(x)
+}
+fn upcast_mut<'a, T1 : Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
+    unsafe{ transmute(x) }
+}
+fn upcast<'a, T1 : Is<T2>, T2>(x: &'a T1) -> &'a T2 {
+    unsafe{ transmute(x) }
+}
+
+fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_base_t> {
+    unsafe { transmute(x) }
+}
+
+unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+    transmute(x)
+}
+
+fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
+    unsafe{ transmute(x) }
+}
+
+fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
+    unsafe{ transmute(x) }
+}
+
+unsafe fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+    transmute(x)
 }
 
 #[repr(i32)]
@@ -390,11 +396,13 @@ fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
 #[cfg(target_os="windows")]
 fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ptr::null;
-    let args_ = ffi::cef_main_args_t { instance: unsafe { kernel32::GetModuleHandleW(null()) } as ffi::HINSTANCE };
+    let args_ = ffi::cef_main_args_t {
+        instance: unsafe { kernel32::GetModuleHandleW(null()) } as ffi::HINSTANCE
+    };
     f(args_)
 }
 
-pub fn execute_process<T : App>(app: Option<T>) -> isize {
+pub fn execute_process<T : App = Void>(app: Option<T>) -> isize {
     with_args(move |args| unsafe {
         ffi::cef_execute_process(
             &args as *const _,
@@ -403,7 +411,7 @@ pub fn execute_process<T : App>(app: Option<T>) -> isize {
     })
 }
 
-pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
+pub fn initialize<T : App = Void>(settings: &Settings, app: Option<T>) -> bool {
     let settings = settings.to_cef();
     let result = with_args(move |args| unsafe{
         ffi::cef_initialize(

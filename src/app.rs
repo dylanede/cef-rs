@@ -4,6 +4,7 @@ use Void;
 use Is;
 use CefRc;
 use unsafe_downcast_mut;
+use upcast_ptr;
 use std::mem::zeroed;
 use std::ops::{Deref, DerefMut};
 
@@ -29,7 +30,7 @@ pub trait App : 'static {
     fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
 }
 
-impl App for () {}
+impl App for Void {}
 
 #[repr(C)]
 pub struct AppWrapper<T : App> {
@@ -76,7 +77,7 @@ impl<T : App> AppWrapper<T> {
         extern fn grbh<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_resource_bundle_handler_t {
             unsafe {
                 zeroed()
-                //let this : &mut App<T> = unsafe_downcast_mut(&mut *_self);
+                //let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 //this.callback.get_resource_bundle_handler().map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed())
             }
         }
