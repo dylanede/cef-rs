@@ -6,9 +6,14 @@
            filling_drop,
            str_utf16,
            heap_api,
-           oom)]
+           oom,
+           custom_derive)]
 #![plugin(callc)]
+#![plugin(num_macros)]
 extern crate cef_sys as ffi;
+#[macro_use]
+extern crate bitflags;
+extern crate num;
 extern crate libc;
 extern crate alloc;
 
@@ -47,6 +52,8 @@ pub use browser_client::render_handler::{
 pub use browser::Browser;
 pub use browser_host::BrowserHost;
 pub use browser_host::BrowserSettings;
+pub use browser_host::{event_flags, MouseEvent, MouseButtonType};
+pub use browser_host::event_flags::EventFlags;
 pub use string::CefString;
 
 #[repr(C)]
@@ -185,8 +192,12 @@ fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
     unsafe{ transmute(x) }
 }
 
-unsafe fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
-    transmute(x)
+fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+    unsafe{ transmute(x) }
+}
+
+fn cast_from_interface<T1, T2 : Interface<T1>>(x: CefRc<T2>) -> *mut T1 where T2 : Is<ffi::cef_base_t> {
+    unsafe { transmute(x) }
 }
 
 #[repr(i32)]

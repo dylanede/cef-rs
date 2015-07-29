@@ -4,9 +4,10 @@ use Browser;
 use CBool;
 use Void;
 use Is;
+use Interface;
 
 use unsafe_downcast_mut;
-use unsafe_downcast_ptr;
+use cast_to_interface;
 use std::mem::transmute;
 
 use std::ops::{Deref, DerefMut};
@@ -23,7 +24,7 @@ pub struct DragData {
 }
 
 unsafe impl Is<ffi::cef_base_t> for DragData {}
-unsafe impl Is<ffi::cef_drag_data_t> for DragData {}
+unsafe impl Interface<ffi::cef_drag_data_t> for DragData {}
 
 #[repr(C)]
 pub struct ScreenInfo {
@@ -178,7 +179,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 let rect: &mut ffi::cef_rect_t = transmute(rect);
                 match this.callback.get_root_screen_rect(browser) {
                     Some(new_rect) => {
@@ -197,7 +198,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 match this.callback.get_view_rect(browser) {
                     Some(new_rect) => {
                         *rect = new_rect;
@@ -218,7 +219,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 match this.callback.get_screen_point(browser, (view_x, view_y)) {
                     Some((x, y)) => {
                         *screen_x = x;
@@ -237,7 +238,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 match this.callback.get_screen_info(browser) {
                     Some(info) => {
                         *screen_info = transmute(info);
@@ -255,7 +256,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 match show {
                     0 => this.callback.on_popup_hide(browser),
                     _ => this.callback.on_popup_show(browser)
@@ -270,7 +271,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 this.callback.on_popup_size(browser, &*rect)
             }
         }
@@ -288,7 +289,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
             use std::slice::from_raw_parts;
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 let _type = match _type {
                     ffi::PET_VIEW => PaintElementType::View,
                     ffi::PET_POPUP => PaintElementType::Popup,
@@ -332,8 +333,8 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
-                let drag_data: CefRc<DragData> = unsafe_downcast_ptr(drag_data);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
+                let drag_data: CefRc<DragData> = cast_to_interface(drag_data);
                 this.callback.start_dragging(browser, drag_data, allowed_ops, (x, y)) as ::libc::c_int
             }
         }
@@ -345,7 +346,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 this.callback.update_drag_cursor(browser, operation);
             }
         }
@@ -356,7 +357,7 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
         {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                let browser: CefRc<Browser> = unsafe_downcast_ptr(browser);
+                let browser: CefRc<Browser> = cast_to_interface(browser);
                 this.callback.on_scroll_offset_changed(browser);
             }
         }

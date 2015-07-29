@@ -5,21 +5,18 @@ version = "0.0.1"
 authors = ["Dylan Ede <dylanede@googlemail.com>"]
 
 [dependencies]
-
 bitflags = "0.1"
+num = "0.1"
+num-macros = "0.1"
 
 [dependencies.cef-sys]
-
 path = "cef-sys"
 
 [dependencies.callc]
-
 git = "https://github.com/dylanede/callc.git"
 
 [target.x86_64-pc-windows-gnu.dependencies]
-
-kernel32-sys = "0.0.7"
+kernel32-sys = "*"
 
 [target.x86-pc-windows-gnu.dependencies]
-
-kernel32-sys = "0.0.7"
+kernel32-sys = "*"

@@ -4,7 +4,6 @@ use Void;
 use Is;
 use CefRc;
 use unsafe_downcast_mut;
-use upcast_ptr;
 use std::mem::zeroed;
 use std::ops::{Deref, DerefMut};
 

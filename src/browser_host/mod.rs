@@ -11,13 +11,153 @@ use upcast_ptr;
 use std::mem::{transmute, zeroed};
 use string;
 use cast_to_interface;
+use upcast;
+
+use Interface;
+use Is;
 
 use std::ptr::null_mut;
+use std::default::Default;
 
-pub struct BrowserHost;
+pub mod keys;
+
+pub mod event_flags {
+    bitflags! {
+        flags EventFlags: u32 {
+            const NONE = 0,
+            const CAPS_LOCK_ON = 1,
+            const SHIFT_DOWN = 2,
+            const CONTROL_DOWN = 4,
+            const ALT_DOWN = 8,
+            const LEFT_MOUSE_BUTTON = 16,
+            const MIDDLE_MOUSE_BUTTON = 32,
+            const RIGHT_MOUSE_BUTTON = 64,
+            const COMMAND_DOWN = 128,
+            const NUM_LOCK_ON = 256,
+            const IS_KEY_PAD = 512,
+            const IS_LEFT = 1024,
+            const IS_RIGHT = 2048
+        }
+    }
+}
+pub use self::event_flags::EventFlags;
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct MouseEvent {
+    pub x: i32,
+    pub y: i32,
+    pub modifiers: EventFlags
+}
+
+impl Default for MouseEvent {
+    fn default() -> MouseEvent {
+        MouseEvent {
+            modifiers: EventFlags::empty(),
+            x: 0,
+            y: 0
+        }
+    }
+}
+
+unsafe impl Is<ffi::cef_mouse_event_t> for MouseEvent {}
+
+#[test]
+fn check_mouse_event_size() {
+    use std::mem::size_of;
+    assert!(size_of::<MouseEvent>() == size_of::<ffi::cef_mouse_event_t>());
+}
+
+#[derive(Copy, Clone)]
+#[repr(u32)]
+pub enum MouseButtonType {
+    Left,
+    Middle,
+    Right
+}
+
+#[allow(missing_copy_implementations)]
+pub struct BrowserHost {
+    vtable: ffi::cef_browser_host_t
+}
+
+unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
+unsafe impl Is<ffi::cef_base_t> for BrowserHost {}
+
 pub enum RequestContext {}
 
 impl BrowserHost {
+    #[cfg(target_os="windows")]
+    fn call0<'a, T>(
+        &'a self,
+        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t) -> T>) -> T
+    {
+        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _)
+    }
+    #[cfg(not(target_os="windows"))]
+    fn call0<'a, T>(
+        &'a self,
+        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_host_t) -> T>) -> T
+    {
+        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _)
+    }
+    #[cfg(target_os="windows")]
+    fn call1<'a, A0, T>(
+        &'a self,
+        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t, A0) -> T>,
+        a0: A0) -> T
+    {
+        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _, a0)
+    }
+    #[cfg(not(target_os="windows"))]
+    fn call1<'a, A0, T>(
+        &'a self,
+        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_host_t, A0) -> T>,
+        a0: A0) -> T
+    {
+        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _, a0)
+    }
+
+    pub fn was_resized(&self) {
+        self.call0(&self.vtable.was_resized)
+    }
+
+    pub fn set_focus(&self, focused: bool) {
+        self.call1(&self.vtable.set_focus, focused as libc::c_int);
+    }
+
+    pub fn close_browser(&self, force: bool) {
+        self.call1(&self.vtable.close_browser, force as libc::c_int)
+    }
+
+    pub fn send_mouse_click_event(
+        &self,
+        event: &MouseEvent,
+        button: MouseButtonType,
+        mouse_up: bool,
+        click_count: i32)
+    {
+        unsafe {
+            self.vtable.send_mouse_click_event.as_ref().unwrap()
+                (&self.vtable as *const _ as *mut _,
+                 upcast(event) as *const _, transmute(button),
+                 mouse_up as i32, click_count)
+        }
+    }
+
+    pub fn send_mouse_move_event(&self, event: &MouseEvent, mouse_leave: bool) {
+        self.vtable.send_mouse_move_event.as_ref().unwrap()
+            (&self.vtable as *const _ as *mut _,
+             upcast(event) as *const _,
+             mouse_leave as i32)
+    }
+
+    pub fn send_mouse_wheel_event(&self, event: &MouseEvent, delta: (i32, i32)) {
+        self.vtable.send_mouse_wheel_event.as_ref().unwrap()
+            (&self.vtable as *const _ as *mut _,
+             upcast(event) as *const _,
+             delta.0, delta.1)
+    }
     pub fn create_browser_sync<T: BrowserClient>(
         window_info: &WindowInfo,
         client: T,
