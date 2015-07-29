@@ -1,26 +1,6 @@
-<<<<<<< HEAD
-#![feature(
-    unsafe_destructor,
-    box_syntax,
-    libc,
-    alloc,
-    core,
-    collections,
-    plugin,
-    os,
-    std_misc,
-    hash,
-    unsafe_no_drop_flag)]
-#![plugin(callc)]
-
-extern crate "cef-sys" as ffi;
-#[macro_use]
-extern crate bitflags;
-=======
 #![feature(box_syntax, libc, alloc, plugin, unsafe_no_drop_flag, filling_drop, str_utf16, heap_api, oom)]
 #![plugin(callc)]
 extern crate cef_sys as ffi;
->>>>>>> 5282ffde0bb712c20c33a9978e8652811124cf18
 extern crate libc;
 extern crate alloc;
 
