@@ -7,15 +7,14 @@ use Interface;
 use Void;
 
 use Browser;
+use ProcessID;
+use ProcessMessage;
 
 use upcast_ptr;
 
 pub mod render_handler;
 //pub use self::render_handler::{RenderHandler, RenderHandlerWrapper};
 use self::render_handler::{RenderHandler, RenderHandlerWrapper};
-
-struct ProcessMessage;
-unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
 
 trait ContextMenuHandler {}
 impl ContextMenuHandler for Void {}
@@ -80,7 +79,7 @@ pub trait BrowserClient : 'static {
     fn on_process_message_received(
         &mut self,
         browser: &mut Browser,
-        source_process: ffi::cef_process_id_t,
+        source_process: ProcessID,
         message: &mut ProcessMessage) -> bool { false }
 }
 
@@ -186,7 +185,11 @@ impl<T : BrowserClient> BrowserClientWrapper<T> {
                 let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 this.callback.on_process_message_received(
                     cast_mut_ref(&mut *browser),
-                    source_process,
+                    match source_process {
+                        ffi::PID_BROWSER => ProcessID::Browser,
+                        ffi::PID_RENDERER => ProcessID::Renderer,
+                        _ => panic!("Invalid source process ID passed to on_process_message_received by CEF!")
+                    },
                     cast_mut_ref(&mut *message)) as libc::c_int
             }
         }

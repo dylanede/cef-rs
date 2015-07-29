@@ -56,6 +56,14 @@ pub use browser_host::{event_flags, MouseEvent, MouseButtonType};
 pub use browser_host::event_flags::EventFlags;
 pub use string::CefString;
 
+pub enum ProcessID {
+    Browser,
+    Renderer
+}
+
+pub struct ProcessMessage;
+unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
+
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub enum State {
