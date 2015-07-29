@@ -42,13 +42,13 @@ fn check_screen_info_size() {
     assert!(size_of::<ScreenInfo>() == size_of::<ffi::cef_screen_info_t>());
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum PaintElementType {
     View,
     Popup
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum CursorDirection {
     East,
     North,
@@ -60,7 +60,7 @@ pub enum CursorDirection {
     West
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum CursorBidirection {
     NorthSouth,
     NorthEastSouthWest,

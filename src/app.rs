@@ -29,11 +29,7 @@ pub trait App : 'static {
     fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
 }
 
-impl App for () {
-    type OutResourceBundleHandler = Void;
-    type OutBrowserProcessHandler = Void;
-    type OutRenderProcessHandler = Void;
-}
+impl App for () {}
 
 #[repr(C)]
 pub struct AppWrapper<T : App> {

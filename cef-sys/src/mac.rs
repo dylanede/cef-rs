@@ -6,7 +6,7 @@ use libc::time_t;
 
 pub type char16 = ::libc::c_ushort;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_string_wide_t {
     pub _str: *mut wchar_t,
     pub length: size_t,
@@ -19,7 +19,7 @@ impl ::std::default::Default for Struct__cef_string_wide_t {
 }
 pub type cef_string_wide_t = Struct__cef_string_wide_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_string_utf8_t {
     pub _str: *mut ::libc::c_char,
     pub length: size_t,
@@ -33,7 +33,7 @@ impl ::std::default::Default for Struct__cef_string_utf8_t {
 }
 pub type cef_string_utf8_t = Struct__cef_string_utf8_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_string_utf16_t {
     pub _str: *mut char16,
     pub length: size_t,
@@ -55,7 +55,7 @@ pub type cef_string_list_t = *mut ::libc::c_void;
 pub type cef_string_map_t = *mut ::libc::c_void;
 pub type cef_string_multimap_t = *mut ::libc::c_void;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_time_t {
     pub year: ::libc::c_int,
     pub month: ::libc::c_int,
@@ -71,7 +71,7 @@ impl ::std::default::Default for Struct__cef_time_t {
 }
 pub type cef_time_t = Struct__cef_time_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_main_args_t {
     pub argc: ::libc::c_int,
     pub argv: *mut *mut ::libc::c_char,
@@ -83,7 +83,7 @@ impl ::std::default::Default for Struct__cef_main_args_t {
 }
 pub type cef_main_args_t = Struct__cef_main_args_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_window_info_t {
     pub window_name: cef_string_t,
     pub x: ::libc::c_int,
@@ -121,7 +121,7 @@ pub const STATE_ENABLED: ::libc::c_uint = 1;
 pub const STATE_DISABLED: ::libc::c_uint = 2;
 pub type cef_state_t = Enum_Unnamed2;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_settings_t {
     pub size: size_t,
     pub single_process: ::libc::c_int,
@@ -152,7 +152,7 @@ impl ::std::default::Default for Struct__cef_settings_t {
 }
 pub type cef_settings_t = Struct__cef_settings_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_browser_settings_t {
     pub size: size_t,
     pub windowless_frame_rate: ::libc::c_int,
@@ -196,7 +196,7 @@ impl ::std::default::Default for Struct__cef_browser_settings_t {
 }
 pub type cef_browser_settings_t = Struct__cef_browser_settings_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_urlparts_t {
     pub spec: cef_string_t,
     pub scheme: cef_string_t,
@@ -213,7 +213,7 @@ impl ::std::default::Default for Struct__cef_urlparts_t {
 }
 pub type cef_urlparts_t = Struct__cef_urlparts_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_cookie_t {
     pub name: cef_string_t,
     pub value: cef_string_t,
@@ -377,7 +377,7 @@ pub const UR_CANCELED: ::libc::c_uint = 3;
 pub const UR_FAILED: ::libc::c_uint = 4;
 pub type cef_urlrequest_status_t = Enum_Unnamed14;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_point_t {
     pub x: ::libc::c_int,
     pub y: ::libc::c_int,
@@ -387,7 +387,7 @@ impl ::std::default::Default for Struct__cef_point_t {
 }
 pub type cef_point_t = Struct__cef_point_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_rect_t {
     pub x: ::libc::c_int,
     pub y: ::libc::c_int,
@@ -399,7 +399,7 @@ impl ::std::default::Default for Struct__cef_rect_t {
 }
 pub type cef_rect_t = Struct__cef_rect_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_size_t {
     pub width: ::libc::c_int,
     pub height: ::libc::c_int,
@@ -439,7 +439,7 @@ pub const JSDIALOGTYPE_CONFIRM: ::libc::c_uint = 1;
 pub const JSDIALOGTYPE_PROMPT: ::libc::c_uint = 2;
 pub type cef_jsdialog_type_t = Enum_Unnamed18;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_screen_info_t {
     pub device_scale_factor: ::libc::c_float,
     pub depth: ::libc::c_int,
@@ -487,7 +487,7 @@ pub const MBT_MIDDLE: ::libc::c_uint = 1;
 pub const MBT_RIGHT: ::libc::c_uint = 2;
 pub type cef_mouse_button_type_t = Enum_Unnamed20;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_mouse_event_t {
     pub x: ::libc::c_int,
     pub y: ::libc::c_int,
@@ -574,7 +574,7 @@ pub const KEYEVENT_KEYUP: ::libc::c_uint = 2;
 pub const KEYEVENT_CHAR: ::libc::c_uint = 3;
 pub type cef_key_event_type_t = Enum_Unnamed28;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_key_event_t {
     pub _type: cef_key_event_type_t,
     pub modifiers: uint32,
@@ -624,7 +624,7 @@ pub const XML_NODE_WHITESPACE: ::libc::c_uint = 9;
 pub const XML_NODE_COMMENT: ::libc::c_uint = 10;
 pub type cef_xml_node_type_t = Enum_Unnamed32;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_popup_features_t {
     pub x: ::libc::c_int,
     pub xSet: ::libc::c_int,
@@ -709,7 +709,7 @@ pub const GEOPOSITON_ERROR_POSITION_UNAVAILABLE: ::libc::c_uint = 2;
 pub const GEOPOSITON_ERROR_TIMEOUT: ::libc::c_uint = 3;
 pub type cef_geoposition_error_code_t = Enum_Unnamed38;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_geoposition_t {
     pub latitude: ::libc::c_double,
     pub longitude: ::libc::c_double,
@@ -758,7 +758,7 @@ pub const DUPLEX_MODE_LONG_EDGE: ::libc::c_int = 1;
 pub const DUPLEX_MODE_SHORT_EDGE: ::libc::c_int = 2;
 pub type cef_duplex_mode_t = Enum_Unnamed40;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_page_range_t {
     pub from: ::libc::c_int,
     pub to: ::libc::c_int,
@@ -816,7 +816,7 @@ pub const CT_GRABBING: ::libc::c_uint = 42;
 pub const CT_CUSTOM: ::libc::c_uint = 43;
 pub type cef_cursor_type_t = Enum_Unnamed41;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_cursor_info_t {
     pub hotspot: cef_point_t,
     pub image_scale_factor: ::libc::c_float,
@@ -830,7 +830,7 @@ impl ::std::default::Default for Struct__cef_cursor_info_t {
 }
 pub type cef_cursor_info_t = Struct__cef_cursor_info_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_base_t {
     pub size: size_t,
     pub add_ref: ::std::option::Option<extern "C" fn
@@ -849,7 +849,7 @@ impl ::std::default::Default for Struct__cef_base_t {
 }
 pub type cef_base_t = Struct__cef_base_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_command_line_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -962,7 +962,7 @@ impl ::std::default::Default for Struct__cef_command_line_t {
 }
 pub type cef_command_line_t = Struct__cef_command_line_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_read_handler_t {
     pub base: cef_base_t,
     pub read: ::std::option::Option<extern "C" fn
@@ -995,7 +995,7 @@ impl ::std::default::Default for Struct__cef_read_handler_t {
 }
 pub type cef_read_handler_t = Struct__cef_read_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_stream_reader_t {
     pub base: cef_base_t,
     pub read: ::std::option::Option<extern "C" fn
@@ -1028,7 +1028,7 @@ impl ::std::default::Default for Struct__cef_stream_reader_t {
 }
 pub type cef_stream_reader_t = Struct__cef_stream_reader_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_write_handler_t {
     pub base: cef_base_t,
     pub write: ::std::option::Option<extern "C" fn
@@ -1061,7 +1061,7 @@ impl ::std::default::Default for Struct__cef_write_handler_t {
 }
 pub type cef_write_handler_t = Struct__cef_write_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_stream_writer_t {
     pub base: cef_base_t,
     pub write: ::std::option::Option<extern "C" fn
@@ -1094,7 +1094,7 @@ impl ::std::default::Default for Struct__cef_stream_writer_t {
 }
 pub type cef_stream_writer_t = Struct__cef_stream_writer_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_drag_data_t {
     pub base: cef_base_t,
     pub clone: ::std::option::Option<extern "C" fn
@@ -1211,7 +1211,7 @@ impl ::std::default::Default for Struct__cef_drag_data_t {
 }
 pub type cef_drag_data_t = Struct__cef_drag_data_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_domvisitor_t {
     pub base: cef_base_t,
     pub visit: ::std::option::Option<extern "C" fn
@@ -1228,7 +1228,7 @@ impl ::std::default::Default for Struct__cef_domvisitor_t {
 }
 pub type cef_domvisitor_t = Struct__cef_domvisitor_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_domdocument_t {
     pub base: cef_base_t,
     pub get_type: ::std::option::Option<extern "C" fn
@@ -1304,7 +1304,7 @@ impl ::std::default::Default for Struct__cef_domdocument_t {
 }
 pub type cef_domdocument_t = Struct__cef_domdocument_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_domnode_t {
     pub base: cef_base_t,
     pub get_type: ::std::option::Option<extern "C" fn
@@ -1432,7 +1432,7 @@ impl ::std::default::Default for Struct__cef_domnode_t {
 }
 pub type cef_domnode_t = Struct__cef_domnode_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_request_t {
     pub base: cef_base_t,
     pub is_read_only: ::std::option::Option<extern "C" fn
@@ -1519,7 +1519,7 @@ impl ::std::default::Default for Struct__cef_request_t {
 }
 pub type cef_request_t = Struct__cef_request_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_post_data_t {
     pub base: cef_base_t,
     pub is_read_only: ::std::option::Option<extern "C" fn
@@ -1561,7 +1561,7 @@ impl ::std::default::Default for Struct__cef_post_data_t {
 }
 pub type cef_post_data_t = Struct__cef_post_data_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_post_data_element_t {
     pub base: cef_base_t,
     pub is_read_only: ::std::option::Option<extern "C" fn
@@ -1609,7 +1609,7 @@ impl ::std::default::Default for Struct__cef_post_data_element_t {
 }
 pub type cef_post_data_element_t = Struct__cef_post_data_element_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_string_visitor_t {
     pub base: cef_base_t,
     pub visit: ::std::option::Option<extern "C" fn
@@ -1624,7 +1624,7 @@ impl ::std::default::Default for Struct__cef_string_visitor_t {
 }
 pub type cef_string_visitor_t = Struct__cef_string_visitor_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_frame_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -1734,7 +1734,7 @@ impl ::std::default::Default for Struct__cef_frame_t {
 }
 pub type cef_frame_t = Struct__cef_frame_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_navigation_entry_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -1786,7 +1786,7 @@ impl ::std::default::Default for Struct__cef_navigation_entry_t {
 }
 pub type cef_navigation_entry_t = Struct__cef_navigation_entry_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_binary_value_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -1819,7 +1819,7 @@ impl ::std::default::Default for Struct__cef_binary_value_t {
 }
 pub type cef_binary_value_t = Struct__cef_binary_value_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_dictionary_value_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -1964,7 +1964,7 @@ impl ::std::default::Default for Struct__cef_dictionary_value_t {
 }
 pub type cef_dictionary_value_t = Struct__cef_dictionary_value_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_list_value_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -2099,7 +2099,7 @@ impl ::std::default::Default for Struct__cef_list_value_t {
 }
 pub type cef_list_value_t = Struct__cef_list_value_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_process_message_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -2132,7 +2132,7 @@ impl ::std::default::Default for Struct__cef_process_message_t {
 }
 pub type cef_process_message_t = Struct__cef_process_message_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -2147,7 +2147,7 @@ impl ::std::default::Default for Struct__cef_callback_t {
 }
 pub type cef_callback_t = Struct__cef_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_completion_callback_t {
     pub base: cef_base_t,
     pub on_complete: ::std::option::Option<extern "C" fn
@@ -2162,7 +2162,7 @@ impl ::std::default::Default for Struct__cef_completion_callback_t {
 }
 pub type cef_completion_callback_t = Struct__cef_completion_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_cookie_manager_t {
     pub base: cef_base_t,
     pub set_supported_schemes: ::std::option::Option<extern "C" fn
@@ -2223,7 +2223,7 @@ impl ::std::default::Default for Struct__cef_cookie_manager_t {
 }
 pub type cef_cookie_manager_t = Struct__cef_cookie_manager_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_cookie_visitor_t {
     pub base: cef_base_t,
     pub visit: ::std::option::Option<extern "C" fn
@@ -2242,7 +2242,7 @@ impl ::std::default::Default for Struct__cef_cookie_visitor_t {
 }
 pub type cef_cookie_visitor_t = Struct__cef_cookie_visitor_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_request_context_handler_t {
     pub base: cef_base_t,
     pub get_cookie_manager: ::std::option::Option<extern "C" fn
@@ -2259,7 +2259,7 @@ impl ::std::default::Default for Struct__cef_request_context_handler_t {
 pub type cef_request_context_handler_t =
     Struct__cef_request_context_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_request_context_t {
     pub base: cef_base_t,
     pub is_same: ::std::option::Option<extern "C" fn
@@ -2285,7 +2285,7 @@ impl ::std::default::Default for Struct__cef_request_context_t {
 }
 pub type cef_request_context_t = Struct__cef_request_context_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_browser_t {
     pub base: cef_base_t,
     pub get_host: ::std::option::Option<extern "C" fn
@@ -2391,7 +2391,7 @@ impl ::std::default::Default for Struct__cef_browser_t {
 }
 pub type cef_browser_t = Struct__cef_browser_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_run_file_dialog_callback_t {
     pub base: cef_base_t,
     pub on_file_dialog_dismissed: ::std::option::Option<extern "C" fn
@@ -2411,7 +2411,7 @@ impl ::std::default::Default for Struct__cef_run_file_dialog_callback_t {
 pub type cef_run_file_dialog_callback_t =
     Struct__cef_run_file_dialog_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_navigation_entry_visitor_t {
     pub base: cef_base_t,
     pub visit: ::std::option::Option<extern "C" fn
@@ -2432,7 +2432,7 @@ impl ::std::default::Default for Struct__cef_navigation_entry_visitor_t {
 pub type cef_navigation_entry_visitor_t =
     Struct__cef_navigation_entry_visitor_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_browser_host_t {
     pub base: cef_base_t,
     pub get_browser: ::std::option::Option<extern "C" fn
@@ -2706,7 +2706,7 @@ impl ::std::default::Default for Struct__cef_browser_host_t {
 }
 pub type cef_browser_host_t = Struct__cef_browser_host_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_print_settings_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -2828,7 +2828,7 @@ impl ::std::default::Default for Struct__cef_print_settings_t {
 }
 pub type cef_print_settings_t = Struct__cef_print_settings_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_print_dialog_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -2849,7 +2849,7 @@ impl ::std::default::Default for Struct__cef_print_dialog_callback_t {
 }
 pub type cef_print_dialog_callback_t = Struct__cef_print_dialog_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_print_job_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -2864,7 +2864,7 @@ impl ::std::default::Default for Struct__cef_print_job_callback_t {
 }
 pub type cef_print_job_callback_t = Struct__cef_print_job_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_print_handler_t {
     pub base: cef_base_t,
     pub on_print_settings: ::std::option::Option<extern "C" fn
@@ -2905,7 +2905,7 @@ impl ::std::default::Default for Struct__cef_print_handler_t {
 }
 pub type cef_print_handler_t = Struct__cef_print_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_browser_process_handler_t {
     pub base: cef_base_t,
     pub on_context_initialized: ::std::option::Option<extern "C" fn
@@ -2938,7 +2938,7 @@ impl ::std::default::Default for Struct__cef_browser_process_handler_t {
 pub type cef_browser_process_handler_t =
     Struct__cef_browser_process_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_load_handler_t {
     pub base: cef_base_t,
     pub on_loading_state_change: ::std::option::Option<extern "C" fn
@@ -2991,7 +2991,7 @@ impl ::std::default::Default for Struct__cef_load_handler_t {
 }
 pub type cef_load_handler_t = Struct__cef_load_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_task_t {
     pub base: cef_base_t,
     pub execute: ::std::option::Option<extern "C" fn
@@ -3003,7 +3003,7 @@ impl ::std::default::Default for Struct__cef_task_t {
 }
 pub type cef_task_t = Struct__cef_task_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_task_runner_t {
     pub base: cef_base_t,
     pub is_same: ::std::option::Option<extern "C" fn
@@ -3043,7 +3043,7 @@ impl ::std::default::Default for Struct__cef_task_runner_t {
 }
 pub type cef_task_runner_t = Struct__cef_task_runner_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8context_t {
     pub base: cef_base_t,
     pub get_task_runner: ::std::option::Option<extern "C" fn
@@ -3095,7 +3095,7 @@ impl ::std::default::Default for Struct__cef_v8context_t {
 }
 pub type cef_v8context_t = Struct__cef_v8context_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8handler_t {
     pub base: cef_base_t,
     pub execute: ::std::option::Option<extern "C" fn
@@ -3119,7 +3119,7 @@ impl ::std::default::Default for Struct__cef_v8handler_t {
 }
 pub type cef_v8handler_t = Struct__cef_v8handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8accessor_t {
     pub base: cef_base_t,
     pub get: ::std::option::Option<extern "C" fn
@@ -3145,7 +3145,7 @@ impl ::std::default::Default for Struct__cef_v8accessor_t {
 }
 pub type cef_v8accessor_t = Struct__cef_v8accessor_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8exception_t {
     pub base: cef_base_t,
     pub get_message: ::std::option::Option<extern "C" fn
@@ -3189,7 +3189,7 @@ impl ::std::default::Default for Struct__cef_v8exception_t {
 }
 pub type cef_v8exception_t = Struct__cef_v8exception_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8value_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -3419,7 +3419,7 @@ impl ::std::default::Default for Struct__cef_v8value_t {
 }
 pub type cef_v8value_t = Struct__cef_v8value_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8stack_trace_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -3444,7 +3444,7 @@ impl ::std::default::Default for Struct__cef_v8stack_trace_t {
 }
 pub type cef_v8stack_trace_t = Struct__cef_v8stack_trace_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_v8stack_frame_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -3489,7 +3489,7 @@ impl ::std::default::Default for Struct__cef_v8stack_frame_t {
 }
 pub type cef_v8stack_frame_t = Struct__cef_v8stack_frame_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_render_process_handler_t {
     pub base: cef_base_t,
     pub on_render_thread_created: ::std::option::Option<extern "C" fn
@@ -3596,7 +3596,7 @@ impl ::std::default::Default for Struct__cef_render_process_handler_t {
 }
 pub type cef_render_process_handler_t = Struct__cef_render_process_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_resource_bundle_handler_t {
     pub base: cef_base_t,
     pub get_localized_string: ::std::option::Option<extern "C" fn
@@ -3625,7 +3625,7 @@ impl ::std::default::Default for Struct__cef_resource_bundle_handler_t {
 pub type cef_resource_bundle_handler_t =
     Struct__cef_resource_bundle_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_response_t {
     pub base: cef_base_t,
     pub is_read_only: ::std::option::Option<extern "C" fn
@@ -3683,7 +3683,7 @@ impl ::std::default::Default for Struct__cef_response_t {
 }
 pub type cef_response_t = Struct__cef_response_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_resource_handler_t {
     pub base: cef_base_t,
     pub process_request: ::std::option::Option<extern "C" fn
@@ -3740,7 +3740,7 @@ impl ::std::default::Default for Struct__cef_resource_handler_t {
 }
 pub type cef_resource_handler_t = Struct__cef_resource_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_scheme_registrar_t {
     pub base: cef_base_t,
     pub add_custom_scheme: ::std::option::Option<extern "C" fn
@@ -3762,7 +3762,7 @@ impl ::std::default::Default for Struct__cef_scheme_registrar_t {
 }
 pub type cef_scheme_registrar_t = Struct__cef_scheme_registrar_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_scheme_handler_factory_t {
     pub base: cef_base_t,
     pub create: ::std::option::Option<extern "C" fn
@@ -3784,7 +3784,7 @@ impl ::std::default::Default for Struct__cef_scheme_handler_factory_t {
 }
 pub type cef_scheme_handler_factory_t = Struct__cef_scheme_handler_factory_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_app_t {
     pub base: cef_base_t,
     pub on_before_command_line_processing: ::std::option::Option<extern "C" fn
@@ -3822,7 +3822,7 @@ impl ::std::default::Default for Struct__cef_app_t {
 }
 pub type cef_app_t = Struct__cef_app_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_auth_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -3843,7 +3843,7 @@ impl ::std::default::Default for Struct__cef_auth_callback_t {
 }
 pub type cef_auth_callback_t = Struct__cef_auth_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_menu_model_t {
     pub base: cef_base_t,
     pub clear: ::std::option::Option<extern "C" fn
@@ -4166,7 +4166,7 @@ impl ::std::default::Default for Struct__cef_menu_model_t {
 }
 pub type cef_menu_model_t = Struct__cef_menu_model_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_context_menu_handler_t {
     pub base: cef_base_t,
     pub on_before_context_menu: ::std::option::Option<extern "C" fn
@@ -4211,7 +4211,7 @@ impl ::std::default::Default for Struct__cef_context_menu_handler_t {
 }
 pub type cef_context_menu_handler_t = Struct__cef_context_menu_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_context_menu_params_t {
     pub base: cef_base_t,
     pub get_xcoord: ::std::option::Option<extern "C" fn
@@ -4309,7 +4309,7 @@ impl ::std::default::Default for Struct__cef_context_menu_params_t {
 }
 pub type cef_context_menu_params_t = Struct__cef_context_menu_params_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_file_dialog_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -4331,7 +4331,7 @@ impl ::std::default::Default for Struct__cef_file_dialog_callback_t {
 }
 pub type cef_file_dialog_callback_t = Struct__cef_file_dialog_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_dialog_handler_t {
     pub base: cef_base_t,
     pub on_file_dialog: ::std::option::Option<extern "C" fn
@@ -4359,7 +4359,7 @@ impl ::std::default::Default for Struct__cef_dialog_handler_t {
 }
 pub type cef_dialog_handler_t = Struct__cef_dialog_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_display_handler_t {
     pub base: cef_base_t,
     pub on_address_change: ::std::option::Option<extern "C" fn
@@ -4422,7 +4422,7 @@ impl ::std::default::Default for Struct__cef_display_handler_t {
 }
 pub type cef_display_handler_t = Struct__cef_display_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_download_item_t {
     pub base: cef_base_t,
     pub is_valid: ::std::option::Option<extern "C" fn
@@ -4503,7 +4503,7 @@ impl ::std::default::Default for Struct__cef_download_item_t {
 }
 pub type cef_download_item_t = Struct__cef_download_item_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_before_download_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -4520,7 +4520,7 @@ impl ::std::default::Default for Struct__cef_before_download_callback_t {
 pub type cef_before_download_callback_t =
     Struct__cef_before_download_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_download_item_callback_t {
     pub base: cef_base_t,
     pub cancel: ::std::option::Option<extern "C" fn
@@ -4543,7 +4543,7 @@ impl ::std::default::Default for Struct__cef_download_item_callback_t {
 }
 pub type cef_download_item_callback_t = Struct__cef_download_item_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_download_handler_t {
     pub base: cef_base_t,
     pub on_before_download: ::std::option::Option<extern "C" fn
@@ -4576,7 +4576,7 @@ impl ::std::default::Default for Struct__cef_download_handler_t {
 }
 pub type cef_download_handler_t = Struct__cef_download_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_drag_handler_t {
     pub base: cef_base_t,
     pub on_drag_enter: ::std::option::Option<extern "C" fn
@@ -4597,7 +4597,7 @@ impl ::std::default::Default for Struct__cef_drag_handler_t {
 }
 pub type cef_drag_handler_t = Struct__cef_drag_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_find_handler_t {
     pub base: cef_base_t,
     pub on_find_result: ::std::option::Option<extern "C" fn
@@ -4621,7 +4621,7 @@ impl ::std::default::Default for Struct__cef_find_handler_t {
 }
 pub type cef_find_handler_t = Struct__cef_find_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_focus_handler_t {
     pub base: cef_base_t,
     pub on_take_focus: ::std::option::Option<extern "C" fn
@@ -4651,7 +4651,7 @@ impl ::std::default::Default for Struct__cef_focus_handler_t {
 }
 pub type cef_focus_handler_t = Struct__cef_focus_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_geolocation_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -4666,7 +4666,7 @@ impl ::std::default::Default for Struct__cef_geolocation_callback_t {
 }
 pub type cef_geolocation_callback_t = Struct__cef_geolocation_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_geolocation_handler_t {
     pub base: cef_base_t,
     pub on_request_geolocation_permission: ::std::option::Option<extern "C" fn
@@ -4700,7 +4700,7 @@ impl ::std::default::Default for Struct__cef_geolocation_handler_t {
 }
 pub type cef_geolocation_handler_t = Struct__cef_geolocation_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_jsdialog_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -4765,6 +4765,12 @@ pub struct Struct__cef_jsdialog_handler_t {
                                                          *mut Struct__cef_browser_t)
                                                     -> ()>,
 }
+impl Clone for Struct__cef_jsdialog_handler_t {
+    fn clone(&self) -> Struct__cef_jsdialog_handler_t {
+        *self
+    }
+}
+
 impl ::std::default::Default for Struct__cef_jsdialog_handler_t {
     fn default() -> Struct__cef_jsdialog_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -4772,7 +4778,7 @@ impl ::std::default::Default for Struct__cef_jsdialog_handler_t {
 }
 pub type cef_jsdialog_handler_t = Struct__cef_jsdialog_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_keyboard_handler_t {
     pub base: cef_base_t,
     pub on_pre_key_event: ::std::option::Option<extern "C" fn
@@ -4855,6 +4861,11 @@ pub struct Struct__cef_life_span_handler_t {
                                                         *mut Struct__cef_browser_t)
                                                    -> ()>,
 }
+impl Clone for Struct__cef_life_span_handler_t {
+    fn clone(&self) -> Struct__cef_life_span_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_life_span_handler_t {
     fn default() -> Struct__cef_life_span_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -4862,7 +4873,7 @@ impl ::std::default::Default for Struct__cef_life_span_handler_t {
 }
 pub type cef_life_span_handler_t = Struct__cef_life_span_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_render_handler_t {
     pub base: cef_base_t,
     pub get_root_screen_rect: ::std::option::Option<extern "C" fn
@@ -4969,7 +4980,7 @@ impl ::std::default::Default for Struct__cef_render_handler_t {
 }
 pub type cef_render_handler_t = Struct__cef_render_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_web_plugin_info_t {
     pub base: cef_base_t,
     pub get_name: ::std::option::Option<extern "C" fn
@@ -4996,7 +5007,7 @@ impl ::std::default::Default for Struct__cef_web_plugin_info_t {
 }
 pub type cef_web_plugin_info_t = Struct__cef_web_plugin_info_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_web_plugin_info_visitor_t {
     pub base: cef_base_t,
     pub visit: ::std::option::Option<extern "C" fn
@@ -5016,7 +5027,7 @@ impl ::std::default::Default for Struct__cef_web_plugin_info_visitor_t {
 pub type cef_web_plugin_info_visitor_t =
     Struct__cef_web_plugin_info_visitor_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_web_plugin_unstable_callback_t {
     pub base: cef_base_t,
     pub is_unstable: ::std::option::Option<extern "C" fn
@@ -5034,7 +5045,7 @@ impl ::std::default::Default for Struct__cef_web_plugin_unstable_callback_t {
 pub type cef_web_plugin_unstable_callback_t =
     Struct__cef_web_plugin_unstable_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_quota_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -5053,7 +5064,7 @@ impl ::std::default::Default for Struct__cef_quota_callback_t {
 }
 pub type cef_quota_callback_t = Struct__cef_quota_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_allow_certificate_error_callback_t {
     pub base: cef_base_t,
     pub cont: ::std::option::Option<extern "C" fn
@@ -5197,6 +5208,12 @@ pub struct Struct__cef_request_handler_t {
                                                                      cef_termination_status_t)
                                                                 -> ()>,
 }
+impl Clone for Struct__cef_request_handler_t {
+    fn clone(&self) -> Struct__cef_request_handler_t {
+        *self
+    }
+}
+
 impl ::std::default::Default for Struct__cef_request_handler_t {
     fn default() -> Struct__cef_request_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -5204,7 +5221,7 @@ impl ::std::default::Default for Struct__cef_request_handler_t {
 }
 pub type cef_request_handler_t = Struct__cef_request_handler_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_client_t {
     pub base: cef_base_t,
     pub get_context_menu_handler: ::std::option::Option<extern "C" fn
@@ -5294,7 +5311,7 @@ impl ::std::default::Default for Struct__cef_client_t {
 }
 pub type cef_client_t = Struct__cef_client_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_get_geolocation_callback_t {
     pub base: cef_base_t,
     pub on_location_update: ::std::option::Option<extern "C" fn
@@ -5312,7 +5329,7 @@ impl ::std::default::Default for Struct__cef_get_geolocation_callback_t {
 pub type cef_get_geolocation_callback_t =
     Struct__cef_get_geolocation_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_end_tracing_callback_t {
     pub base: cef_base_t,
     pub on_end_tracing_complete: ::std::option::Option<extern "C" fn
@@ -5329,7 +5346,7 @@ impl ::std::default::Default for Struct__cef_end_tracing_callback_t {
 }
 pub type cef_end_tracing_callback_t = Struct__cef_end_tracing_callback_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_urlrequest_t {
     pub base: cef_base_t,
     pub get_request: ::std::option::Option<extern "C" fn
@@ -5367,7 +5384,7 @@ impl ::std::default::Default for Struct__cef_urlrequest_t {
 }
 pub type cef_urlrequest_t = Struct__cef_urlrequest_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_urlrequest_client_t {
     pub base: cef_base_t,
     pub on_request_complete: ::std::option::Option<extern "C" fn
@@ -5422,7 +5439,7 @@ impl ::std::default::Default for Struct__cef_urlrequest_client_t {
 }
 pub type cef_urlrequest_client_t = Struct__cef_urlrequest_client_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_xml_reader_t {
     pub base: cef_base_t,
     pub move_to_next_node: ::std::option::Option<extern "C" fn
@@ -5573,7 +5590,7 @@ impl ::std::default::Default for Struct__cef_xml_reader_t {
 }
 pub type cef_xml_reader_t = Struct__cef_xml_reader_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_zip_reader_t {
     pub base: cef_base_t,
     pub move_to_first_file: ::std::option::Option<extern "C" fn

@@ -1,5 +1,3 @@
-#![feature(os)]
-
 extern crate cef;
 
 use std::default::Default;
@@ -7,16 +5,14 @@ use std::default::Default;
 fn main() {
     let result_code = cef::execute_process::<()>(None);
     if result_code >= 0 { // The process was a helper process, so end now.
-        std::os::set_exit_status(result_code);
-        return;
+        std::process::exit(result_code as i32);
     }
-    
+
     let settings = cef::Settings {
         log_file: Some("log.log"),
         locale: Some("en_GB"), // This improves CEF's grammar
         .. Default::default()
     };
-
     if !cef::initialize::<()>(&settings, None) {
         panic!("Initialising CEF failed. Please check the log file.")
     }
@@ -32,9 +28,10 @@ fn main() {
     cef::BrowserHost::create_browser_sync(
         &window_info, (), "http://www.google.com",
         &cef::BrowserSettings::new(), None);
-    
+
     cef::run_message_loop();
 
     // This is important for cleanup and stopping helper processes
     cef::shutdown();
+    println!("Done!");
 }

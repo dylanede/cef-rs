@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #![feature(
     unsafe_destructor,
     box_syntax,
@@ -15,11 +16,16 @@
 extern crate "cef-sys" as ffi;
 #[macro_use]
 extern crate bitflags;
+=======
+#![feature(box_syntax, libc, alloc, plugin, unsafe_no_drop_flag, filling_drop, str_utf16, heap_api, oom)]
+#![plugin(callc)]
+extern crate cef_sys as ffi;
+>>>>>>> 5282ffde0bb712c20c33a9978e8652811124cf18
 extern crate libc;
 extern crate alloc;
 
 #[cfg(target_os="windows")]
-extern crate "kernel32-sys" as kernel32;
+extern crate kernel32_sys as kernel32;
 
 #[allow(missing_copy_implementations)]
 pub enum Void {}
@@ -59,7 +65,7 @@ pub use browser_host::event_flags::EventFlags;
 pub use string::CefString;
 
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum State {
     Default,
     Enabled,
@@ -204,7 +210,7 @@ impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
 }
 
 #[repr(i32)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub enum CBool {
     False = 0,
     True = 1
@@ -397,11 +403,11 @@ impl<'a> WindowInfo<'a> {
 #[cfg(not(target_os="windows"))]
 fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ffi::CString;
-    let args: Vec<CString> = std::os::args().into_iter().map(|x| CString::from_vec(x.into_bytes())).collect();
+    let args: Vec<CString> = std::env::args().map(|x| CString::new(x).unwrap()).collect();
     println!("{:?}", args);
-    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_slice_with_nul().as_ptr() as *mut _).collect();
-    let args = &args[];
-    let args_ = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args[].as_ptr() as *mut _ };
+    let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_ptr() as *mut _).collect();
+    let args = &args;
+    let args_ = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args.as_ptr() as *mut _ };
     let result = f(args_);
     drop(args);
     result
@@ -446,11 +452,12 @@ pub fn do_message_loop_work() {
     unsafe { ffi::cef_do_message_loop_work() }
 }
 
-#[unsafe_destructor]
 impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
     fn drop(&mut self) {
         unsafe{
-            if self.inner != std::ptr::null_mut() {
+            if self.inner != std::ptr::null_mut()
+                && transmute::<_, usize>(self.inner) != ::std::mem::POST_DROP_USIZE
+            {
                 (*self.inner).release();
                 self.inner = std::ptr::null_mut();
             }

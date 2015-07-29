@@ -48,20 +48,20 @@ impl RequestHandler for Void {}
 
 #[allow(unused_variables)]
 pub trait BrowserClient : 'static {
-    type OutContextMenuHandler : ContextMenuHandler = ();
-    type OutDialogHandler : DialogHandler = ();
-    type OutDisplayHandler : DisplayHandler = ();
-    type OutDownloadHandler : DownloadHandler = ();
-    type OutDragHandler : DragHandler = ();
-    type OutFindHandler : FindHandler = ();
-    type OutFocusHandler : FocusHandler = ();
-    type OutGeolocationHandler : GeolocationHandler = ();
-    type OutJSDialogHandler : JSDialogHandler = ();
-    type OutKeyboardHandler : KeyboardHandler = ();
-    type OutLifeSpanHandler : LifeSpanHandler = ();
-    type OutLoadHandler : LoadHandler = ();
-    type OutRenderHandler : RenderHandler = ();
-    type OutRequestHandler : RequestHandler = ();
+    type OutContextMenuHandler : ContextMenuHandler = Void;
+    type OutDialogHandler : DialogHandler = Void;
+    type OutDisplayHandler : DisplayHandler = Void;
+    type OutDownloadHandler : DownloadHandler = Void;
+    type OutDragHandler : DragHandler = Void;
+    type OutFindHandler : FindHandler = Void;
+    type OutFocusHandler : FocusHandler = Void;
+    type OutGeolocationHandler : GeolocationHandler = Void;
+    type OutJSDialogHandler : JSDialogHandler = Void;
+    type OutKeyboardHandler : KeyboardHandler = Void;
+    type OutLifeSpanHandler : LifeSpanHandler = Void;
+    type OutLoadHandler : LoadHandler = Void;
+    type OutRenderHandler : RenderHandler = Void;
+    type OutRequestHandler : RequestHandler = Void;
 
     fn get_context_menu_handler(&mut self) -> Option<Self::OutContextMenuHandler> { None }
     fn get_dialog_handler(&mut self) -> Option<Self::OutDialogHandler> { None }
@@ -84,22 +84,7 @@ pub trait BrowserClient : 'static {
         message: &mut ProcessMessage) -> bool { false }
 }
 
-impl BrowserClient for () {
-    type OutContextMenuHandler = Void;
-    type OutDialogHandler = Void;
-    type OutDisplayHandler = Void;
-    type OutDownloadHandler = Void;
-    type OutDragHandler = Void;
-    type OutFindHandler = Void;
-    type OutFocusHandler = Void;
-    type OutGeolocationHandler = Void;
-    type OutJSDialogHandler = Void;
-    type OutKeyboardHandler = Void;
-    type OutLifeSpanHandler = Void;
-    type OutLoadHandler = Void;
-    type OutRenderHandler = Void;
-    type OutRequestHandler = Void;
-}
+impl BrowserClient for () {}
 
 #[repr(C)]
 pub struct BrowserClientWrapper<T : BrowserClient> {
