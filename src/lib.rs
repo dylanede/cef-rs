@@ -7,7 +7,8 @@
            str_utf16,
            heap_api,
            oom,
-           custom_derive)]
+           custom_derive,
+           associated_type_defaults)]
 #![plugin(callc)]
 #![plugin(num_macros)]
 extern crate cef_sys as ffi;
@@ -23,18 +24,49 @@ extern crate kernel32_sys as kernel32;
 pub enum Void {}
 
 use std::mem::{transmute, drop, size_of, zeroed};
-use std::ops::{Deref, DerefMut};
 use std::default::Default;
 
 mod app;
-pub mod string;
+mod string;
 mod browser_client;
 mod browser;
 mod browser_host;
+mod frame;
+pub use frame::Frame;
+mod request;
+pub use request::Request;
+mod v8;
+pub use v8::{
+    V8Context,
+    V8StackTrace,
+    V8Exception
+};
+mod dom;
+pub use dom::{
+    DOMNode
+};
+mod value;
+pub use value::{
+    ListValue,
+    BinaryValue,
+    DictionaryValue,
+    ValueItem
+};
 
-pub use app::App;
-pub use app::AppWrapper;
-pub use browser_client::{BrowserClient, BrowserClientWrapper};
+pub use app::{
+    App,
+    ResourceBundleHandler,
+    CommandLine,
+    SchemeRegistrar
+};
+#[doc(inline)]
+pub use app::render_process_handler::{LoadHandler, RenderProcessHandler};
+#[doc(inline)]
+pub use app::browser_process_handler::BrowserProcessHandler;
+
+use app::AppWrapper;
+#[doc(inline)]
+pub use browser_client::BrowserClient;
 pub use browser_client::render_handler::{
     Rect,
     Point,
@@ -42,7 +74,6 @@ pub use browser_client::render_handler::{
     CursorHandle,
     DragOperationsMask,
     RenderHandler,
-    RenderHandlerWrapper,
     PaintElementType,
     CursorDirection,
     CursorBidirection,
@@ -53,16 +84,29 @@ pub use browser::Browser;
 pub use browser_host::BrowserHost;
 pub use browser_host::BrowserSettings;
 pub use browser_host::{event_flags, MouseEvent, MouseButtonType};
+#[doc(inline)]
 pub use browser_host::event_flags::EventFlags;
-pub use string::CefString;
+use string::CefString;
 
 pub enum ProcessID {
     Browser,
     Renderer
 }
+impl ProcessID {
+    fn from_c(id: ffi::cef_process_id_t) -> Option<ProcessID> {
+        match id {
+            ffi::PID_BROWSER => Some(ProcessID::Browser),
+            ffi::PID_RENDERER => Some(ProcessID::Renderer),
+            _ => None
+        }
+    }
+}
 
-pub struct ProcessMessage;
-unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
+mod process_message;
+pub use process_message::ProcessMessage;
+//pub struct ProcessMessage;
+//unsafe impl Is<ffi::cef_base_t> for ProcessMessage {}
+//unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -76,34 +120,35 @@ pub fn shutdown() {
     unsafe { ffi::cef_shutdown() }
 }
 
+pub unsafe trait RefCountable {}
+
 #[repr(C)]
 #[unsafe_no_drop_flag]
-pub struct CefRc<T: Is<ffi::cef_base_t>> {
+pub struct CefRc<T: RefCountable> {
     inner: *mut T
 }
 
-pub unsafe trait Is<T> {}
-pub unsafe trait Interface<T> {}
+unsafe trait Is<T> {}
+unsafe trait Interface<T> {}
 
-unsafe impl Is<ffi::cef_base_t> for ffi::cef_base_t {}
-trait CefBase : Is<ffi::cef_base_t> {
+trait CefBase : RefCountable {
     fn add_ref(&mut self);
     fn release(&mut self) -> libc::c_int;
 }
 
-impl<T: Is<ffi::cef_base_t>> CefBase for T {
+impl<T: RefCountable> CefBase for T {
     fn add_ref(&mut self) {
-        let base: &mut ffi::cef_base_t = upcast_mut(self);
+        let base: &mut ffi::cef_base_t = as_base_mut(self);
         base.add_ref.unwrap()(base as *mut _)
     }
     fn release(&mut self) -> libc::c_int {
-        let base: &mut ffi::cef_base_t = upcast_mut(self);
+        let base: &mut ffi::cef_base_t = as_base_mut(self);
         base.release.unwrap()(base as *mut _)
     }
 }
 
-impl<T: Is<ffi::cef_base_t>> CefRc<T> {
-    fn make<F: FnOnce(ffi::cef_base_t) -> T>(f: F) -> CefRc<T> {
+impl<T: RefCountable> CefRc<T> {
+    unsafe fn make<F: FnOnce(ffi::cef_base_t) -> T>(f: F) -> CefRc<T> {
         use std::mem::size_of;
         use std::sync::atomic::AtomicUsize;
         use std::sync::atomic::Ordering;
@@ -144,7 +189,7 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
             if cell.count.load(Ordering::SeqCst) == 1 { 1 } else { 0 }
         }
         CefRc {
-            inner: unsafe { transmute(box RefCounted {
+            inner: transmute(box RefCounted {
                 v: f(ffi::cef_base_t {
                     size: size_of::<RefCounted<T>>() as libc::size_t,
                     add_ref: Some(add_ref::<T>),
@@ -152,7 +197,7 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
                     has_one_ref: Some(has_one_ref::<T>)
                 }),
                 count: AtomicUsize::new(1)
-            })}
+            })
         }
     }
     pub fn from_existing(ptr: *mut T) -> CefRc<T> {
@@ -160,17 +205,11 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
     }
 }
 
-impl<T: Is<ffi::cef_base_t>> Deref for CefRc<T> {
+impl<T: RefCountable> ::std::ops::Deref for CefRc<T> {
     type Target = T;
 
     fn deref<'a>(&'a self) -> &'a T {
         unsafe{ &*self.inner }
-    }
-}
-
-impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
-    fn deref_mut<'a>(&'a mut self) -> &'a mut T {
-        unsafe{ &mut *self.inner }
     }
 }
 
@@ -180,31 +219,35 @@ unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 
 fn upcast_mut<'a, T1 : Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
     unsafe{ transmute(x) }
 }
+fn as_base_mut<'a, T : RefCountable>(x: &'a mut T) -> &'a mut ffi::cef_base_t {
+    unsafe{ transmute(x) }
+}
+
 fn upcast<'a, T1 : Is<T2>, T2>(x: &'a T1) -> &'a T2 {
     unsafe{ transmute(x) }
 }
 
-fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_base_t> {
+fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : RefCountable {
     unsafe { transmute(x) }
 }
 
-unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2 : RefCountable {
     transmute(x)
 }
-
+/*
 fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
     unsafe{ transmute(x) }
 }
 
 fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
     unsafe{ transmute(x) }
-}
+}*/
 
-fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
+fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : RefCountable {
     unsafe{ transmute(x) }
 }
 
-fn cast_from_interface<T1, T2 : Interface<T1>>(x: CefRc<T2>) -> *mut T1 where T2 : Is<ffi::cef_base_t> {
+fn cast_from_interface<T1, T2 : Interface<T1>>(x: CefRc<T2>) -> *mut T1 where T2 : RefCountable {
     unsafe { transmute(x) }
 }
 
@@ -453,7 +496,7 @@ pub fn do_message_loop_work() {
     unsafe { ffi::cef_do_message_loop_work() }
 }
 
-impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
+impl<T: RefCountable> Drop for CefRc<T> {
     fn drop(&mut self) {
         unsafe{
             if self.inner != std::ptr::null_mut()
@@ -466,7 +509,7 @@ impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
     }
 }
 
-impl<T: Is<ffi::cef_base_t>> Clone for CefRc<T> {
+impl<T: RefCountable> Clone for CefRc<T> {
     fn clone(&self) -> CefRc<T> {
         unsafe{ (*self.inner).add_ref() };
         CefRc { inner: self.inner }

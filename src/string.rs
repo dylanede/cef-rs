@@ -7,7 +7,7 @@ use std::ptr::null_mut;
 use libc;
 use std::ops::{Deref, DerefMut};
 
-pub trait UTF16Ext {
+trait UTF16Ext {
     fn units<'a>(&'a self) -> &'a [u16];
     fn to_string(&self) -> String;
 }
@@ -58,8 +58,16 @@ impl<T: OwnableString> OwnedString<T> {
         forget(self);
         out
     }
+    pub fn view(v: &T) -> &Self {
+        unsafe{ transmute(v) }
+    }
 }
-
+impl<T: OwnableString> Deref for OwnedString<T> {
+    type Target = T;
+    fn deref<'a>(&'a self) -> &'a T {
+        &self.v
+    }
+}
 impl<T : OwnableString> Drop for OwnedString<T> {
     fn drop(&mut self) {
         use std::mem::zeroed;
@@ -73,7 +81,7 @@ pub type OwnedString16 = OwnedString<ffi::cef_string_utf16_t>;
 pub type CefString = OwnedString16;
 
 pub fn cast_from(s: ffi::cef_string_t) -> CefString {
-    unsafe { CefString{ v: transmute(s) } }
+    CefString{ v: s }
 }
 
 pub fn cast_from_userfree_ptr(s: ffi::cef_string_userfree_t) -> CefStringUserFreePtr {
@@ -118,22 +126,22 @@ impl<T: OwnableString> Drop for OwnedStringPtr<T> {
 }
 
 impl<T: OwnableString> Deref for OwnedStringPtr<T> {
-    type Target = T;
-    fn deref<'a>(&'a self) -> &'a T {
-        unsafe { &(*self.v) }
+    type Target = OwnedString<T>;
+    fn deref<'a>(&'a self) -> &'a OwnedString<T> {
+        unsafe { &(*transmute::<_, *mut _>(self.v)) }
     }
 }
 
 impl<T: OwnableString> DerefMut for OwnedStringPtr<T> {
-    fn deref_mut<'a>(&'a mut self) -> &'a mut T {
-        unsafe { &mut(*self.v) }
+    fn deref_mut<'a>(&'a mut self) -> &'a mut OwnedString<T> {
+        unsafe { &mut(*transmute::<_, *mut _>(self.v)) }
     }
 }
 
 
-pub fn cast_userfree<T : OwnableString>(s: *mut T) -> OwnedStringPtr<T> {
-    OwnedStringPtr { v: s }
-}
+//pub fn cast_userfree<T : OwnableString>(s: *mut T) -> OwnedStringPtr<T> {
+//    OwnedStringPtr { v: s }
+//}
 
 impl CefString {
     pub fn cast(self) -> ffi::cef_string_t {
@@ -179,5 +187,13 @@ impl CefString {
                 dtor: Some(release)
             }
         }
+    }
+    pub fn units<'a>(&'a self) -> &'a [u16] {
+        unsafe {
+            slice::from_raw_parts(self.v._str, self.v.length as usize)
+        }
+    }
+    pub fn to_string(&self) -> String {
+        String::from_utf16_lossy(self.units())
     }
 }

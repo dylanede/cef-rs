@@ -1,7 +1,7 @@
 use ffi;
 use CefRc;
 use Interface;
-use Is;
+use RefCountable;
 use browser_host::BrowserHost;
 use cast_to_interface;
 use cast_from_interface;
@@ -12,7 +12,7 @@ pub struct Browser {
 }
 
 unsafe impl Interface<ffi::cef_browser_t> for Browser {}
-unsafe impl Is<ffi::cef_base_t> for Browser {}
+unsafe impl RefCountable for Browser {}
 
 impl Browser {
     #[cfg(target_os="windows")]

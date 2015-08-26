@@ -1,10 +1,10 @@
 use ffi;
 use libc;
-use BrowserClientWrapper;
+use ::browser_client::BrowserClientWrapper;
 use Browser;
 use BrowserClient;
 use WindowInfo;
-use CefString;
+use ::string::CefString;
 use CefRc;
 use State;
 use upcast_ptr;
@@ -15,6 +15,7 @@ use upcast;
 
 use Interface;
 use Is;
+use RefCountable;
 
 use std::ptr::null_mut;
 use std::default::Default;
@@ -40,7 +41,7 @@ pub mod event_flags {
         }
     }
 }
-pub use self::event_flags::EventFlags;
+use EventFlags;
 
 #[derive(Copy, Clone)]
 #[repr(C)]
@@ -59,7 +60,7 @@ impl Default for MouseEvent {
         }
     }
 }
-
+#[doc(hidden)]
 unsafe impl Is<ffi::cef_mouse_event_t> for MouseEvent {}
 
 #[test]
@@ -82,7 +83,7 @@ pub struct BrowserHost {
 }
 
 unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
-unsafe impl Is<ffi::cef_base_t> for BrowserHost {}
+unsafe impl RefCountable for BrowserHost {}
 
 pub enum RequestContext {}
 
