@@ -19,7 +19,24 @@ use Is;
 use std::ptr::null_mut;
 use std::default::Default;
 
-pub mod keys;
+mod keys;
+
+#[derive(Debug, Copy, Clone)]
+pub struct Modifiers {
+    pub shift: bool,
+    pub control: bool,
+    pub alt: bool
+}
+
+impl Modifiers {
+    pub fn new() -> Modifiers {
+        Modifiers {
+            shift: false,
+            control: false,
+            alt: false
+        }
+    }
+}
 
 pub mod event_flags {
     bitflags! {
@@ -123,7 +140,7 @@ impl BrowserHost {
     }
 
     pub fn set_focus(&self, focused: bool) {
-        self.call1(&self.vtable.set_focus, focused as libc::c_int);
+        self.call1(&self.vtable.send_focus_event, focused as libc::c_int);
     }
 
     pub fn close_browser(&self, force: bool) {
@@ -158,6 +175,84 @@ impl BrowserHost {
              upcast(event) as *const _,
              delta.0, delta.1)
     }
+
+    pub fn send_char(&self, c: char) {
+        println!("CHAR EVENT {}", c);
+        let modifiers = keys::modifiers_for_char(c);
+        println!("char modifiers: {:?}", modifiers);
+        //let keycode = keys::win_vk_for_char(c);
+        let scan_code = keys::scan_code_for_char(c);
+        let c = c as u8;
+        //println!("sending key code: {:?}", keycode);
+        //let keycode = unsafe{ transmute(keycode) };
+        let mut mods = 0;
+        if modifiers.shift {
+            mods |= ffi::EVENTFLAG_SHIFT_DOWN;
+        }
+        if modifiers.alt {
+            mods |= ffi::EVENTFLAG_ALT_DOWN;
+        }
+        if modifiers.control {
+            mods |= ffi::EVENTFLAG_CONTROL_DOWN;
+        }
+        let native_key_code: i32 =
+            if cfg!(target_os = "windows") {
+                (((scan_code as u32) << 16) | 1) as i32
+            } else {
+                unimplemented!()
+            };
+        let event = ffi::cef_key_event_t {
+            _type: ffi::KEYEVENT_CHAR,
+            modifiers: mods as u32,
+            windows_key_code: c as i32,
+            native_key_code: native_key_code,
+            is_system_key: 0,
+            character: c as u16,
+            unmodified_character: c as u16,
+            focus_on_editable_field: 0
+        };
+        self.call1(&self.vtable.send_key_event, &event as *const _)
+    }
+    pub fn send_key_event(&self, pressed: bool, scan_code: u8, modifiers: Modifiers) {
+        println!("KEY EVENT");
+        let keycode = keys::win_vk_for_scan_code(scan_code);
+        let c = keys::char_for_scan_code(scan_code);
+        println!("sending modifiers: {:?}", modifiers);
+        println!("sending char: {:?}", c as char);
+        println!("sending key code: {:?}", keycode);
+        let mut mods = 0;
+        if modifiers.shift {
+            mods |= ffi::EVENTFLAG_SHIFT_DOWN;
+        }
+        if modifiers.alt {
+            mods |= ffi::EVENTFLAG_ALT_DOWN;
+        }
+        if modifiers.control {
+            mods |= ffi::EVENTFLAG_CONTROL_DOWN;
+        }
+        let keycode = unsafe{ transmute(keycode) };
+        let native_key_code: i32 =
+            if cfg!(target_os = "windows") {
+                (((scan_code as u32) << 16) | 1) as i32
+            } else {
+                unimplemented!()
+            };
+        let mut event = ffi::cef_key_event_t {
+            _type: if pressed { ffi::KEYEVENT_KEYDOWN } else { ffi::KEYEVENT_KEYUP },
+            modifiers: mods as u32,
+            windows_key_code: keycode,
+            native_key_code: native_key_code,
+            is_system_key: 0,
+            character: c as u16,
+            unmodified_character: c as u16,
+            focus_on_editable_field: 0
+        };
+        if cfg!(target_os = "windows") && !pressed {
+            event.native_key_code |= 0xC0000000u32 as i32;
+        }
+        self.call1(&self.vtable.send_key_event, &event as *const _)
+    }
+
     pub fn create_browser_sync<T: BrowserClient>(
         window_info: &WindowInfo,
         client: T,

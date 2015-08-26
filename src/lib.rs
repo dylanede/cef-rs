@@ -7,7 +7,8 @@
            str_utf16,
            heap_api,
            oom,
-           custom_derive)]
+           custom_derive,
+           associated_type_defaults)]
 #![plugin(callc)]
 #![plugin(num_macros)]
 extern crate cef_sys as ffi;
@@ -18,7 +19,7 @@ extern crate libc;
 extern crate alloc;
 
 #[cfg(target_os="windows")]
-extern crate kernel32_sys as kernel32;
+extern crate kernel32;
 
 pub enum Void {}
 
@@ -53,6 +54,7 @@ pub use browser::Browser;
 pub use browser_host::BrowserHost;
 pub use browser_host::BrowserSettings;
 pub use browser_host::{event_flags, MouseEvent, MouseButtonType};
+pub use browser_host::Modifiers;
 pub use browser_host::event_flags::EventFlags;
 pub use string::CefString;
 

@@ -19,7 +19,7 @@ pub type WPARAM = UINT_PTR;
 pub type LONG = u32;
 
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_tagPOINT {
     pub x: LONG,
     pub y: LONG,
@@ -30,7 +30,7 @@ impl ::std::default::Default for Struct_tagPOINT {
 pub type POINT = Struct_tagPOINT;
 
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct_tagMSG {
     pub hwnd: HWND,
     pub message: UINT,
@@ -52,6 +52,11 @@ pub struct Struct__cef_string_wide_t {
     pub length: size_t,
     pub dtor: ::std::option::Option<extern "stdcall" fn(str: *mut wchar_t) -> ()>,
 }
+impl Clone for Struct__cef_string_wide_t {
+    fn clone(&self) -> Struct__cef_string_wide_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_string_wide_t {
     fn default() -> Struct__cef_string_wide_t {
         unsafe { ::std::mem::zeroed() }
@@ -66,6 +71,11 @@ pub struct Struct__cef_string_utf8_t {
     pub dtor: ::std::option::Option<extern "stdcall" fn(str: *mut ::libc::c_char)
                                         -> ()>,
 }
+impl Clone for Struct__cef_string_utf8_t {
+    fn clone(&self) -> Struct__cef_string_utf8_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_string_utf8_t {
     fn default() -> Struct__cef_string_utf8_t {
         unsafe { ::std::mem::zeroed() }
@@ -78,6 +88,11 @@ pub struct Struct__cef_string_utf16_t {
     pub _str: *mut char16,
     pub length: size_t,
     pub dtor: ::std::option::Option<extern "stdcall" fn(str: *mut char16) -> ()>,
+}
+impl Clone for Struct__cef_string_utf16_t {
+    fn clone(&self) -> Struct__cef_string_utf16_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_string_utf16_t {
     fn default() -> Struct__cef_string_utf16_t {
@@ -95,7 +110,7 @@ pub type cef_string_list_t = *mut ::libc::c_void;
 pub type cef_string_map_t = *mut ::libc::c_void;
 pub type cef_string_multimap_t = *mut ::libc::c_void;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_time_t {
     pub year: ::libc::c_int,
     pub month: ::libc::c_int,
@@ -111,7 +126,7 @@ impl ::std::default::Default for Struct__cef_time_t {
 }
 pub type cef_time_t = Struct__cef_time_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_main_args_t {
     pub instance: HINSTANCE,
 }
@@ -122,7 +137,7 @@ impl ::std::default::Default for Struct__cef_main_args_t {
 }
 pub type cef_main_args_t = Struct__cef_main_args_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_window_info_t {
     pub ex_style: DWORD,
     pub window_name: cef_string_t,
@@ -162,7 +177,7 @@ pub const STATE_ENABLED: ::libc::c_int = 1;
 pub const STATE_DISABLED: ::libc::c_int = 2;
 pub type cef_state_t = Enum_Unnamed2;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_settings_t {
     pub size: size_t,
     pub single_process: ::libc::c_int,
@@ -193,7 +208,7 @@ impl ::std::default::Default for Struct__cef_settings_t {
 }
 pub type cef_settings_t = Struct__cef_settings_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_browser_settings_t {
     pub size: size_t,
     pub windowless_frame_rate: ::libc::c_int,
@@ -237,7 +252,7 @@ impl ::std::default::Default for Struct__cef_browser_settings_t {
 }
 pub type cef_browser_settings_t = Struct__cef_browser_settings_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_urlparts_t {
     pub spec: cef_string_t,
     pub scheme: cef_string_t,
@@ -254,7 +269,7 @@ impl ::std::default::Default for Struct__cef_urlparts_t {
 }
 pub type cef_urlparts_t = Struct__cef_urlparts_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_cookie_t {
     pub name: cef_string_t,
     pub value: cef_string_t,
@@ -418,7 +433,7 @@ pub const UR_CANCELED: ::libc::c_int = 3;
 pub const UR_FAILED: ::libc::c_int = 4;
 pub type cef_urlrequest_status_t = Enum_Unnamed14;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_point_t {
     pub x: ::libc::c_int,
     pub y: ::libc::c_int,
@@ -428,7 +443,7 @@ impl ::std::default::Default for Struct__cef_point_t {
 }
 pub type cef_point_t = Struct__cef_point_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_rect_t {
     pub x: ::libc::c_int,
     pub y: ::libc::c_int,
@@ -440,7 +455,7 @@ impl ::std::default::Default for Struct__cef_rect_t {
 }
 pub type cef_rect_t = Struct__cef_rect_t;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_size_t {
     pub width: ::libc::c_int,
     pub height: ::libc::c_int,
@@ -480,7 +495,7 @@ pub const JSDIALOGTYPE_CONFIRM: ::libc::c_int = 1;
 pub const JSDIALOGTYPE_PROMPT: ::libc::c_int = 2;
 pub type cef_jsdialog_type_t = Enum_Unnamed18;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_screen_info_t {
     pub device_scale_factor: ::libc::c_float,
     pub depth: ::libc::c_int,
@@ -528,7 +543,7 @@ pub const MBT_MIDDLE: ::libc::c_int = 1;
 pub const MBT_RIGHT: ::libc::c_int = 2;
 pub type cef_mouse_button_type_t = Enum_Unnamed20;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_mouse_event_t {
     pub x: ::libc::c_int,
     pub y: ::libc::c_int,
@@ -615,7 +630,7 @@ pub const KEYEVENT_KEYUP: ::libc::c_int = 2;
 pub const KEYEVENT_CHAR: ::libc::c_int = 3;
 pub type cef_key_event_type_t = Enum_Unnamed28;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_key_event_t {
     pub _type: cef_key_event_type_t,
     pub modifiers: uint32,
@@ -665,7 +680,7 @@ pub const XML_NODE_WHITESPACE: ::libc::c_int = 9;
 pub const XML_NODE_COMMENT: ::libc::c_int = 10;
 pub type cef_xml_node_type_t = Enum_Unnamed32;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_popup_features_t {
     pub x: ::libc::c_int,
     pub xSet: ::libc::c_int,
@@ -750,7 +765,7 @@ pub const GEOPOSITON_ERROR_POSITION_UNAVAILABLE: ::libc::c_int = 2;
 pub const GEOPOSITON_ERROR_TIMEOUT: ::libc::c_int = 3;
 pub type cef_geoposition_error_code_t = Enum_Unnamed38;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_geoposition_t {
     pub latitude: ::libc::c_double,
     pub longitude: ::libc::c_double,
@@ -799,7 +814,7 @@ pub const DUPLEX_MODE_LONG_EDGE: ::libc::c_int = 1;
 pub const DUPLEX_MODE_SHORT_EDGE: ::libc::c_int = 2;
 pub type cef_duplex_mode_t = Enum_Unnamed40;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_page_range_t {
     pub from: ::libc::c_int,
     pub to: ::libc::c_int,
@@ -857,7 +872,7 @@ pub const CT_GRABBING: ::libc::c_int = 42;
 pub const CT_CUSTOM: ::libc::c_int = 43;
 pub type cef_cursor_type_t = Enum_Unnamed41;
 #[repr(C)]
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct Struct__cef_cursor_info_t {
     pub hotspot: cef_point_t,
     pub image_scale_factor: ::libc::c_float,
@@ -884,6 +899,11 @@ pub struct Struct__cef_base_t {
                                                (_self:
                                                     *mut Struct__cef_base_t)
                                                -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_base_t {
+    fn clone(&self) -> Struct__cef_base_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_base_t {
     fn default() -> Struct__cef_base_t { unsafe { ::std::mem::zeroed() } }
@@ -996,6 +1016,11 @@ pub struct Struct__cef_command_line_t {
                                                         *const cef_string_t)
                                                    -> ()>,
 }
+impl Clone for Struct__cef_command_line_t {
+    fn clone(&self) -> Struct__cef_command_line_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_command_line_t {
     fn default() -> Struct__cef_command_line_t {
         unsafe { ::std::mem::zeroed() }
@@ -1028,6 +1053,11 @@ pub struct Struct__cef_read_handler_t {
                                              (_self:
                                                   *mut Struct__cef_read_handler_t)
                                              -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_read_handler_t {
+    fn clone(&self) -> Struct__cef_read_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_read_handler_t {
     fn default() -> Struct__cef_read_handler_t {
@@ -1062,6 +1092,11 @@ pub struct Struct__cef_stream_reader_t {
                                                   *mut Struct__cef_stream_reader_t)
                                              -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_stream_reader_t {
+    fn clone(&self) -> Struct__cef_stream_reader_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_stream_reader_t {
     fn default() -> Struct__cef_stream_reader_t {
         unsafe { ::std::mem::zeroed() }
@@ -1095,6 +1130,11 @@ pub struct Struct__cef_write_handler_t {
                                                   *mut Struct__cef_write_handler_t)
                                              -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_write_handler_t {
+    fn clone(&self) -> Struct__cef_write_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_write_handler_t {
     fn default() -> Struct__cef_write_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -1127,6 +1167,11 @@ pub struct Struct__cef_stream_writer_t {
                                              (_self:
                                                   *mut Struct__cef_stream_writer_t)
                                              -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_stream_writer_t {
+    fn clone(&self) -> Struct__cef_stream_writer_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_stream_writer_t {
     fn default() -> Struct__cef_stream_writer_t {
@@ -1245,6 +1290,11 @@ pub struct Struct__cef_drag_data_t {
                                              display_name:
                                                  *const cef_string_t) -> ()>,
 }
+impl Clone for Struct__cef_drag_data_t {
+    fn clone(&self) -> Struct__cef_drag_data_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_drag_data_t {
     fn default() -> Struct__cef_drag_data_t {
         unsafe { ::std::mem::zeroed() }
@@ -1261,6 +1311,11 @@ pub struct Struct__cef_domvisitor_t {
                                           document:
                                               *mut Struct__cef_domdocument_t)
                                          -> ()>,
+}
+impl Clone for Struct__cef_domvisitor_t {
+    fn clone(&self) -> Struct__cef_domvisitor_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_domvisitor_t {
     fn default() -> Struct__cef_domvisitor_t {
@@ -1337,6 +1392,11 @@ pub struct Struct__cef_domdocument_t {
                                                      partialURL:
                                                          *const cef_string_t)
                                                     -> cef_string_userfree_t>,
+}
+impl Clone for Struct__cef_domdocument_t {
+    fn clone(&self) -> Struct__cef_domdocument_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_domdocument_t {
     fn default() -> Struct__cef_domdocument_t {
@@ -1468,6 +1528,11 @@ pub struct Struct__cef_domnode_t {
                                                           ->
                                                               cef_string_userfree_t>,
 }
+impl Clone for Struct__cef_domnode_t {
+    fn clone(&self) -> Struct__cef_domnode_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_domnode_t {
     fn default() -> Struct__cef_domnode_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -1555,6 +1620,11 @@ pub struct Struct__cef_request_t {
                                                        ->
                                                            cef_transition_type_t>,
 }
+impl Clone for Struct__cef_request_t {
+    fn clone(&self) -> Struct__cef_request_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_request_t {
     fn default() -> Struct__cef_request_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -1594,6 +1664,11 @@ pub struct Struct__cef_post_data_t {
                                                    (_self:
                                                         *mut Struct__cef_post_data_t)
                                                    -> ()>,
+}
+impl Clone for Struct__cef_post_data_t {
+    fn clone(&self) -> Struct__cef_post_data_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_post_data_t {
     fn default() -> Struct__cef_post_data_t {
@@ -1643,6 +1718,11 @@ pub struct Struct__cef_post_data_element_t {
                                               bytes: *mut ::libc::c_void)
                                              -> size_t>,
 }
+impl Clone for Struct__cef_post_data_element_t {
+    fn clone(&self) -> Struct__cef_post_data_element_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_post_data_element_t {
     fn default() -> Struct__cef_post_data_element_t {
         unsafe { ::std::mem::zeroed() }
@@ -1657,6 +1737,11 @@ pub struct Struct__cef_string_visitor_t {
                                          (_self:
                                               *mut Struct__cef_string_visitor_t,
                                           string: *const cef_string_t) -> ()>,
+}
+impl Clone for Struct__cef_string_visitor_t {
+    fn clone(&self) -> Struct__cef_string_visitor_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_string_visitor_t {
     fn default() -> Struct__cef_string_visitor_t {
@@ -1770,6 +1855,11 @@ pub struct Struct__cef_frame_t {
                                                   *mut Struct__cef_domvisitor_t)
                                              -> ()>,
 }
+impl Clone for Struct__cef_frame_t {
+    fn clone(&self) -> Struct__cef_frame_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_frame_t {
     fn default() -> Struct__cef_frame_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -1820,6 +1910,11 @@ pub struct Struct__cef_navigation_entry_t {
                                                              *mut Struct__cef_navigation_entry_t)
                                                         -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_navigation_entry_t {
+    fn clone(&self) -> Struct__cef_navigation_entry_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_navigation_entry_t {
     fn default() -> Struct__cef_navigation_entry_t {
         unsafe { ::std::mem::zeroed() }
@@ -1852,6 +1947,11 @@ pub struct Struct__cef_binary_value_t {
                                              buffer: *mut ::libc::c_void,
                                              buffer_size: size_t,
                                              data_offset: size_t) -> size_t>,
+}
+impl Clone for Struct__cef_binary_value_t {
+    fn clone(&self) -> Struct__cef_binary_value_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_binary_value_t {
     fn default() -> Struct__cef_binary_value_t {
@@ -1998,6 +2098,11 @@ pub struct Struct__cef_dictionary_value_t {
                                                  *mut Struct__cef_list_value_t)
                                             -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_dictionary_value_t {
+    fn clone(&self) -> Struct__cef_dictionary_value_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_dictionary_value_t {
     fn default() -> Struct__cef_dictionary_value_t {
         unsafe { ::std::mem::zeroed() }
@@ -2133,6 +2238,11 @@ pub struct Struct__cef_list_value_t {
                                                  *mut Struct__cef_list_value_t)
                                             -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_list_value_t {
+    fn clone(&self) -> Struct__cef_list_value_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_list_value_t {
     fn default() -> Struct__cef_list_value_t {
         unsafe { ::std::mem::zeroed() }
@@ -2166,6 +2276,11 @@ pub struct Struct__cef_process_message_t {
                                                      ->
                                                          *mut Struct__cef_list_value_t>,
 }
+impl Clone for Struct__cef_process_message_t {
+    fn clone(&self) -> Struct__cef_process_message_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_process_message_t {
     fn default() -> Struct__cef_process_message_t {
         unsafe { ::std::mem::zeroed() }
@@ -2183,6 +2298,11 @@ pub struct Struct__cef_callback_t {
                                           (_self: *mut Struct__cef_callback_t)
                                           -> ()>,
 }
+impl Clone for Struct__cef_callback_t {
+    fn clone(&self) -> Struct__cef_callback_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_callback_t {
     fn default() -> Struct__cef_callback_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -2195,6 +2315,11 @@ pub struct Struct__cef_completion_callback_t {
                                                (_self:
                                                     *mut Struct__cef_completion_callback_t)
                                                -> ()>,
+}
+impl Clone for Struct__cef_completion_callback_t {
+    fn clone(&self) -> Struct__cef_completion_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_completion_callback_t {
     fn default() -> Struct__cef_completion_callback_t {
@@ -2257,6 +2382,11 @@ pub struct Struct__cef_cookie_manager_t {
                                                     *mut Struct__cef_completion_callback_t)
                                                -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_cookie_manager_t {
+    fn clone(&self) -> Struct__cef_cookie_manager_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_cookie_manager_t {
     fn default() -> Struct__cef_cookie_manager_t {
         unsafe { ::std::mem::zeroed() }
@@ -2276,6 +2406,11 @@ pub struct Struct__cef_cookie_visitor_t {
                                           deleteCookie: *mut ::libc::c_int)
                                          -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_cookie_visitor_t {
+    fn clone(&self) -> Struct__cef_cookie_visitor_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_cookie_visitor_t {
     fn default() -> Struct__cef_cookie_visitor_t {
         unsafe { ::std::mem::zeroed() }
@@ -2291,6 +2426,11 @@ pub struct Struct__cef_request_context_handler_t {
                                                            *mut Struct__cef_request_context_handler_t)
                                                       ->
                                                           *mut Struct__cef_cookie_manager_t>,
+}
+impl Clone for Struct__cef_request_context_handler_t {
+    fn clone(&self) -> Struct__cef_request_context_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_request_context_handler_t {
     fn default() -> Struct__cef_request_context_handler_t {
@@ -2318,6 +2458,11 @@ pub struct Struct__cef_request_context_t {
                                                     *mut Struct__cef_request_context_t)
                                                ->
                                                    *mut Struct__cef_request_context_handler_t>,
+}
+impl Clone for Struct__cef_request_context_t {
+    fn clone(&self) -> Struct__cef_request_context_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_request_context_t {
     fn default() -> Struct__cef_request_context_t {
@@ -2427,6 +2572,11 @@ pub struct Struct__cef_browser_t {
                                                              *mut Struct__cef_process_message_t)
                                                         -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_browser_t {
+    fn clone(&self) -> Struct__cef_browser_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_browser_t {
     fn default() -> Struct__cef_browser_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -2443,6 +2593,11 @@ pub struct Struct__cef_run_file_dialog_callback_t {
                                                              file_paths:
                                                                  cef_string_list_t)
                                                             -> ()>,
+}
+impl Clone for Struct__cef_run_file_dialog_callback_t {
+    fn clone(&self) -> Struct__cef_run_file_dialog_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_run_file_dialog_callback_t {
     fn default() -> Struct__cef_run_file_dialog_callback_t {
@@ -2464,6 +2619,11 @@ pub struct Struct__cef_navigation_entry_visitor_t {
                                           index: ::libc::c_int,
                                           total: ::libc::c_int)
                                          -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_navigation_entry_visitor_t {
+    fn clone(&self) -> Struct__cef_navigation_entry_visitor_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_navigation_entry_visitor_t {
     fn default() -> Struct__cef_navigation_entry_visitor_t {
@@ -2739,6 +2899,11 @@ pub struct Struct__cef_browser_host_t {
                                                                       *mut Struct__cef_browser_host_t)
                                                                  -> ()>,
 }
+impl Clone for Struct__cef_browser_host_t {
+    fn clone(&self) -> Struct__cef_browser_host_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_browser_host_t {
     fn default() -> Struct__cef_browser_host_t {
         unsafe { ::std::mem::zeroed() }
@@ -2861,6 +3026,11 @@ pub struct Struct__cef_print_settings_t {
                                                         *mut Struct__cef_print_settings_t)
                                                    -> cef_duplex_mode_t>,
 }
+impl Clone for Struct__cef_print_settings_t {
+    fn clone(&self) -> Struct__cef_print_settings_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_print_settings_t {
     fn default() -> Struct__cef_print_settings_t {
         unsafe { ::std::mem::zeroed() }
@@ -2882,6 +3052,11 @@ pub struct Struct__cef_print_dialog_callback_t {
                                                *mut Struct__cef_print_dialog_callback_t)
                                           -> ()>,
 }
+impl Clone for Struct__cef_print_dialog_callback_t {
+    fn clone(&self) -> Struct__cef_print_dialog_callback_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_print_dialog_callback_t {
     fn default() -> Struct__cef_print_dialog_callback_t {
         unsafe { ::std::mem::zeroed() }
@@ -2896,6 +3071,11 @@ pub struct Struct__cef_print_job_callback_t {
                                         (_self:
                                              *mut Struct__cef_print_job_callback_t)
                                         -> ()>,
+}
+impl Clone for Struct__cef_print_job_callback_t {
+    fn clone(&self) -> Struct__cef_print_job_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_print_job_callback_t {
     fn default() -> Struct__cef_print_job_callback_t {
@@ -2938,6 +3118,11 @@ pub struct Struct__cef_print_handler_t {
                                                        *mut Struct__cef_print_handler_t)
                                                   -> ()>,
 }
+impl Clone for Struct__cef_print_handler_t {
+    fn clone(&self) -> Struct__cef_print_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_print_handler_t {
     fn default() -> Struct__cef_print_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -2969,6 +3154,11 @@ pub struct Struct__cef_browser_process_handler_t {
                                                           *mut Struct__cef_browser_process_handler_t)
                                                      ->
                                                          *mut Struct__cef_print_handler_t>,
+}
+impl Clone for Struct__cef_browser_process_handler_t {
+    fn clone(&self) -> Struct__cef_browser_process_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_browser_process_handler_t {
     fn default() -> Struct__cef_browser_process_handler_t {
@@ -3024,6 +3214,11 @@ pub struct Struct__cef_load_handler_t {
                                                       *const cef_string_t)
                                                  -> ()>,
 }
+impl Clone for Struct__cef_load_handler_t {
+    fn clone(&self) -> Struct__cef_load_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_load_handler_t {
     fn default() -> Struct__cef_load_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -3037,6 +3232,11 @@ pub struct Struct__cef_task_t {
     pub execute: ::std::option::Option<extern "stdcall" fn
                                            (_self: *mut Struct__cef_task_t)
                                            -> ()>,
+}
+impl Clone for Struct__cef_task_t {
+    fn clone(&self) -> Struct__cef_task_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_task_t {
     fn default() -> Struct__cef_task_t { unsafe { ::std::mem::zeroed() } }
@@ -3075,6 +3275,11 @@ pub struct Struct__cef_task_runner_t {
                                                           *mut Struct__cef_task_t,
                                                       delay_ms: int64)
                                                      -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_task_runner_t {
+    fn clone(&self) -> Struct__cef_task_runner_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_task_runner_t {
     fn default() -> Struct__cef_task_runner_t {
@@ -3128,6 +3333,11 @@ pub struct Struct__cef_v8context_t {
                                              *mut *mut Struct__cef_v8exception_t)
                                         -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_v8context_t {
+    fn clone(&self) -> Struct__cef_v8context_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_v8context_t {
     fn default() -> Struct__cef_v8context_t {
         unsafe { ::std::mem::zeroed() }
@@ -3151,6 +3361,11 @@ pub struct Struct__cef_v8handler_t {
                                                 *mut *mut Struct__cef_v8value_t,
                                             exception: *mut cef_string_t)
                                            -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_v8handler_t {
+    fn clone(&self) -> Struct__cef_v8handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_v8handler_t {
     fn default() -> Struct__cef_v8handler_t {
@@ -3177,6 +3392,11 @@ pub struct Struct__cef_v8accessor_t {
                                         value: *mut Struct__cef_v8value_t,
                                         exception: *mut cef_string_t)
                                        -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_v8accessor_t {
+    fn clone(&self) -> Struct__cef_v8accessor_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_v8accessor_t {
     fn default() -> Struct__cef_v8accessor_t {
@@ -3221,6 +3441,11 @@ pub struct Struct__cef_v8exception_t {
                                                   (_self:
                                                        *mut Struct__cef_v8exception_t)
                                                   -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_v8exception_t {
+    fn clone(&self) -> Struct__cef_v8exception_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_v8exception_t {
     fn default() -> Struct__cef_v8exception_t {
@@ -3454,6 +3679,11 @@ pub struct Struct__cef_v8value_t {
                                                                  ->
                                                                      *mut Struct__cef_v8value_t>,
 }
+impl Clone for Struct__cef_v8value_t {
+    fn clone(&self) -> Struct__cef_v8value_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_v8value_t {
     fn default() -> Struct__cef_v8value_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -3476,6 +3706,11 @@ pub struct Struct__cef_v8stack_trace_t {
                                               index: ::libc::c_int)
                                              ->
                                                  *mut Struct__cef_v8stack_frame_t>,
+}
+impl Clone for Struct__cef_v8stack_trace_t {
+    fn clone(&self) -> Struct__cef_v8stack_trace_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_v8stack_trace_t {
     fn default() -> Struct__cef_v8stack_trace_t {
@@ -3521,6 +3756,11 @@ pub struct Struct__cef_v8stack_frame_t {
                                                   (_self:
                                                        *mut Struct__cef_v8stack_frame_t)
                                                   -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_v8stack_frame_t {
+    fn clone(&self) -> Struct__cef_v8stack_frame_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_v8stack_frame_t {
     fn default() -> Struct__cef_v8stack_frame_t {
@@ -3629,6 +3869,11 @@ pub struct Struct__cef_render_process_handler_t {
                                                                ->
                                                                    ::libc::c_int>,
 }
+impl Clone for Struct__cef_render_process_handler_t {
+    fn clone(&self) -> Struct__cef_render_process_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_render_process_handler_t {
     fn default() -> Struct__cef_render_process_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -3656,6 +3901,11 @@ pub struct Struct__cef_resource_bundle_handler_t {
                                                           *mut *mut ::libc::c_void,
                                                       data_size: *mut size_t)
                                                      -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_resource_bundle_handler_t {
+    fn clone(&self) -> Struct__cef_resource_bundle_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_resource_bundle_handler_t {
     fn default() -> Struct__cef_resource_bundle_handler_t {
@@ -3718,6 +3968,11 @@ pub struct Struct__cef_response_t {
                                                        cef_string_multimap_t)
                                                   -> ()>,
 }
+impl Clone for Struct__cef_response_t {
+    fn clone(&self) -> Struct__cef_response_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_response_t {
     fn default() -> Struct__cef_response_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -3773,6 +4028,11 @@ pub struct Struct__cef_resource_handler_t {
                                                *mut Struct__cef_resource_handler_t)
                                           -> ()>,
 }
+impl Clone for Struct__cef_resource_handler_t {
+    fn clone(&self) -> Struct__cef_resource_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_resource_handler_t {
     fn default() -> Struct__cef_resource_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -3795,6 +4055,11 @@ pub struct Struct__cef_scheme_registrar_t {
                                                           ::libc::c_int)
                                                      -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_scheme_registrar_t {
+    fn clone(&self) -> Struct__cef_scheme_registrar_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_scheme_registrar_t {
     fn default() -> Struct__cef_scheme_registrar_t {
         unsafe { ::std::mem::zeroed() }
@@ -3816,6 +4081,11 @@ pub struct Struct__cef_scheme_handler_factory_t {
                                                *mut Struct__cef_request_t)
                                           ->
                                               *mut Struct__cef_resource_handler_t>,
+}
+impl Clone for Struct__cef_scheme_handler_factory_t {
+    fn clone(&self) -> Struct__cef_scheme_handler_factory_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_scheme_handler_factory_t {
     fn default() -> Struct__cef_scheme_handler_factory_t {
@@ -3857,6 +4127,11 @@ pub struct Struct__cef_app_t {
                                                               ->
                                                                   *mut Struct__cef_render_process_handler_t>,
 }
+impl Clone for Struct__cef_app_t {
+    fn clone(&self) -> Struct__cef_app_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_app_t {
     fn default() -> Struct__cef_app_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -3875,6 +4150,11 @@ pub struct Struct__cef_auth_callback_t {
                                           (_self:
                                                *mut Struct__cef_auth_callback_t)
                                           -> ()>,
+}
+impl Clone for Struct__cef_auth_callback_t {
+    fn clone(&self) -> Struct__cef_auth_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_auth_callback_t {
     fn default() -> Struct__cef_auth_callback_t {
@@ -4199,6 +4479,11 @@ pub struct Struct__cef_menu_model_t {
                                                            *mut ::libc::c_int)
                                                       -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_menu_model_t {
+    fn clone(&self) -> Struct__cef_menu_model_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_menu_model_t {
     fn default() -> Struct__cef_menu_model_t {
         unsafe { ::std::mem::zeroed() }
@@ -4243,6 +4528,11 @@ pub struct Struct__cef_context_menu_handler_t {
                                                               frame:
                                                                   *mut Struct__cef_frame_t)
                                                              -> ()>,
+}
+impl Clone for Struct__cef_context_menu_handler_t {
+    fn clone(&self) -> Struct__cef_context_menu_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_context_menu_handler_t {
     fn default() -> Struct__cef_context_menu_handler_t {
@@ -4342,6 +4632,11 @@ pub struct Struct__cef_context_menu_params_t {
                                                         ->
                                                             cef_context_menu_edit_state_flags_t>,
 }
+impl Clone for Struct__cef_context_menu_params_t {
+    fn clone(&self) -> Struct__cef_context_menu_params_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_context_menu_params_t {
     fn default() -> Struct__cef_context_menu_params_t {
         unsafe { ::std::mem::zeroed() }
@@ -4363,6 +4658,11 @@ pub struct Struct__cef_file_dialog_callback_t {
                                           (_self:
                                                *mut Struct__cef_file_dialog_callback_t)
                                           -> ()>,
+}
+impl Clone for Struct__cef_file_dialog_callback_t {
+    fn clone(&self) -> Struct__cef_file_dialog_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_file_dialog_callback_t {
     fn default() -> Struct__cef_file_dialog_callback_t {
@@ -4391,6 +4691,11 @@ pub struct Struct__cef_dialog_handler_t {
                                                    callback:
                                                        *mut Struct__cef_file_dialog_callback_t)
                                                   -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_dialog_handler_t {
+    fn clone(&self) -> Struct__cef_dialog_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_dialog_handler_t {
     fn default() -> Struct__cef_dialog_handler_t {
@@ -4454,6 +4759,11 @@ pub struct Struct__cef_display_handler_t {
                                                            *const cef_string_t,
                                                        line: ::libc::c_int)
                                                       -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_display_handler_t {
+    fn clone(&self) -> Struct__cef_display_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_display_handler_t {
     fn default() -> Struct__cef_display_handler_t {
@@ -4536,6 +4846,11 @@ pub struct Struct__cef_download_item_t {
                                                       *mut Struct__cef_download_item_t)
                                                  -> cef_string_userfree_t>,
 }
+impl Clone for Struct__cef_download_item_t {
+    fn clone(&self) -> Struct__cef_download_item_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_download_item_t {
     fn default() -> Struct__cef_download_item_t {
         unsafe { ::std::mem::zeroed() }
@@ -4551,6 +4866,11 @@ pub struct Struct__cef_before_download_callback_t {
                                              *mut Struct__cef_before_download_callback_t,
                                          download_path: *const cef_string_t,
                                          show_dialog: ::libc::c_int) -> ()>,
+}
+impl Clone for Struct__cef_before_download_callback_t {
+    fn clone(&self) -> Struct__cef_before_download_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_before_download_callback_t {
     fn default() -> Struct__cef_before_download_callback_t {
@@ -4575,6 +4895,11 @@ pub struct Struct__cef_download_item_callback_t {
                                           (_self:
                                                *mut Struct__cef_download_item_callback_t)
                                           -> ()>,
+}
+impl Clone for Struct__cef_download_item_callback_t {
+    fn clone(&self) -> Struct__cef_download_item_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_download_item_callback_t {
     fn default() -> Struct__cef_download_item_callback_t {
@@ -4609,6 +4934,11 @@ pub struct Struct__cef_download_handler_t {
                                                             *mut Struct__cef_download_item_callback_t)
                                                        -> ()>,
 }
+impl Clone for Struct__cef_download_handler_t {
+    fn clone(&self) -> Struct__cef_download_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_download_handler_t {
     fn default() -> Struct__cef_download_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -4629,6 +4959,11 @@ pub struct Struct__cef_drag_handler_t {
                                                   mask:
                                                       cef_drag_operations_mask_t)
                                                  -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_drag_handler_t {
+    fn clone(&self) -> Struct__cef_drag_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_drag_handler_t {
     fn default() -> Struct__cef_drag_handler_t {
@@ -4653,6 +4988,11 @@ pub struct Struct__cef_find_handler_t {
                                                        ::libc::c_int,
                                                    finalUpdate: ::libc::c_int)
                                                   -> ()>,
+}
+impl Clone for Struct__cef_find_handler_t {
+    fn clone(&self) -> Struct__cef_find_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_find_handler_t {
     fn default() -> Struct__cef_find_handler_t {
@@ -4684,6 +5024,11 @@ pub struct Struct__cef_focus_handler_t {
                                                      *mut Struct__cef_browser_t)
                                                 -> ()>,
 }
+impl Clone for Struct__cef_focus_handler_t {
+    fn clone(&self) -> Struct__cef_focus_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_focus_handler_t {
     fn default() -> Struct__cef_focus_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -4698,6 +5043,11 @@ pub struct Struct__cef_geolocation_callback_t {
                                         (_self:
                                              *mut Struct__cef_geolocation_callback_t,
                                          allow: ::libc::c_int) -> ()>,
+}
+impl Clone for Struct__cef_geolocation_callback_t {
+    fn clone(&self) -> Struct__cef_geolocation_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_geolocation_callback_t {
     fn default() -> Struct__cef_geolocation_callback_t {
@@ -4733,6 +5083,11 @@ pub struct Struct__cef_geolocation_handler_t {
                                                                          ::libc::c_int)
                                                                     -> ()>,
 }
+impl Clone for Struct__cef_geolocation_handler_t {
+    fn clone(&self) -> Struct__cef_geolocation_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_geolocation_handler_t {
     fn default() -> Struct__cef_geolocation_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -4749,6 +5104,11 @@ pub struct Struct__cef_jsdialog_callback_t {
                                          success: ::libc::c_int,
                                          user_input: *const cef_string_t)
                                         -> ()>,
+}
+impl Clone for Struct__cef_jsdialog_callback_t {
+    fn clone(&self) -> Struct__cef_jsdialog_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_jsdialog_callback_t {
     fn default() -> Struct__cef_jsdialog_callback_t {
@@ -4805,6 +5165,11 @@ pub struct Struct__cef_jsdialog_handler_t {
                                                          *mut Struct__cef_browser_t)
                                                     -> ()>,
 }
+impl Clone for Struct__cef_jsdialog_handler_t {
+    fn clone(&self) -> Struct__cef_jsdialog_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_jsdialog_handler_t {
     fn default() -> Struct__cef_jsdialog_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -4835,6 +5200,11 @@ pub struct Struct__cef_keyboard_handler_t {
                                                      *const Struct__cef_key_event_t,
                                                  os_event: *mut MSG)
                                                 -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_keyboard_handler_t {
+    fn clone(&self) -> Struct__cef_keyboard_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_keyboard_handler_t {
     fn default() -> Struct__cef_keyboard_handler_t {
@@ -4892,6 +5262,11 @@ pub struct Struct__cef_life_span_handler_t {
                                                     browser:
                                                         *mut Struct__cef_browser_t)
                                                    -> ()>,
+}
+impl Clone for Struct__cef_life_span_handler_t {
+    fn clone(&self) -> Struct__cef_life_span_handler_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_life_span_handler_t {
     fn default() -> Struct__cef_life_span_handler_t {
@@ -4999,6 +5374,11 @@ pub struct Struct__cef_render_handler_t {
                                                                  *mut Struct__cef_browser_t)
                                                             -> ()>,
 }
+impl Clone for Struct__cef_render_handler_t {
+    fn clone(&self) -> Struct__cef_render_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_render_handler_t {
     fn default() -> Struct__cef_render_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -5026,6 +5406,11 @@ pub struct Struct__cef_web_plugin_info_t {
                                                         *mut Struct__cef_web_plugin_info_t)
                                                    -> cef_string_userfree_t>,
 }
+impl Clone for Struct__cef_web_plugin_info_t {
+    fn clone(&self) -> Struct__cef_web_plugin_info_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_web_plugin_info_t {
     fn default() -> Struct__cef_web_plugin_info_t {
         unsafe { ::std::mem::zeroed() }
@@ -5045,6 +5430,11 @@ pub struct Struct__cef_web_plugin_info_visitor_t {
                                           total: ::libc::c_int)
                                          -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_web_plugin_info_visitor_t {
+    fn clone(&self) -> Struct__cef_web_plugin_info_visitor_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_web_plugin_info_visitor_t {
     fn default() -> Struct__cef_web_plugin_info_visitor_t {
         unsafe { ::std::mem::zeroed() }
@@ -5062,6 +5452,11 @@ pub struct Struct__cef_web_plugin_unstable_callback_t {
                                                 path: *const cef_string_t,
                                                 unstable: ::libc::c_int)
                                                -> ()>,
+}
+impl Clone for Struct__cef_web_plugin_unstable_callback_t {
+    fn clone(&self) -> Struct__cef_web_plugin_unstable_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_web_plugin_unstable_callback_t {
     fn default() -> Struct__cef_web_plugin_unstable_callback_t {
@@ -5083,6 +5478,11 @@ pub struct Struct__cef_quota_callback_t {
                                                *mut Struct__cef_quota_callback_t)
                                           -> ()>,
 }
+impl Clone for Struct__cef_quota_callback_t {
+    fn clone(&self) -> Struct__cef_quota_callback_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_quota_callback_t {
     fn default() -> Struct__cef_quota_callback_t {
         unsafe { ::std::mem::zeroed() }
@@ -5097,6 +5497,11 @@ pub struct Struct__cef_allow_certificate_error_callback_t {
                                         (_self:
                                              *mut Struct__cef_allow_certificate_error_callback_t,
                                          allow: ::libc::c_int) -> ()>,
+}
+impl Clone for Struct__cef_allow_certificate_error_callback_t {
+    fn clone(&self) -> Struct__cef_allow_certificate_error_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for
  Struct__cef_allow_certificate_error_callback_t {
@@ -5234,6 +5639,11 @@ pub struct Struct__cef_request_handler_t {
                                                                      cef_termination_status_t)
                                                                 -> ()>,
 }
+impl Clone for Struct__cef_request_handler_t {
+    fn clone(&self) -> Struct__cef_request_handler_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_request_handler_t {
     fn default() -> Struct__cef_request_handler_t {
         unsafe { ::std::mem::zeroed() }
@@ -5326,6 +5736,11 @@ pub struct Struct__cef_client_t {
                                                                ->
                                                                    ::libc::c_int>,
 }
+impl Clone for Struct__cef_client_t {
+    fn clone(&self) -> Struct__cef_client_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_client_t {
     fn default() -> Struct__cef_client_t { unsafe { ::std::mem::zeroed() } }
 }
@@ -5340,6 +5755,11 @@ pub struct Struct__cef_get_geolocation_callback_t {
                                                        position:
                                                            *const Struct__cef_geoposition_t)
                                                       -> ()>,
+}
+impl Clone for Struct__cef_get_geolocation_callback_t {
+    fn clone(&self) -> Struct__cef_get_geolocation_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_get_geolocation_callback_t {
     fn default() -> Struct__cef_get_geolocation_callback_t {
@@ -5358,6 +5778,11 @@ pub struct Struct__cef_end_tracing_callback_t {
                                                             tracing_file:
                                                                 *const cef_string_t)
                                                            -> ()>,
+}
+impl Clone for Struct__cef_end_tracing_callback_t {
+    fn clone(&self) -> Struct__cef_end_tracing_callback_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_end_tracing_callback_t {
     fn default() -> Struct__cef_end_tracing_callback_t {
@@ -5396,6 +5821,11 @@ pub struct Struct__cef_urlrequest_t {
                                           (_self:
                                                *mut Struct__cef_urlrequest_t)
                                           -> ()>,
+}
+impl Clone for Struct__cef_urlrequest_t {
+    fn clone(&self) -> Struct__cef_urlrequest_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_urlrequest_t {
     fn default() -> Struct__cef_urlrequest_t {
@@ -5451,6 +5881,11 @@ pub struct Struct__cef_urlrequest_client_t {
                                                          callback:
                                                              *mut Struct__cef_auth_callback_t)
                                                         -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_urlrequest_client_t {
+    fn clone(&self) -> Struct__cef_urlrequest_client_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_urlrequest_client_t {
     fn default() -> Struct__cef_urlrequest_client_t {
@@ -5603,6 +6038,11 @@ pub struct Struct__cef_xml_reader_t {
                                                                  *mut Struct__cef_xml_reader_t)
                                                             -> ::libc::c_int>,
 }
+impl Clone for Struct__cef_xml_reader_t {
+    fn clone(&self) -> Struct__cef_xml_reader_t {
+        *self
+    }
+}
 impl ::std::default::Default for Struct__cef_xml_reader_t {
     fn default() -> Struct__cef_xml_reader_t {
         unsafe { ::std::mem::zeroed() }
@@ -5665,6 +6105,11 @@ pub struct Struct__cef_zip_reader_t {
     pub eof: ::std::option::Option<extern "stdcall" fn
                                        (_self: *mut Struct__cef_zip_reader_t)
                                        -> ::libc::c_int>,
+}
+impl Clone for Struct__cef_zip_reader_t {
+    fn clone(&self) -> Struct__cef_zip_reader_t {
+        *self
+    }
 }
 impl ::std::default::Default for Struct__cef_zip_reader_t {
     fn default() -> Struct__cef_zip_reader_t {

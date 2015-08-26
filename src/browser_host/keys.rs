@@ -1,5 +1,7 @@
+use Modifiers;
+
 #[allow(non_camel_case_types)]
-#[derive(NumFromPrimitive)]
+#[derive(NumFromPrimitive, Debug, Copy, Clone)]
 #[repr(u32)]
 pub enum WIN_VK {
     LBUTTON = 0x01,
@@ -201,11 +203,13 @@ pub enum WIN_VK {
 }
 
 #[cfg(target_os="windows")]
+#[link(name="user32")]
 extern "stdcall" {
-    fn MapVirtualKey(code: u32, map_type: u32) -> u32;
+    fn MapVirtualKeyA(code: u32, map_type: u32) -> u32;
+    fn VkKeyScanA(c: u8) -> u16;
 }
 
-//#[cfg(target_os="windows")]
+//#[cfg(target_os="windows")]        winapi::VK_LMENU => Some(VirtualKeyCode::LMenu),
 //pub fn get_win_scan_code(key: WIN_VK, pressed: bool) -> u32 {
 //    let code = unsafe { MapVirtualKey(key as u32, 0) };
 //    ((code << 16) | 1) | if pressed { 0 } else { 0xC0000000 }
@@ -213,6 +217,38 @@ extern "stdcall" {
 
 #[cfg(target_os="windows")]
 pub fn win_vk_for_scan_code(code: u8) -> WIN_VK {
-    use std::num::FromPrimitive;
-    FromPrimitive::from_u32(unsafe { MapVirtualKey(code as u32, 3) }).unwrap()
+    use num::FromPrimitive;
+    FromPrimitive::from_u32(unsafe { MapVirtualKeyA(code as u32, 3) }).unwrap()
 }
+#[cfg(target_os="windows")]
+pub fn char_for_scan_code(code: u8) -> u8 {
+    let vk = unsafe { MapVirtualKeyA(code as u32, 1) };
+    let c = unsafe { MapVirtualKeyA(vk, 2) };
+    (c & 0xFF) as u8
+}
+
+#[cfg(target_os="windows")]
+pub fn win_vk_for_char(c: char) -> WIN_VK {
+    use num::FromPrimitive;
+    FromPrimitive::from_u16(unsafe { VkKeyScanA(c as u8) & 0xFF }).unwrap()
+}
+
+#[cfg(target_os="windows")]
+pub fn scan_code_for_char(c: char) -> u8 {
+    let vk = unsafe { VkKeyScanA(c as u8) } as u32;
+    let scan_code = unsafe { MapVirtualKeyA(vk, 0) };
+    (scan_code & 0xFF) as u8
+}
+
+#[cfg(target_os="windows")]
+pub fn modifiers_for_char(c: char) -> Modifiers {
+    let mods = (unsafe { VkKeyScanA(c as u8) } >> 8) & 0xFF;
+    Modifiers {
+        shift: (mods & 1) != 0,
+        control: (mods & 2) != 0,
+        alt: (mods & 4) != 0
+    }
+}
+
+//#[cfg(target_os="windows")]
+//pub fn get_modifiers

@@ -1,5 +1,5 @@
 #![feature(libc, negate_unsigned)]
-#![allow(non_camel_case_types, non_snake_case, raw_pointer_derive, missing_copy_implementations)]
+#![allow(non_camel_case_types, non_snake_case, raw_pointer_derive, missing_copy_implementations, improper_ctypes)]
 extern crate libc;
 
 #[cfg(target_os="linux")]
