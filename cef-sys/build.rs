@@ -1,8 +1,3 @@
-#![feature(result_expect, path_ext)]
-
-//use std::os;
-//use std::old_io::fs::PathExtensions;
-
 enum Platform {
     Windows,
     Mac,
@@ -20,8 +15,8 @@ fn get_platform() -> Platform {
 
 fn main() {
     use std::path::Path;
-    use std::fs::PathExt;
     use std::env::consts;
+
     let dll_name = match get_platform() {
         Platform::Mac => return, // CEF_PATH is not necessarily needed for Mac
         Platform::Windows => "libcef",

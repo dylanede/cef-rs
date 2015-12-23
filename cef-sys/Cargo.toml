@@ -15,3 +15,6 @@ links = "cef"
 build = "build.rs"
 
 exclude = [ "*~", "*.racertmp" ]
+
+[dependencies]
+libc = "0.2.4"
