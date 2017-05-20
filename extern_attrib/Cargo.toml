@@ -1,0 +1,9 @@
+[package]
+name = "extern_attrib"
+version = "0.1.0"
+authors = ["anderejd <rajder@gmail.com>"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
