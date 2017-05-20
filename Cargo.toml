@@ -8,15 +8,17 @@ authors = ["Dylan Ede <dylanede@googlemail.com>"]
 bitflags = "0.1"
 num = "0.1"
 num-macros = "0.1"
+libc = "0.2.23"
 
 [dependencies.cef-sys]
 path = "cef-sys"
 
-[dependencies.callc]
-git = "https://github.com/dylanede/callc.git"
+[dependencies.extern_attrib]
+path = "extern_attrib"
 
 [target.x86_64-pc-windows-gnu.dependencies]
 kernel32-sys = "*"
 
 [target.x86-pc-windows-gnu.dependencies]
 kernel32-sys = "*"
+

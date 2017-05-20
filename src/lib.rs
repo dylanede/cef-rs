@@ -1,17 +1,20 @@
 #![feature(box_syntax,
-           libc,
+           //libc,
            alloc,
            plugin,
-           unsafe_no_drop_flag,
            filling_drop,
            str_utf16,
            heap_api,
            oom,
            custom_derive,
-           associated_type_defaults)]
-#![plugin(callc)]
-#![plugin(num_macros)]
+           associated_type_defaults,
+           proc_macro,
+)]
+
+//#![plugin(num_macros)]
+
 extern crate cef_sys as ffi;
+extern crate extern_attrib;
 #[macro_use]
 extern crate bitflags;
 extern crate num;
@@ -21,11 +24,14 @@ extern crate alloc;
 #[cfg(target_os="windows")]
 extern crate kernel32;
 
-pub enum Void {}
+/// TODO: Investigate if this was special older versions of Rust.
+//pub enum Void {}
 
 use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
 use std::default::Default;
+
+use extern_attrib::extern_auto;
 
 mod app;
 pub mod string;
@@ -40,7 +46,7 @@ pub use browser_client::render_handler::{
     Rect,
     Point,
     Size,
-    CursorHandle,
+    //CursorHandle,
     DragOperationsMask,
     RenderHandler,
     RenderHandlerWrapper,
@@ -79,7 +85,6 @@ pub fn shutdown() {
 }
 
 #[repr(C)]
-#[unsafe_no_drop_flag]
 pub struct CefRc<T: Is<ffi::cef_base_t>> {
     inner: *mut T
 }
@@ -119,14 +124,14 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
         }
         unsafe impl<T> Is<ffi::cef_base_t> for RefCounted<T> {}
 
-        #[stdcall_win]
-        extern "C" fn add_ref<T>(_self: *mut ffi::cef_base_t) {
+        #[extern_auto]
+        fn add_ref<T>(_self: *mut ffi::cef_base_t) {
             //println!("add {:?}", size_of::<T>());
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
             cell.count.fetch_add(1, Ordering::Relaxed);
         }
-        #[stdcall_win]
-        extern "C" fn release<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
+        #[extern_auto]
+        fn release<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
             //println!("release {:?}", size_of::<T>());
             unsafe {
                 let cell: *mut RefCounted<T> = transmute(_self);
@@ -140,8 +145,8 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
                 if old_count == 1 { 1 } else { 0 }
             }
         }
-        #[stdcall_win]
-        extern "C" fn has_one_ref<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
+        #[extern_auto]
+        fn has_one_ref<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
             let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
             if cell.count.load(Ordering::SeqCst) == 1 { 1 } else { 0 }
         }
@@ -423,7 +428,8 @@ fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     f(args_)
 }
 
-pub fn execute_process<T : App = Void>(app: Option<T>) -> isize {
+/// TODO: Investigate issue #36887 <https://github.com/rust-lang/rust/issues/36887>
+pub fn execute_process<T : App>(app: Option<T>) -> isize {
     with_args(move |args| unsafe {
         ffi::cef_execute_process(
             &args as *const _,
@@ -432,7 +438,8 @@ pub fn execute_process<T : App = Void>(app: Option<T>) -> isize {
     })
 }
 
-pub fn initialize<T : App = Void>(settings: &Settings, app: Option<T>) -> bool {
+/// TODO: Investigate issue #36887 <https://github.com/rust-lang/rust/issues/36887>
+pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
     let settings = settings.to_cef();
     let result = with_args(move |args| unsafe{
         ffi::cef_initialize(
@@ -459,7 +466,6 @@ impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
     fn drop(&mut self) {
         unsafe{
             if self.inner != std::ptr::null_mut()
-                && transmute::<_, usize>(self.inner) != ::std::mem::POST_DROP_USIZE
             {
                 (*self.inner).release();
                 self.inner = std::ptr::null_mut();

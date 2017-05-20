@@ -9,7 +9,7 @@ mod tests {
     fn extern_auto_resolves_as_expected() {
         #[extern_auto]
         #[cfg(not(extra_attrib_to_make_things_harder = "for the procedural macro"))]
-        fn modified_by_attrib() -> i32 {
+        extern "Rust" fn modified_by_attrib() -> i32 {
             1 + 2
         }
 

@@ -6,6 +6,7 @@ use alloc::heap::{allocate, deallocate};
 use std::ptr::null_mut;
 use libc;
 use std::ops::{Deref, DerefMut};
+use extern_attrib::extern_auto;
 
 pub trait UTF16Ext {
     fn units<'a>(&'a self) -> &'a [u16];
@@ -27,7 +28,9 @@ pub trait OwnableString {
     unsafe fn alloc() -> *mut Self;
     unsafe fn free(v: *mut Self);
     fn release(&mut self);
-    fn is_drop_fill(&self) -> bool;
+
+    // TODO: Investigate how this used to work on old unstable rust.
+    //fn is_drop_fill(&self) -> bool;
 }
 
 impl OwnableString for ffi::cef_string_utf16_t {
@@ -40,13 +43,15 @@ impl OwnableString for ffi::cef_string_utf16_t {
     fn release(&mut self) {
         self.dtor.map(|f| f(self._str));
     }
+    /*
+        TODO: Investigate how this used to work on old unstable rust.
     fn is_drop_fill(&self) -> bool {
         unsafe { transmute::<_, usize>(self._str) == ::std::mem::POST_DROP_USIZE }
     }
+    */
 }
 
 #[repr(C)]
-#[unsafe_no_drop_flag]
 pub struct OwnedString<T : OwnableString> {
     v: T
 }
@@ -63,9 +68,9 @@ impl<T: OwnableString> OwnedString<T> {
 impl<T : OwnableString> Drop for OwnedString<T> {
     fn drop(&mut self) {
         use std::mem::zeroed;
-        if !self.v.is_drop_fill() {
-            unsafe{ self.v.release(); self.v = zeroed() }
-        }
+        //if !self.v.is_drop_fill() {
+        unsafe{ self.v.release(); self.v = zeroed() }
+        //}
     }
 }
 
@@ -85,7 +90,6 @@ pub fn cast_to_ptr<T: OwnableString>(s: *const OwnedString<T>) -> *const T {
 }
 
 #[repr(C)]
-#[unsafe_no_drop_flag]
 pub struct OwnedStringPtr<T : OwnableString> {
     v: *mut T
 }
@@ -106,13 +110,14 @@ impl<T: OwnableString> Drop for OwnedStringPtr<T> {
     fn drop(&mut self) {
         use std::mem::zeroed;
         unsafe {
-            if transmute::<_, usize>(self.v) != ::std::mem::POST_DROP_USIZE {
-                if self.v != null_mut() {
-                    (*self.v).release();
-                    T::free(self.v);
-                }
-                self.v = zeroed();
+            // TODO: Investigate anchient drop flags. Could this be related?
+            // https://github.com/rust-lang/rust/pull/39304/commits/4ba6e1b68892667401695056621dbbf632bf6775
+            //if transmute::<_, usize>(self.v) != ::std::mem::POST_DROP_USIZE {
+            if self.v != null_mut() {
+                (*self.v).release();
+                T::free(self.v);
             }
+            self.v = zeroed();
         }
     }
 }
@@ -142,7 +147,7 @@ impl CefString {
     pub fn from_str(s: &str) -> CefString {
         use std::ptr::copy_nonoverlapping;
 
-        let data: Vec<u16> = s.utf16_units().collect();
+        let data: Vec<u16> = s.encode_utf16().collect();
 
         let (ptr, size) = if data.len() == 0 {
             (null_mut(), 0)
@@ -161,8 +166,8 @@ impl CefString {
         }
         let ptr = ptr as *mut u16;
         unsafe { copy_nonoverlapping(data.as_ptr(), ptr, data.len()) };
-        #[stdcall_win]
-        extern fn release(str: *mut u16) {
+        #[extern_auto]
+        fn release(str: *mut u16) {
             if str == null_mut() { return; }
             unsafe {
                 let mut ptr = str as *mut usize;

@@ -1,24 +1,25 @@
 use ffi;
 
-use Void;
+//use Void;
 use Is;
 use CefRc;
 use unsafe_downcast_mut;
 use std::mem::zeroed;
 use std::ops::{Deref, DerefMut};
+use extern_attrib::extern_auto;
 
 trait ResourceBundleHandler {}
-impl ResourceBundleHandler for Void {}
+//impl ResourceBundleHandler for Void {}
 trait BrowserProcessHandler {}
-impl BrowserProcessHandler for Void {}
+//impl BrowserProcessHandler for Void {}
 trait RenderProcessHandler {}
-impl RenderProcessHandler for Void {}
+//impl RenderProcessHandler for Void {}
 
 #[allow(unused_variables)]
 pub trait App : 'static {
-    type OutResourceBundleHandler : ResourceBundleHandler = Void;
-    type OutBrowserProcessHandler : BrowserProcessHandler = Void;
-    type OutRenderProcessHandler : RenderProcessHandler = Void;
+    type OutResourceBundleHandler : ResourceBundleHandler;
+    type OutBrowserProcessHandler : BrowserProcessHandler;
+    type OutRenderProcessHandler : RenderProcessHandler;
 
     fn on_before_command_line_processing(&mut self,
                                          process_type: &ffi::cef_string_t,
@@ -29,7 +30,8 @@ pub trait App : 'static {
     fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
 }
 
-impl App for Void {}
+// TODO: Investigate the purpose. Does this work in Rust 2017?
+//impl App for Void {}
 
 #[repr(C)]
 pub struct AppWrapper<T : App> {
@@ -55,8 +57,8 @@ unsafe impl<T: App> Is<ffi::cef_app_t> for AppWrapper<T> {}
 
 impl<T : App> AppWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<AppWrapper<T>> {
-        #[stdcall_win]
-        extern fn obclp<T : App>(_self: *mut ffi::cef_app_t,
+        #[extern_auto]
+        fn obclp<T : App>(_self: *mut ffi::cef_app_t,
                         process_type: *const ffi::cef_string_t,
                         command_line: *mut ffi::cef_command_line_t) {
             unsafe {
@@ -64,32 +66,32 @@ impl<T : App> AppWrapper<T> {
                 this.callback.on_before_command_line_processing(&*process_type, &mut *command_line);
             }
         }
-        #[stdcall_win]
-        extern fn orcs<T : App>(_self: *mut ffi::cef_app_t,
+        #[extern_auto]
+        fn orcs<T : App>(_self: *mut ffi::cef_app_t,
                                      registrar: *mut ffi::cef_scheme_registrar_t) {
             unsafe {
                 let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 this.callback.on_register_custom_schemes(&mut *registrar);
             }
         }
-        #[stdcall_win]
-        extern fn grbh<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_resource_bundle_handler_t {
+        #[extern_auto]
+        fn grbh<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_resource_bundle_handler_t {
             unsafe {
                 zeroed()
                 //let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 //this.callback.get_resource_bundle_handler().map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed())
             }
         }
-        #[stdcall_win]
-        extern fn gbph<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_browser_process_handler_t {
+        #[extern_auto]
+        fn gbph<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_browser_process_handler_t {
             unsafe {
                 zeroed()
                 //let this : &mut App<T> = transmute_mut_ref(&mut *_self);
                 //this.callback.get_browser_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
         }
-        #[stdcall_win]
-        extern fn grph<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_render_process_handler_t {
+        #[extern_auto]
+        fn grph<T : App>(_self: *mut ffi::cef_app_t) -> *mut ffi::cef_render_process_handler_t {
             unsafe {
                 zeroed()
                 //let this : &mut App<T> = transmute_mut_ref(&mut *_self);

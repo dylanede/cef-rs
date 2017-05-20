@@ -5,7 +5,8 @@ extern crate cef;
 use std::default::Default;
 
 fn main() {
-    let result_code = cef::execute_process(None);
+    let app: Option<cef::App> = None;
+    let result_code = cef::execute_process(app);
     if result_code >= 0 { // The process was a helper process, so end now.
         std::process::exit(result_code as i32);
     }

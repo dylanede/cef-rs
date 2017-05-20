@@ -14,16 +14,9 @@ use syn::ItemKind;
 #[proc_macro_attribute]
 pub fn extern_auto(_: TokenStream, input: TokenStream) -> TokenStream {
     let src = input.to_string();
-    let item = syn::parse_item(&src);
-    let mut item = match item {
-        Ok(i) => i,
-        Err(_) => {
-            // Ignore syntax errors and let the compiler handle it.
-            eprintln!("Parse error in extern_auto.");
-            return input
-        }
-    };
-    {
+    let err_str = "Attribute extern_auto is only supported on functions.";
+    let mut item = syn::parse_item(&src).expect(err_str);
+    { //! This scope drops abi_opt after mutation.
         let abi_opt = match item.node {
             ItemKind::Fn(_, _, _, ref mut opt, _, _) => opt,
             _ => return input
@@ -31,7 +24,8 @@ pub fn extern_auto(_: TokenStream, input: TokenStream) -> TokenStream {
         modify_abi(abi_opt);
     }
     let tokens = quote!(#item).to_string();
-    println!("tokens: {}", tokens);
+    // Uncomment for debug help:
+    // println!("tokens: {}", tokens);
     TokenStream::from_str(&tokens).unwrap() // TODO: Handle error.
 }
 
