@@ -7,7 +7,7 @@ mod tests {
 
     #[test]
     fn extern_auto_resolves_as_expected() {
-        #![extern_auto]
+        #[extern_auto]
         fn modified_by_attrib() -> i32 {
             1 + 2
         }
