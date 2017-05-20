@@ -14,7 +14,7 @@ libc = "0.2.23"
 path = "cef-sys"
 
 [dependencies.extern_attrib]
-path = "extern_attrib"
+git = "https://github.com/anderejd/extern_attrib"
 
 [target.x86_64-pc-windows-gnu.dependencies]
 kernel32-sys = "*"
