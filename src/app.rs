@@ -37,7 +37,7 @@ pub trait App : 'static {
 }
 
 // TODO: Investigate the purpose. Does this work in Rust 2017?
-//impl App for Void {}
+impl App for () {}
 
 #[repr(C)]
 pub struct AppWrapper<T : App> {

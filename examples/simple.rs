@@ -4,8 +4,9 @@ extern crate cef;
 
 use std::default::Default;
 
+/// TODO: Remove generics cef::* and provide structs with builders.
 fn main() {
-    let app: Option<cef::App> = None;
+    let app: Option<()> = None;
     let result_code = cef::execute_process(app);
     if result_code >= 0 { // The process was a helper process, so end now.
         std::process::exit(result_code as i32);
@@ -16,7 +17,7 @@ fn main() {
         locale: Some("en_GB"), // This improves CEF's grammar ;-)
         .. Default::default()
     };
-    if !cef::initialize(&settings, None) {
+    if !cef::initialize(&settings, app) {
         panic!("Initialising CEF failed. Please check the log file.")
     }
 
