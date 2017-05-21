@@ -15,7 +15,7 @@ pub trait UTF16Ext {
 
 impl UTF16Ext for ffi::cef_string_utf16_t {
     fn units<'a>(&'a self) -> &'a [u16] {
-        unsafe { slice::from_raw_parts(self._str, self.length as usize) }
+        unsafe { slice::from_raw_parts(self.str, self.length as usize) }
     }
     fn to_string(&self) -> String {
         String::from_utf16_lossy(self.units())
@@ -39,7 +39,9 @@ impl OwnableString for ffi::cef_string_utf16_t {
         ffi::cef_string_userfree_utf16_free(v)
     }
     fn release(&mut self) {
-        self.dtor.map(|f| f(self._str));
+        unsafe {
+            self.dtor.map(|f| f(self.str));
+        }
     }
     /*
         TODO: Investigate how this used to work on old unstable rust.
@@ -185,7 +187,7 @@ impl CefString {
 
         OwnedString {
             v: ffi::cef_string_utf16_t {
-                _str: ptr,
+                str: ptr,
                 length: data.len() as libc::size_t,
                 dtor: Some(release),
             },

@@ -1,3 +1,7 @@
+/*
+    Many build errors here, the code looks overcomplicated and I will not
+    deal with this now. TODO: Investigate later.
+
 use ffi;
 use libc;
 use BrowserClientWrapper;
@@ -99,7 +103,7 @@ pub struct BrowserHost {
 }
 
 unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
-unsafe impl Is<ffi::cef_base_t> for BrowserHost {}
+unsafe impl Is<ffi::cef_base_ref_counted_t> for BrowserHost {}
 
 /// TODO: Investigate and implement.
 pub enum RequestContext {}
@@ -355,3 +359,5 @@ fn check_browser_settings_size() {
     use std::mem::size_of;
     assert!(size_of::<BrowserSettings>() == size_of::<ffi::cef_browser_settings_t>());
 }
+
+*/

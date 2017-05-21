@@ -1,3 +1,7 @@
+/* 
+    Many build errors here and the code below seems to use definitions from
+    cef-dist/include/internal, TODO: Investigate later.
+
 use ffi;
 use Is;
 use CefRc;
@@ -6,7 +10,7 @@ use libc;
 //use Interface;
 //use Void;
 
-use Browser;
+//use Browser;
 use ProcessID;
 use ProcessMessage;
 
@@ -117,12 +121,12 @@ impl BrowserClient for () {}
 
 #[repr(C)]
 pub struct BrowserClientWrapper<T: BrowserClient> {
-    vtable: ffi::cef_client_t,
+    vtable: ffi::_cef_client_t,
     callback: T,
 }
 
-unsafe impl<T: BrowserClient> Is<ffi::cef_base_t> for BrowserClientWrapper<T> {}
-unsafe impl<T: BrowserClient> Is<ffi::cef_client_t> for BrowserClientWrapper<T> {}
+unsafe impl<T: BrowserClient> Is<ffi::cef_base_ref_counted_t> for BrowserClientWrapper<T> {}
+unsafe impl<T: BrowserClient> Is<ffi::_cef_client_t> for BrowserClientWrapper<T> {}
 
 impl<T: BrowserClient> BrowserClientWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<BrowserClientWrapper<T>> {
@@ -130,69 +134,69 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         use unsafe_downcast_mut;
         use cast_mut_ref;
         #[extern_auto]
-        fn _1(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_context_menu_handler_t {
+        fn _1(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_context_menu_handler_t {
             //println!("context menu");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _2(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_dialog_handler_t {
+        fn _2(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_dialog_handler_t {
             //println!("dialog");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _3(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_display_handler_t {
+        fn _3(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_display_handler_t {
             //println!("display");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _4(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_download_handler_t {
+        fn _4(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_download_handler_t {
             //println!("download");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _5(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_drag_handler_t {
+        fn _5(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_drag_handler_t {
             //println!("drag");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _6(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_find_handler_t {
+        fn _6(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_find_handler_t {
             //println!("find");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _7(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_focus_handler_t {
+        fn _7(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_focus_handler_t {
             //println!("focus");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _8(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_geolocation_handler_t {
+        fn _8(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_geolocation_handler_t {
             //println!("geo");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _9(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_jsdialog_handler_t {
+        fn _9(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_jsdialog_handler_t {
             //println!("js");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _10(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_keyboard_handler_t {
+        fn _10(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_keyboard_handler_t {
             //println!("keyboard");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _11(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_life_span_handler_t {
+        fn _11(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_life_span_handler_t {
             //println!("lifespan");
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _12(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_load_handler_t {
+        fn _12(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_load_handler_t {
             //println!("load");
             unsafe { zeroed() }
         }
         // TODO: Fix build errors by removing generics?
         /*
         #[extern_auto]
-        fn _13<T : BrowserClient>(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_render_handler_t {
+        fn _13<T : BrowserClient>(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_render_handler_t {
             //println!("render");
             unsafe {
                 let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
@@ -204,11 +208,11 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         */
 
         #[extern_auto]
-        fn _14<T: BrowserClient>(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_request_handler_t {
+        fn _14<T: BrowserClient>(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_request_handler_t {
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _15<T: BrowserClient>(_self: *mut ffi::cef_client_t,
+        fn _15<T: BrowserClient>(_self: *mut ffi::_cef_client_t,
                                  browser: *mut ffi::cef_browser_t,
                                  source_process: ffi::cef_process_id_t,
                                  message: *mut ffi::cef_process_message_t)
@@ -228,7 +232,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         }
         CefRc::make(move |base| {
             BrowserClientWrapper {
-                vtable: ffi::cef_client_t {
+                vtable: ffi::_cef_client_t {
                     base: base,
                     get_context_menu_handler: Some(_1),
                     get_dialog_handler: Some(_2),
@@ -252,3 +256,4 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         })
     }
 }
+*/

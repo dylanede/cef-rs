@@ -1,3 +1,7 @@
+/*
+    Many build errors here, the code looks overcomplicated and I will not
+    deal with this now. TODO: Investigate later.
+
 use ffi;
 use CefRc;
 use Interface;
@@ -12,7 +16,7 @@ pub struct Browser {
 }
 
 unsafe impl Interface<ffi::cef_browser_t> for Browser {}
-unsafe impl Is<ffi::cef_base_t> for Browser {}
+unsafe impl Is<ffi::cef_base_ref_counted_t> for Browser {}
 
 impl Browser {
     #[cfg(target_os="windows")]
@@ -80,3 +84,5 @@ impl Browser {
     }
     //TODO complete
 }
+
+*/

@@ -11,8 +11,11 @@ num-macros = "0.1"
 libc = "0.2.23"
 extern_attrib = "0.2"
 
-[dependencies.cef-sys]
-path = "cef-sys"
+#[dependencies.cef-sys]
+#path = "cef-sys"
+
+[dependencies.cef_ffi]
+path = "../cef_ffi"
 
 [target.x86_64-pc-windows-gnu.dependencies]
 kernel32-sys = "*"
