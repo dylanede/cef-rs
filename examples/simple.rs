@@ -4,7 +4,7 @@ extern crate cef;
 
 use std::default::Default;
 
-/// TODO: Remove generics cef::* and provide structs with builders.
+/// TODO: Remove all(?) generics from cef::* and provide structs with builders.
 fn main() {
     let app: Option<()> = None;
     let result_code = cef::execute_process(app);
