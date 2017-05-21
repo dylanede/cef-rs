@@ -117,7 +117,7 @@ impl<T: OwnableString> Drop for OwnedStringPtr<T> {
                 (*self.v).release();
                 T::free(self.v);
             }
-            self.v = zeroed();
+            self.v = zeroed(); // TODO: Investigate zeroed() vs null_mut().
         }
     }
 }

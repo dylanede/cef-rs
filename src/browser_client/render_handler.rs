@@ -75,6 +75,7 @@ pub struct CustomCursorInfo<'a> {
     pub buffer: &'a mut[u8], // size.width * size.height * 4
     pub size: Size,
 }
+
 pub enum Cursor<'a> {
     Pointer,
     Cross,
@@ -104,6 +105,7 @@ pub enum Cursor<'a> {
     Grabbing,
     Custom(CustomCursorInfo<'a>)
 }
+
 #[allow(unused_variables)]
 pub trait RenderHandler : 'static {
     fn get_root_screen_rect(&mut self, browser: CefRc<Browser>) -> Option<Rect> { None }
@@ -306,6 +308,8 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                 this.callback.on_paint(browser, _type, dirty_rects, buffer, width, height);
             }
         }
+        /// TODO: Implement me.
+        #[allow(unused_variables)]
         #[cfg(not(target_os="linux"))]
         #[extern_auto]
         fn on_cursor_change<T : RenderHandler>(

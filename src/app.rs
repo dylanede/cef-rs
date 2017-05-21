@@ -15,19 +15,25 @@ trait BrowserProcessHandler {}
 trait RenderProcessHandler {}
 //impl RenderProcessHandler for Void {}
 
-#[allow(unused_variables)]
+/// TODO: Refactor to only expose public types, no ffi types, only high-level standard rust types.
+//#[allow(unused_variables)]
 pub trait App : 'static {
-    type OutResourceBundleHandler : ResourceBundleHandler;
-    type OutBrowserProcessHandler : BrowserProcessHandler;
-    type OutRenderProcessHandler : RenderProcessHandler;
+    //type OutResourceBundleHandler : ResourceBundleHandler;
+    //type OutBrowserProcessHandler : BrowserProcessHandler;
+    //type OutRenderProcessHandler : RenderProcessHandler;
 
-    fn on_before_command_line_processing(&mut self,
-                                         process_type: &ffi::cef_string_t,
-                                         command_line: &mut ffi::cef_command_line_t) {}
-    fn on_register_custom_schemes(&mut self, registrar: &mut ffi::cef_scheme_registrar_t) {}
-    fn get_resource_bundle_handler(&mut self) -> Option<Self::OutResourceBundleHandler> { None }
-    fn get_browser_process_handler(&mut self) -> Option<Self::OutBrowserProcessHandler> { None }
-    fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
+    /// Placeholder.
+    fn on_before_command_line_processing(&mut self) {}
+    //fn on_before_command_line_processing(&mut self,
+                                         //process_type: &ffi::cef_string_t,
+                                         //command_line: &mut ffi::cef_command_line_t) {}
+                                       
+    /// Placeholder.
+    fn on_register_custom_schemes(&mut self) {}
+    //fn on_register_custom_schemes(&mut self, registrar: &mut ffi::cef_scheme_registrar_t) {}
+    //fn get_resource_bundle_handler(&mut self) -> Option<Self::OutResourceBundleHandler> { None }
+    //fn get_browser_process_handler(&mut self) -> Option<Self::OutBrowserProcessHandler> { None }
+    //fn get_render_process_handler(&mut self) -> Option<Self::OutRenderProcessHandler> { None }
 }
 
 // TODO: Investigate the purpose. Does this work in Rust 2017?
@@ -55,23 +61,31 @@ impl<T : App> DerefMut for AppWrapper<T> {
 unsafe impl<T: App> Is<ffi::cef_base_t> for AppWrapper<T> {}
 unsafe impl<T: App> Is<ffi::cef_app_t> for AppWrapper<T> {}
 
+/// TODO: The purpose of this impl should be to hide all ffi details from
+///       the caller code and provide a high-level Rust API.
+///       For example all cef strings should probably be converted to
+///       normal rust String instances.
 impl<T : App> AppWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<AppWrapper<T>> {
+        #[allow(unused_variables)]
         #[extern_auto]
         fn obclp<T : App>(_self: *mut ffi::cef_app_t,
                         process_type: *const ffi::cef_string_t,
                         command_line: *mut ffi::cef_command_line_t) {
             unsafe {
                 let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                this.callback.on_before_command_line_processing(&*process_type, &mut *command_line);
+                //this.callback.on_before_command_line_processing(&*process_type, &mut *command_line);
+                this.callback.on_before_command_line_processing();
             }
         }
+        #[allow(unused_variables)]
         #[extern_auto]
         fn orcs<T : App>(_self: *mut ffi::cef_app_t,
-                                     registrar: *mut ffi::cef_scheme_registrar_t) {
+                         registrar: *mut ffi::cef_scheme_registrar_t) {
             unsafe {
                 let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                this.callback.on_register_custom_schemes(&mut *registrar);
+                //this.callback.on_register_custom_schemes(&mut *registrar);
+                this.callback.on_register_custom_schemes();
             }
         }
         #[extern_auto]

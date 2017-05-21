@@ -3,7 +3,7 @@ use Is;
 use CefRc;
 use libc;
 
-use Interface;
+//use Interface;
 //use Void;
 
 use Browser;
@@ -18,33 +18,33 @@ pub mod render_handler;
 //pub use self::render_handler::{RenderHandler, RenderHandlerWrapper};
 use self::render_handler::{RenderHandler, RenderHandlerWrapper};
 
-trait ContextMenuHandler {}
+pub trait ContextMenuHandler {}
 //impl ContextMenuHandler for Void {}
-trait DialogHandler {}
+pub trait DialogHandler {}
 //impl DialogHandler for Void {}
-trait DisplayHandler {}
+pub trait DisplayHandler {}
 //impl DisplayHandler for Void {}
-trait DownloadHandler {}
+pub trait DownloadHandler {}
 //impl DownloadHandler for Void {}
-trait DragHandler {}
+pub trait DragHandler {}
 //impl DragHandler for Void {}
-trait FindHandler {}
+pub trait FindHandler {}
 //impl FindHandler for Void {}
-trait FocusHandler {}
+pub trait FocusHandler {}
 //impl FocusHandler for Void {}
-trait GeolocationHandler {}
+pub trait GeolocationHandler {}
 //impl GeolocationHandler for Void {}
-trait JSDialogHandler {}
+pub trait JSDialogHandler {}
 //impl JSDialogHandler for Void {}
-trait KeyboardHandler {}
+pub trait KeyboardHandler {}
 //impl KeyboardHandler for Void {}
-trait LifeSpanHandler {}
+pub trait LifeSpanHandler {}
 //impl LifeSpanHandler for Void {}
-trait LoadHandler {}
+pub trait LoadHandler {}
 //impl LoadHandler for Void {}
-//trait RenderHandler {}
+//pub trait RenderHandler {}
 //impl RenderHandler for Void {}
-trait RequestHandler {}
+pub trait RequestHandler {}
 //impl RequestHandler for Void {}
 
 #[allow(unused_variables)]

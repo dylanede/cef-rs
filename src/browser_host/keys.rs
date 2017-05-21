@@ -227,6 +227,8 @@ pub fn win_vk_for_scan_code(code: u8) -> WIN_VK {
     FromPrimitive::from_u32(unsafe { MapVirtualKeyA(code as u32, 3) }).unwrap()
 }
 
+/// TODO: Implement me.
+#[allow(unused_variables)]
 #[cfg(not(target_os="windows"))]
 pub fn win_vk_for_scan_code(code: u8) -> WIN_VK {
     eprintln!("win_vk_for_scan_code not implemented!");
@@ -240,6 +242,8 @@ pub fn char_for_scan_code(code: u8) -> u8 {
     (c & 0xFF) as u8
 }
 
+/// TODO: Implement me.
+#[allow(unused_variables)]
 #[cfg(not(target_os="windows"))]
 pub fn char_for_scan_code(code: u8) -> u8 {
     eprintln!("char_for_scan_code not implemented!");
@@ -259,6 +263,8 @@ pub fn scan_code_for_char(c: char) -> u8 {
     (scan_code & 0xFF) as u8
 }
 
+/// TODO: Implement me.
+#[allow(unused_variables)]
 #[cfg(not(target_os="windows"))]
 pub fn scan_code_for_char(c: char) -> u8 {
     eprintln!("scan_code_for_char not implemented!");
@@ -275,6 +281,8 @@ pub fn modifiers_for_char(c: char) -> Modifiers {
     }
 }
 
+/// TODO: Implement me.
+#[allow(unused_variables)]
 #[cfg(not(target_os="windows"))]
 pub fn modifiers_for_char(c: char) -> Modifiers {
     eprintln!("modifiers_for_char not implemented!");

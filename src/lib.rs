@@ -2,8 +2,6 @@
            //libc,
            alloc,
            plugin,
-           filling_drop,
-           str_utf16,
            heap_api,
            oom,
            custom_derive,
@@ -12,6 +10,8 @@
 )]
 
 //#![plugin(num_macros)]
+
+#![deny(warnings)]
 
 extern crate cef_sys as ffi;
 extern crate extern_attrib;
@@ -195,6 +195,7 @@ fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_b
     unsafe { transmute(x) }
 }
 
+/*
 unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
     transmute(x)
 }
@@ -202,6 +203,7 @@ unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2
 fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
     unsafe{ transmute(x) }
 }
+*/
 
 fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
     unsafe{ transmute(x) }

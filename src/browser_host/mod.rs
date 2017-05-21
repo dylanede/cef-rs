@@ -101,6 +101,7 @@ pub struct BrowserHost {
 unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
 unsafe impl Is<ffi::cef_base_t> for BrowserHost {}
 
+/// TODO: Investigate and implement.
 pub enum RequestContext {}
 
 impl BrowserHost {
@@ -253,6 +254,8 @@ impl BrowserHost {
         self.call1(&self.vtable.send_key_event, &event as *const _)
     }
 
+    /// TODO: Review and implement request_context handling.
+    #[allow(unused_variables)]
     pub fn create_browser_sync<T: BrowserClient>(
         window_info: &WindowInfo,
         client: T,
@@ -260,7 +263,6 @@ impl BrowserHost {
         settings: &BrowserSettings,
         request_context: Option<RequestContext>) -> CefRc<Browser>
     {
-        use std::default::Default;
         let info = window_info.to_cef();
         let url = CefString::from_str(url);
         unsafe {
@@ -279,6 +281,9 @@ impl BrowserHost {
             cast_to_interface(ptr)
         }
     }
+
+    /// TODO: Review and implement request_context handling.
+    #[allow(unused_variables)]
     pub fn create_browser<T: BrowserClient + Send>(window_info: &WindowInfo,
                                              client: T,
                                              url: &str,
