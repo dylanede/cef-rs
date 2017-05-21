@@ -48,7 +48,7 @@ pub struct RequestHandler {}
 //impl RequestHandler for Void {}
 
 #[allow(unused_variables)]
-pub trait BrowserClient : 'static {
+pub trait BrowserClient: 'static {
     //type OutContextMenuHandler : ContextMenuHandler;
     //type OutDialogHandler : DialogHandler;
     //type OutDisplayHandler : DisplayHandler;
@@ -64,39 +64,67 @@ pub trait BrowserClient : 'static {
     //type OutRenderHandler : RenderHandler;
     //type OutRequestHandler : RequestHandler;
 
-    fn get_context_menu_handler(&mut self) -> Option<ContextMenuHandler> { None }
-    fn get_dialog_handler(&mut self) -> Option<DialogHandler> { None }
-    fn get_display_handler(&mut self) -> Option<DisplayHandler> { None }
-    fn get_download_handler(&mut self) -> Option<DownloadHandler> { None }
-    fn get_drag_handler(&mut self) -> Option<DragHandler> { None }
-    fn get_find_handler(&mut self) -> Option<FindHandler> { None }
-    fn get_focus_handler(&mut self) -> Option<FocusHandler> { None }
-    fn get_geolocation_handler(&mut self) -> Option<GeolocationHandler> { None }
-    fn get_jsdialog_handler(&mut self) -> Option<JSDialogHandler> { None }
-    fn get_keyboard_handler(&mut self) -> Option<KeyboardHandler> { None }
-    fn get_life_span_handler(&mut self) -> Option<LifeSpanHandler> { None }
-    fn get_load_handler(&mut self) -> Option<LoadHandler> { None }
+    fn get_context_menu_handler(&mut self) -> Option<ContextMenuHandler> {
+        None
+    }
+    fn get_dialog_handler(&mut self) -> Option<DialogHandler> {
+        None
+    }
+    fn get_display_handler(&mut self) -> Option<DisplayHandler> {
+        None
+    }
+    fn get_download_handler(&mut self) -> Option<DownloadHandler> {
+        None
+    }
+    fn get_drag_handler(&mut self) -> Option<DragHandler> {
+        None
+    }
+    fn get_find_handler(&mut self) -> Option<FindHandler> {
+        None
+    }
+    fn get_focus_handler(&mut self) -> Option<FocusHandler> {
+        None
+    }
+    fn get_geolocation_handler(&mut self) -> Option<GeolocationHandler> {
+        None
+    }
+    fn get_jsdialog_handler(&mut self) -> Option<JSDialogHandler> {
+        None
+    }
+    fn get_keyboard_handler(&mut self) -> Option<KeyboardHandler> {
+        None
+    }
+    fn get_life_span_handler(&mut self) -> Option<LifeSpanHandler> {
+        None
+    }
+    fn get_load_handler(&mut self) -> Option<LoadHandler> {
+        None
+    }
     //fn get_render_handler(&mut self) -> Option<RenderHandler> { None }
-    fn get_request_handler(&mut self) -> Option<RequestHandler> { None }
-    fn on_process_message_received(
-        &mut self,
-        browser: &mut Browser,
-        source_process: ProcessID,
-        message: &mut ProcessMessage) -> bool { false }
+    fn get_request_handler(&mut self) -> Option<RequestHandler> {
+        None
+    }
+    fn on_process_message_received(&mut self,
+                                   browser: &mut Browser,
+                                   source_process: ProcessID,
+                                   message: &mut ProcessMessage)
+                                   -> bool {
+        false
+    }
 }
 
 impl BrowserClient for () {}
 
 #[repr(C)]
-pub struct BrowserClientWrapper<T : BrowserClient> {
+pub struct BrowserClientWrapper<T: BrowserClient> {
     vtable: ffi::cef_client_t,
-    callback: T
+    callback: T,
 }
 
 unsafe impl<T: BrowserClient> Is<ffi::cef_base_t> for BrowserClientWrapper<T> {}
 unsafe impl<T: BrowserClient> Is<ffi::cef_client_t> for BrowserClientWrapper<T> {}
 
-impl<T : BrowserClient> BrowserClientWrapper<T> {
+impl<T: BrowserClient> BrowserClientWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<BrowserClientWrapper<T>> {
         use std::mem::zeroed;
         use unsafe_downcast_mut;
@@ -174,17 +202,17 @@ impl<T : BrowserClient> BrowserClientWrapper<T> {
             }
         }
         */
+
         #[extern_auto]
-        fn _14<T : BrowserClient>(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_request_handler_t {
+        fn _14<T: BrowserClient>(_self: *mut ffi::cef_client_t) -> *mut ffi::cef_request_handler_t {
             unsafe { zeroed() }
         }
         #[extern_auto]
-        fn _15<T : BrowserClient>(
-            _self: *mut ffi::cef_client_t,
-            browser: *mut ffi::cef_browser_t,
-            source_process: ffi::cef_process_id_t,
-            message: *mut ffi::cef_process_message_t) -> libc::c_int
-        {
+        fn _15<T: BrowserClient>(_self: *mut ffi::cef_client_t,
+                                 browser: *mut ffi::cef_browser_t,
+                                 source_process: ffi::cef_process_id_t,
+                                 message: *mut ffi::cef_process_message_t)
+                                 -> libc::c_int {
             //println!("message");
             unsafe {
                 let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
@@ -217,9 +245,9 @@ impl<T : BrowserClient> BrowserClientWrapper<T> {
                     get_render_handler: None,
                     //get_render_handler: Some(_13::<T>),
                     get_request_handler: Some(_14::<T>),
-                    on_process_message_received: Some(_15::<T>)
+                    on_process_message_received: Some(_15::<T>),
                 },
-                callback: wrapped
+                callback: wrapped,
             }
         })
     }

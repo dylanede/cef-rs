@@ -22,7 +22,7 @@ pub type DragOperationsMask = ffi::cef_drag_operations_mask_t;
 
 #[repr(C)]
 pub struct DragData {
-    vtable: ffi::cef_drag_data_t
+    vtable: ffi::cef_drag_data_t,
 }
 
 unsafe impl Is<ffi::cef_base_t> for DragData {}
@@ -35,7 +35,7 @@ pub struct ScreenInfo {
     depth_per_component: i32,
     device_scale_factor: f32,
     is_monochrome: CBool,
-    rect: Rect
+    rect: Rect,
 }
 
 #[test]
@@ -47,7 +47,7 @@ fn check_screen_info_size() {
 #[derive(Copy, Clone)]
 pub enum PaintElementType {
     View,
-    Popup
+    Popup,
 }
 
 #[derive(Copy, Clone)]
@@ -59,20 +59,20 @@ pub enum CursorDirection {
     South,
     SouthEast,
     SouthWest,
-    West
+    West,
 }
 
 #[derive(Copy, Clone)]
 pub enum CursorBidirection {
     NorthSouth,
     NorthEastSouthWest,
-    NorthWestSouthEast
+    NorthWestSouthEast,
 }
 
 pub struct CustomCursorInfo<'a> {
     pub hotspot: Point,
     pub image_scale_factor: f32,
-    pub buffer: &'a mut[u8], // size.width * size.height * 4
+    pub buffer: &'a mut [u8], // size.width * size.height * 4
     pub size: Size,
 }
 
@@ -103,15 +103,24 @@ pub enum Cursor<'a> {
     ZoomOut,
     Grab,
     Grabbing,
-    Custom(CustomCursorInfo<'a>)
+    Custom(CustomCursorInfo<'a>),
 }
 
 #[allow(unused_variables)]
-pub trait RenderHandler : 'static {
-    fn get_root_screen_rect(&mut self, browser: CefRc<Browser>) -> Option<Rect> { None }
+pub trait RenderHandler: 'static {
+    fn get_root_screen_rect(&mut self, browser: CefRc<Browser>) -> Option<Rect> {
+        None
+    }
     fn get_view_rect(&mut self, browser: CefRc<Browser>) -> Option<Rect>;
-    fn get_screen_point(&mut self, browser: CefRc<Browser>, view_point: (i32, i32)) -> Option<(i32, i32)> { None }
-    fn get_screen_info(&mut self, browser: CefRc<Browser>) -> Option<ScreenInfo> { None }
+    fn get_screen_point(&mut self,
+                        browser: CefRc<Browser>,
+                        view_point: (i32, i32))
+                        -> Option<(i32, i32)> {
+        None
+    }
+    fn get_screen_info(&mut self, browser: CefRc<Browser>) -> Option<ScreenInfo> {
+        None
+    }
     fn on_popup_show(&mut self, browser: CefRc<Browser>) {}
     fn on_popup_hide(&mut self, browser: CefRc<Browser>) {}
     fn on_popup_size(&mut self, browser: CefRc<Browser>, rect: &Rect) {}
@@ -126,12 +135,16 @@ pub trait RenderHandler : 'static {
                         browser: CefRc<Browser>,
                         //cursor_handle: CursorHandle,
                         cursor_handle: *mut ::libc::c_void,
-                        cursor: &Cursor) {}
+                        cursor: &Cursor) {
+    }
     fn start_dragging(&mut self,
                       browser: CefRc<Browser>,
                       drag_data: CefRc<DragData>,
                       allowed_ops: DragOperationsMask,
-                      pos: (i32, i32)) -> bool { false }
+                      pos: (i32, i32))
+                      -> bool {
+        false
+    }
     fn update_drag_cursor(&mut self, browser: CefRc<Browser>, operation: DragOperationsMask) {}
     fn on_scroll_offset_changed(&mut self, browser: CefRc<Browser>) {}
 }
@@ -155,19 +168,19 @@ impl RenderHandler for Void {
 */
 
 #[repr(C)]
-pub struct RenderHandlerWrapper<T : RenderHandler> {
+pub struct RenderHandlerWrapper<T: RenderHandler> {
     vtable: ffi::cef_render_handler_t,
-    callback: T
+    callback: T,
 }
 
-impl<T : RenderHandler> Deref for RenderHandlerWrapper<T> {
+impl<T: RenderHandler> Deref for RenderHandlerWrapper<T> {
     type Target = T;
     fn deref<'a>(&'a self) -> &'a T {
         &self.callback
     }
 }
 
-impl<T : RenderHandler> DerefMut for RenderHandlerWrapper<T> {
+impl<T: RenderHandler> DerefMut for RenderHandlerWrapper<T> {
     fn deref_mut<'a>(&'a mut self) -> &'a mut T {
         &mut self.callback
     }
@@ -176,14 +189,13 @@ impl<T : RenderHandler> DerefMut for RenderHandlerWrapper<T> {
 unsafe impl<T: RenderHandler> Is<ffi::cef_base_t> for RenderHandlerWrapper<T> {}
 unsafe impl<T: RenderHandler> Is<ffi::cef_render_handler_t> for RenderHandlerWrapper<T> {}
 
-impl<T : RenderHandler> RenderHandlerWrapper<T> {
+impl<T: RenderHandler> RenderHandlerWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<RenderHandlerWrapper<T>> {
         #[extern_auto]
-        fn get_root_screen_rect<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            rect: *mut ffi::cef_rect_t) -> ::libc::c_int
-        {
+        fn get_root_screen_rect<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                                  browser: *mut ffi::cef_browser_t,
+                                                  rect: *mut ffi::cef_rect_t)
+                                                  -> ::libc::c_int {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
@@ -192,17 +204,16 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                     Some(new_rect) => {
                         *rect = new_rect;
                         1
-                    },
-                    None => 0
+                    }
+                    None => 0,
                 }
             }
         }
         #[extern_auto]
-        fn get_view_rect<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            rect: *mut ffi::cef_rect_t) -> ::libc::c_int
-        {
+        fn get_view_rect<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                           browser: *mut ffi::cef_browser_t,
+                                           rect: *mut ffi::cef_rect_t)
+                                           -> ::libc::c_int {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
@@ -210,20 +221,19 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                     Some(new_rect) => {
                         *rect = new_rect;
                         1
-                    },
-                    None => 0
+                    }
+                    None => 0,
                 }
             }
         }
-       #[extern_auto]
-        fn get_screen_point<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            view_x: ::libc::c_int,
-            view_y: ::libc::c_int,
-            screen_x: *mut ::libc::c_int,
-            screen_y: *mut ::libc::c_int) -> ::libc::c_int
-        {
+        #[extern_auto]
+        fn get_screen_point<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                              browser: *mut ffi::cef_browser_t,
+                                              view_x: ::libc::c_int,
+                                              view_y: ::libc::c_int,
+                                              screen_x: *mut ::libc::c_int,
+                                              screen_y: *mut ::libc::c_int)
+                                              -> ::libc::c_int {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
@@ -232,17 +242,16 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                         *screen_x = x;
                         *screen_y = y;
                         1
-                    },
-                    None => 0
+                    }
+                    None => 0,
                 }
             }
         }
         #[extern_auto]
-        fn get_screen_info<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            screen_info: *mut ffi::cef_screen_info_t) -> ::libc::c_int
-        {
+        fn get_screen_info<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                             browser: *mut ffi::cef_browser_t,
+                                             screen_info: *mut ffi::cef_screen_info_t)
+                                             -> ::libc::c_int {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
@@ -250,32 +259,28 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                     Some(info) => {
                         *screen_info = transmute(info);
                         1
-                    },
-                    None => 0
+                    }
+                    None => 0,
                 }
             }
         }
         #[extern_auto]
-        fn on_popup_show<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            show: ::libc::c_int)
-        {
+        fn on_popup_show<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                           browser: *mut ffi::cef_browser_t,
+                                           show: ::libc::c_int) {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
                 match show {
                     0 => this.callback.on_popup_hide(browser),
-                    _ => this.callback.on_popup_show(browser)
+                    _ => this.callback.on_popup_show(browser),
                 }
             }
         }
         #[extern_auto]
-        fn on_popup_size<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::Struct__cef_browser_t,
-            rect: *const ffi::cef_rect_t)
-        {
+        fn on_popup_size<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                           browser: *mut ffi::Struct__cef_browser_t,
+                                           rect: *const ffi::cef_rect_t) {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
@@ -283,16 +288,14 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
             }
         }
         #[extern_auto]
-        fn on_paint<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            _type: ffi::cef_paint_element_type_t,
-            dirty_rects_count: ::libc::size_t,
-            dirty_rects: *const ffi::cef_rect_t,
-            buffer: *const ::libc::c_void,
-            width: ::libc::c_int,
-            height: ::libc::c_int)
-        {
+        fn on_paint<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                      browser: *mut ffi::cef_browser_t,
+                                      _type: ffi::cef_paint_element_type_t,
+                                      dirty_rects_count: ::libc::size_t,
+                                      dirty_rects: *const ffi::cef_rect_t,
+                                      buffer: *const ::libc::c_void,
+                                      width: ::libc::c_int,
+                                      height: ::libc::c_int) {
             use std::slice::from_raw_parts;
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
@@ -300,60 +303,56 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
                 let _type = match _type {
                     ffi::PET_VIEW => PaintElementType::View,
                     ffi::PET_POPUP => PaintElementType::Popup,
-                    _ => unreachable!()
+                    _ => unreachable!(),
                 };
                 let dirty_rects = from_raw_parts(dirty_rects, dirty_rects_count as usize);
                 let buffer = buffer as *const u8;
                 let buffer = from_raw_parts(buffer, (width * height * 4) as usize);
-                this.callback.on_paint(browser, _type, dirty_rects, buffer, width, height);
+                this.callback
+                    .on_paint(browser, _type, dirty_rects, buffer, width, height);
             }
         }
         /// TODO: Implement me.
         #[allow(unused_variables)]
         #[cfg(not(target_os="linux"))]
         #[extern_auto]
-        fn on_cursor_change<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            cursor: *mut ::libc::c_void,
-            _type: ffi::cef_cursor_type_t,
-            custom_cursor_info: *const ffi::cef_cursor_info_t)
-        {
+        fn on_cursor_change<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                              browser: *mut ffi::cef_browser_t,
+                                              cursor: *mut ::libc::c_void,
+                                              _type: ffi::cef_cursor_type_t,
+                                              custom_cursor_info: *const ffi::cef_cursor_info_t) {
 
         }
         #[cfg(target_os="linux")]
         #[extern_auto]
-        fn on_cursor_change<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            cursor: ::libc::c_ulong,
-            _type: ffi::cef_cursor_type_t,
-            custom_cursor_info: *const ffi::cef_cursor_info_t)
-        {
+        fn on_cursor_change<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                              browser: *mut ffi::cef_browser_t,
+                                              cursor: ::libc::c_ulong,
+                                              _type: ffi::cef_cursor_type_t,
+                                              custom_cursor_info: *const ffi::cef_cursor_info_t) {
 
         }
         #[extern_auto]
-        fn start_dragging<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            drag_data: *mut ffi::cef_drag_data_t,
-            allowed_ops: ffi::cef_drag_operations_mask_t,
-            x: ::libc::c_int,
-            y: ::libc::c_int) -> ::libc::c_int
-        {
+        fn start_dragging<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                            browser: *mut ffi::cef_browser_t,
+                                            drag_data: *mut ffi::cef_drag_data_t,
+                                            allowed_ops: ffi::cef_drag_operations_mask_t,
+                                            x: ::libc::c_int,
+                                            y: ::libc::c_int)
+                                            -> ::libc::c_int {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
                 let drag_data: CefRc<DragData> = cast_to_interface(drag_data);
-                this.callback.start_dragging(browser, drag_data, allowed_ops, (x, y)) as ::libc::c_int
+                this.callback
+                    .start_dragging(browser, drag_data, allowed_ops, (x, y)) as
+                ::libc::c_int
             }
         }
         #[extern_auto]
-        fn update_drag_cursor<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t,
-            operation: ffi::cef_drag_operations_mask_t)
-        {
+        fn update_drag_cursor<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                                browser: *mut ffi::cef_browser_t,
+                                                operation: ffi::cef_drag_operations_mask_t) {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
@@ -361,32 +360,32 @@ impl<T : RenderHandler> RenderHandlerWrapper<T> {
             }
         }
         #[extern_auto]
-        fn on_scroll_offset_changed<T : RenderHandler>(
-            _self: *mut ffi::cef_render_handler_t,
-            browser: *mut ffi::cef_browser_t)
-        {
+        fn on_scroll_offset_changed<T: RenderHandler>(_self: *mut ffi::cef_render_handler_t,
+                                                      browser: *mut ffi::cef_browser_t) {
             unsafe {
                 let this: &mut RenderHandlerWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 let browser: CefRc<Browser> = cast_to_interface(browser);
                 this.callback.on_scroll_offset_changed(browser);
             }
         }
-        CefRc::make(move |base| RenderHandlerWrapper {
-            vtable: ffi::cef_render_handler_t {
-                base: base,
-                get_root_screen_rect: Some(get_root_screen_rect::<T>),
-                get_view_rect: Some(get_view_rect::<T>),
-                get_screen_point: Some(get_screen_point::<T>),
-                get_screen_info: Some(get_screen_info::<T>),
-                on_popup_show: Some(on_popup_show::<T>),
-                on_popup_size: Some(on_popup_size::<T>),
-                on_paint: Some(on_paint::<T>),
-                on_cursor_change: Some(on_cursor_change::<T>),
-                start_dragging: Some(start_dragging::<T>),
-                update_drag_cursor: Some(update_drag_cursor::<T>),
-                on_scroll_offset_changed: Some(on_scroll_offset_changed::<T>)
-            },
-            callback: wrapped
+        CefRc::make(move |base| {
+            RenderHandlerWrapper {
+                vtable: ffi::cef_render_handler_t {
+                    base: base,
+                    get_root_screen_rect: Some(get_root_screen_rect::<T>),
+                    get_view_rect: Some(get_view_rect::<T>),
+                    get_screen_point: Some(get_screen_point::<T>),
+                    get_screen_info: Some(get_screen_info::<T>),
+                    on_popup_show: Some(on_popup_show::<T>),
+                    on_popup_size: Some(on_popup_size::<T>),
+                    on_paint: Some(on_paint::<T>),
+                    on_cursor_change: Some(on_cursor_change::<T>),
+                    start_dragging: Some(start_dragging::<T>),
+                    update_drag_cursor: Some(update_drag_cursor::<T>),
+                    on_scroll_offset_changed: Some(on_scroll_offset_changed::<T>),
+                },
+                callback: wrapped,
+            }
         })
     }
 }

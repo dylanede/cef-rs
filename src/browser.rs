@@ -8,7 +8,7 @@ use cast_from_interface;
 
 #[allow(missing_copy_implementations)]
 pub struct Browser {
-    vtable: ffi::cef_browser_t
+    vtable: ffi::cef_browser_t,
 }
 
 unsafe impl Interface<ffi::cef_browser_t> for Browser {}
@@ -16,25 +16,28 @@ unsafe impl Is<ffi::cef_base_t> for Browser {}
 
 impl Browser {
     #[cfg(target_os="windows")]
-    fn call0<'a, T>(&'a self, f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_t) -> T>) -> T {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _)
+    fn call0<'a, T>(&'a self,
+                    f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_t) -> T>)
+                    -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _)
     }
     #[cfg(not(target_os="windows"))]
     fn call0<'a, T>(&'a self, f: &'a Option<extern "C" fn(*mut ffi::cef_browser_t) -> T>) -> T {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _)
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _)
     }
     #[cfg(target_os="windows")]
     fn call1<'a, A0, T>(&'a self,
-        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_t, A0) -> T>,
-        a0: A0) -> T {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _, a0)
+                        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_t, A0) -> T>,
+                        a0: A0)
+                        -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _, a0)
     }
     #[cfg(not(target_os="windows"))]
-    fn call1<'a, A0, T>(
-        &'a self,
-        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_t, A0) -> T>,
-        a0: A0) -> T {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _, a0)
+    fn call1<'a, A0, T>(&'a self,
+                        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_t, A0) -> T>,
+                        a0: A0)
+                        -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _, a0)
     }
     pub fn get_host(&self) -> CefRc<BrowserHost> {
         cast_to_interface(self.call0(&self.vtable.get_host))

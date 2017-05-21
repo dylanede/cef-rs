@@ -25,7 +25,7 @@ mod keys;
 pub struct Modifiers {
     pub shift: bool,
     pub control: bool,
-    pub alt: bool
+    pub alt: bool,
 }
 
 impl Modifiers {
@@ -33,7 +33,7 @@ impl Modifiers {
         Modifiers {
             shift: false,
             control: false,
-            alt: false
+            alt: false,
         }
     }
 }
@@ -64,7 +64,7 @@ pub use self::event_flags::EventFlags;
 pub struct MouseEvent {
     pub x: i32,
     pub y: i32,
-    pub modifiers: EventFlags
+    pub modifiers: EventFlags,
 }
 
 impl Default for MouseEvent {
@@ -72,7 +72,7 @@ impl Default for MouseEvent {
         MouseEvent {
             modifiers: EventFlags::empty(),
             x: 0,
-            y: 0
+            y: 0,
         }
     }
 }
@@ -90,12 +90,12 @@ fn check_mouse_event_size() {
 pub enum MouseButtonType {
     Left,
     Middle,
-    Right
+    Right,
 }
 
 #[allow(missing_copy_implementations)]
 pub struct BrowserHost {
-    vtable: ffi::cef_browser_host_t
+    vtable: ffi::cef_browser_host_t,
 }
 
 unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
@@ -106,34 +106,30 @@ pub enum RequestContext {}
 
 impl BrowserHost {
     #[cfg(target_os="windows")]
-    fn call0<'a, T>(
-        &'a self,
-        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t) -> T>) -> T
-    {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _)
+    fn call0<'a, T>(&'a self,
+                    f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t) -> T>)
+                    -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _)
     }
     #[cfg(not(target_os="windows"))]
-    fn call0<'a, T>(
-        &'a self,
-        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_host_t) -> T>) -> T
-    {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _)
+    fn call0<'a, T>(&'a self,
+                    f: &'a Option<extern "C" fn(*mut ffi::cef_browser_host_t) -> T>)
+                    -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _)
     }
     #[cfg(target_os="windows")]
-    fn call1<'a, A0, T>(
-        &'a self,
-        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t, A0) -> T>,
-        a0: A0) -> T
-    {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _, a0)
+    fn call1<'a, A0, T>(&'a self,
+                        f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t, A0) -> T>,
+                        a0: A0)
+                        -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _, a0)
     }
     #[cfg(not(target_os="windows"))]
-    fn call1<'a, A0, T>(
-        &'a self,
-        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_host_t, A0) -> T>,
-        a0: A0) -> T
-    {
-        f.as_ref().unwrap()(&self.vtable as * const _ as *mut _, a0)
+    fn call1<'a, A0, T>(&'a self,
+                        f: &'a Option<extern "C" fn(*mut ffi::cef_browser_host_t, A0) -> T>,
+                        a0: A0)
+                        -> T {
+        f.as_ref().unwrap()(&self.vtable as *const _ as *mut _, a0)
     }
 
     pub fn was_resized(&self) {
@@ -148,33 +144,31 @@ impl BrowserHost {
         self.call1(&self.vtable.close_browser, force as libc::c_int)
     }
 
-    pub fn send_mouse_click_event(
-        &self,
-        event: &MouseEvent,
-        button: MouseButtonType,
-        mouse_up: bool,
-        click_count: i32)
-    {
+    pub fn send_mouse_click_event(&self,
+                                  event: &MouseEvent,
+                                  button: MouseButtonType,
+                                  mouse_up: bool,
+                                  click_count: i32) {
         unsafe {
-            self.vtable.send_mouse_click_event.as_ref().unwrap()
-                (&self.vtable as *const _ as *mut _,
-                 upcast(event) as *const _, transmute(button),
-                 mouse_up as i32, click_count)
+            self.vtable.send_mouse_click_event.as_ref().unwrap()(&self.vtable as *const _ as *mut _,
+                                                                 upcast(event) as *const _,
+                                                                 transmute(button),
+                                                                 mouse_up as i32,
+                                                                 click_count)
         }
     }
 
     pub fn send_mouse_move_event(&self, event: &MouseEvent, mouse_leave: bool) {
-        self.vtable.send_mouse_move_event.as_ref().unwrap()
-            (&self.vtable as *const _ as *mut _,
-             upcast(event) as *const _,
-             mouse_leave as i32)
+        self.vtable.send_mouse_move_event.as_ref().unwrap()(&self.vtable as *const _ as *mut _,
+                                                            upcast(event) as *const _,
+                                                            mouse_leave as i32)
     }
 
     pub fn send_mouse_wheel_event(&self, event: &MouseEvent, delta: (i32, i32)) {
-        self.vtable.send_mouse_wheel_event.as_ref().unwrap()
-            (&self.vtable as *const _ as *mut _,
-             upcast(event) as *const _,
-             delta.0, delta.1)
+        self.vtable.send_mouse_wheel_event.as_ref().unwrap()(&self.vtable as *const _ as *mut _,
+                                                             upcast(event) as *const _,
+                                                             delta.0,
+                                                             delta.1)
     }
 
     pub fn send_char(&self, c: char) {
@@ -196,12 +190,11 @@ impl BrowserHost {
         if modifiers.control {
             mods |= ffi::EVENTFLAG_CONTROL_DOWN;
         }
-        let native_key_code: i32 =
-            if cfg!(target_os = "windows") {
-                (((scan_code as u32) << 16) | 1) as i32
-            } else {
-                unimplemented!()
-            };
+        let native_key_code: i32 = if cfg!(target_os = "windows") {
+            (((scan_code as u32) << 16) | 1) as i32
+        } else {
+            unimplemented!()
+        };
         let event = ffi::cef_key_event_t {
             _type: ffi::KEYEVENT_CHAR,
             modifiers: mods as u32,
@@ -210,7 +203,7 @@ impl BrowserHost {
             is_system_key: 0,
             character: c as u16,
             unmodified_character: c as u16,
-            focus_on_editable_field: 0
+            focus_on_editable_field: 0,
         };
         self.call1(&self.vtable.send_key_event, &event as *const _)
     }
@@ -231,22 +224,25 @@ impl BrowserHost {
         if modifiers.control {
             mods |= ffi::EVENTFLAG_CONTROL_DOWN;
         }
-        let keycode = unsafe{ transmute(keycode) };
-        let native_key_code: i32 =
-            if cfg!(target_os = "windows") {
-                (((scan_code as u32) << 16) | 1) as i32
-            } else {
-                unimplemented!()
-            };
+        let keycode = unsafe { transmute(keycode) };
+        let native_key_code: i32 = if cfg!(target_os = "windows") {
+            (((scan_code as u32) << 16) | 1) as i32
+        } else {
+            unimplemented!()
+        };
         let mut event = ffi::cef_key_event_t {
-            _type: if pressed { ffi::KEYEVENT_KEYDOWN } else { ffi::KEYEVENT_KEYUP },
+            _type: if pressed {
+                ffi::KEYEVENT_KEYDOWN
+            } else {
+                ffi::KEYEVENT_KEYUP
+            },
             modifiers: mods as u32,
             windows_key_code: keycode,
             native_key_code: native_key_code,
             is_system_key: 0,
             character: c as u16,
             unmodified_character: c as u16,
-            focus_on_editable_field: 0
+            focus_on_editable_field: 0,
         };
         if cfg!(target_os = "windows") && !pressed {
             event.native_key_code |= 0xC0000000u32 as i32;
@@ -256,13 +252,12 @@ impl BrowserHost {
 
     /// TODO: Review and implement request_context handling.
     #[allow(unused_variables)]
-    pub fn create_browser_sync<T: BrowserClient>(
-        window_info: &WindowInfo,
-        client: T,
-        url: &str,
-        settings: &BrowserSettings,
-        request_context: Option<RequestContext>) -> CefRc<Browser>
-    {
+    pub fn create_browser_sync<T: BrowserClient>(window_info: &WindowInfo,
+                                                 client: T,
+                                                 url: &str,
+                                                 settings: &BrowserSettings,
+                                                 request_context: Option<RequestContext>)
+                                                 -> CefRc<Browser> {
         let info = window_info.to_cef();
         let url = CefString::from_str(url);
         unsafe {
@@ -285,19 +280,19 @@ impl BrowserHost {
     /// TODO: Review and implement request_context handling.
     #[allow(unused_variables)]
     pub fn create_browser<T: BrowserClient + Send>(window_info: &WindowInfo,
-                                             client: T,
-                                             url: &str,
-                                             settings: &BrowserSettings,
-                                            request_context: Option<RequestContext>) -> bool {
+                                                   client: T,
+                                                   url: &str,
+                                                   settings: &BrowserSettings,
+                                                   request_context: Option<RequestContext>)
+                                                   -> bool {
         let info = window_info.to_cef();
         let url = CefString::from_str(url);
         let result = unsafe {
-            ffi::cef_browser_host_create_browser(
-                &info as *const _,
-                upcast_ptr(BrowserClientWrapper::new(client)),
-                string::cast_to_ptr(&url as *const _),
-                settings.settings() as *const _,
-                zeroed()) != 0
+            ffi::cef_browser_host_create_browser(&info as *const _,
+                                                 upcast_ptr(BrowserClientWrapper::new(client)),
+                                                 string::cast_to_ptr(&url as *const _),
+                                                 settings.settings() as *const _,
+                                                 zeroed()) != 0
         };
         drop(url);
         drop(info);

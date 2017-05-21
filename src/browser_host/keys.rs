@@ -2,7 +2,8 @@ use Modifiers;
 
 #[allow(
     non_camel_case_types,
-    dead_code)] // TODO: Reevaluate later, just trying to compile for now.
+    dead_code)]
+// TODO: Reevaluate later, just trying to compile for now.
 #[derive(
     //NumFromPrimitive,
     Debug,
@@ -277,7 +278,7 @@ pub fn modifiers_for_char(c: char) -> Modifiers {
     Modifiers {
         shift: (mods & 1) != 0,
         control: (mods & 2) != 0,
-        alt: (mods & 4) != 0
+        alt: (mods & 4) != 0,
     }
 }
 
@@ -289,7 +290,7 @@ pub fn modifiers_for_char(c: char) -> Modifiers {
     Modifiers {
         alt: false,
         control: false,
-        shift: false
+        shift: false,
     }
 }
 

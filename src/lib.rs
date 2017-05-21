@@ -1,5 +1,5 @@
 #![feature(box_syntax,
-           //libc,
+//libc,
            alloc,
            plugin,
            heap_api,
@@ -42,20 +42,18 @@ mod browser_host;
 pub use app::App;
 pub use app::AppWrapper;
 pub use browser_client::{BrowserClient, BrowserClientWrapper};
-pub use browser_client::render_handler::{
-    Rect,
-    Point,
-    Size,
-    //CursorHandle,
-    DragOperationsMask,
-    RenderHandler,
-    RenderHandlerWrapper,
-    PaintElementType,
-    CursorDirection,
-    CursorBidirection,
-    Cursor,
-    CustomCursorInfo,
-};
+pub use browser_client::render_handler::{Rect,
+                                         Point,
+                                         Size,
+                                         //CursorHandle,
+                                         DragOperationsMask,
+                                         RenderHandler,
+                                         RenderHandlerWrapper,
+                                         PaintElementType,
+                                         CursorDirection,
+                                         CursorBidirection,
+                                         Cursor,
+                                         CustomCursorInfo};
 pub use browser::Browser;
 pub use browser_host::BrowserHost;
 pub use browser_host::BrowserSettings;
@@ -66,7 +64,7 @@ pub use string::CefString;
 
 pub enum ProcessID {
     Browser,
-    Renderer
+    Renderer,
 }
 
 pub struct ProcessMessage;
@@ -77,7 +75,7 @@ unsafe impl Interface<ffi::cef_process_message_t> for ProcessMessage {}
 pub enum State {
     Default,
     Enabled,
-    Disabled
+    Disabled,
 }
 
 pub fn shutdown() {
@@ -86,14 +84,14 @@ pub fn shutdown() {
 
 #[repr(C)]
 pub struct CefRc<T: Is<ffi::cef_base_t>> {
-    inner: *mut T
+    inner: *mut T,
 }
 
 pub unsafe trait Is<T> {}
 pub unsafe trait Interface<T> {}
 
 unsafe impl Is<ffi::cef_base_t> for ffi::cef_base_t {}
-trait CefBase : Is<ffi::cef_base_t> {
+trait CefBase: Is<ffi::cef_base_t> {
     fn add_ref(&mut self);
     fn release(&mut self) -> libc::c_int;
 }
@@ -120,14 +118,14 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
         #[repr(C)]
         struct RefCounted<T> {
             v: T,
-            count: AtomicUsize
+            count: AtomicUsize,
         }
         unsafe impl<T> Is<ffi::cef_base_t> for RefCounted<T> {}
 
         #[extern_auto]
         fn add_ref<T>(_self: *mut ffi::cef_base_t) {
             //println!("add {:?}", size_of::<T>());
-            let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
+            let cell: &mut RefCounted<T> = unsafe { unsafe_downcast_mut(&mut *_self) };
             cell.count.fetch_add(1, Ordering::Relaxed);
         }
         #[extern_auto]
@@ -147,19 +145,25 @@ impl<T: Is<ffi::cef_base_t>> CefRc<T> {
         }
         #[extern_auto]
         fn has_one_ref<T>(_self: *mut ffi::cef_base_t) -> libc::c_int {
-            let cell: &mut RefCounted<T> = unsafe{ unsafe_downcast_mut(&mut *_self) };
-            if cell.count.load(Ordering::SeqCst) == 1 { 1 } else { 0 }
+            let cell: &mut RefCounted<T> = unsafe { unsafe_downcast_mut(&mut *_self) };
+            if cell.count.load(Ordering::SeqCst) == 1 {
+                1
+            } else {
+                0
+            }
         }
         CefRc {
-            inner: unsafe { transmute(box RefCounted {
-                v: f(ffi::cef_base_t {
-                    size: size_of::<RefCounted<T>>() as libc::size_t,
-                    add_ref: Some(add_ref::<T>),
-                    release: Some(release::<T>),
-                    has_one_ref: Some(has_one_ref::<T>)
-                }),
-                count: AtomicUsize::new(1)
-            })}
+            inner: unsafe {
+                transmute(box RefCounted {
+                                  v: f(ffi::cef_base_t {
+                                           size: size_of::<RefCounted<T>>() as libc::size_t,
+                                           add_ref: Some(add_ref::<T>),
+                                           release: Some(release::<T>),
+                                           has_one_ref: Some(has_one_ref::<T>),
+                                       }),
+                                  count: AtomicUsize::new(1),
+                              })
+            },
         }
     }
     pub fn from_existing(ptr: *mut T) -> CefRc<T> {
@@ -171,27 +175,29 @@ impl<T: Is<ffi::cef_base_t>> Deref for CefRc<T> {
     type Target = T;
 
     fn deref<'a>(&'a self) -> &'a T {
-        unsafe{ &*self.inner }
+        unsafe { &*self.inner }
     }
 }
 
 impl<T: Is<ffi::cef_base_t>> DerefMut for CefRc<T> {
     fn deref_mut<'a>(&'a mut self) -> &'a mut T {
-        unsafe{ &mut *self.inner }
+        unsafe { &mut *self.inner }
     }
 }
 
-unsafe fn unsafe_downcast_mut<'a, T1, T2 : Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
+unsafe fn unsafe_downcast_mut<'a, T1, T2: Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
     transmute(x)
 }
-fn upcast_mut<'a, T1 : Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
-    unsafe{ transmute(x) }
+fn upcast_mut<'a, T1: Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
+    unsafe { transmute(x) }
 }
-fn upcast<'a, T1 : Is<T2>, T2>(x: &'a T1) -> &'a T2 {
-    unsafe{ transmute(x) }
+fn upcast<'a, T1: Is<T2>, T2>(x: &'a T1) -> &'a T2 {
+    unsafe { transmute(x) }
 }
 
-fn upcast_ptr<T1 : Is<T2>, T2>(x: CefRc<T1>) -> *mut T2 where T1 : Is<ffi::cef_base_t> {
+fn upcast_ptr<T1: Is<T2>, T2>(x: CefRc<T1>) -> *mut T2
+    where T1: Is<ffi::cef_base_t>
+{
     unsafe { transmute(x) }
 }
 
@@ -205,15 +211,19 @@ fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
 }
 */
 
-fn cast_mut_ref<'a, T1, T2 : Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
-    unsafe{ transmute(x) }
+fn cast_mut_ref<'a, T1, T2: Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
+    unsafe { transmute(x) }
 }
 
-fn cast_to_interface<T1, T2 : Interface<T1>>(x: *mut T1) -> CefRc<T2> where T2 : Is<ffi::cef_base_t> {
-    unsafe{ transmute(x) }
+fn cast_to_interface<T1, T2: Interface<T1>>(x: *mut T1) -> CefRc<T2>
+    where T2: Is<ffi::cef_base_t>
+{
+    unsafe { transmute(x) }
 }
 
-fn cast_from_interface<T1, T2 : Interface<T1>>(x: CefRc<T2>) -> *mut T1 where T2 : Is<ffi::cef_base_t> {
+fn cast_from_interface<T1, T2: Interface<T1>>(x: CefRc<T2>) -> *mut T1
+    where T2: Is<ffi::cef_base_t>
+{
     unsafe { transmute(x) }
 }
 
@@ -221,24 +231,24 @@ fn cast_from_interface<T1, T2 : Interface<T1>>(x: CefRc<T2>) -> *mut T1 where T2
 #[derive(Copy, Clone)]
 pub enum CBool {
     False = 0,
-    True = 1
+    True = 1,
 }
 pub use CBool::*;
 impl CBool {
     pub fn new(v: bool) -> CBool {
         match v {
             true => True,
-            false => False
+            false => False,
         }
     }
     pub fn set(&mut self, v: bool) {
         *self = match v {
             true => True,
-            false => False
+            false => False,
         }
     }
     pub fn to_cef(self) -> libc::c_int {
-        unsafe{ transmute(self) }
+        unsafe { transmute(self) }
     }
 }
 
@@ -297,7 +307,7 @@ impl<'a> Default for Settings<'a> {
             uncaught_exception_stack_size: None,
             context_safety_implementation: false,
             ignore_certificate_errors: false,
-            background_color: Default::default()
+            background_color: Default::default(),
         }
     }
 }
@@ -305,7 +315,8 @@ impl<'a> Default for Settings<'a> {
 impl<'a> Settings<'a> {
     fn to_cef(&self) -> ffi::cef_settings_t {
         fn to_cef_str<'a>(s: Option<&'a str>) -> ffi::cef_string_t {
-            s.map(|x| CefString::from_str(x).cast()).unwrap_or_else(|| unsafe { zeroed() })
+            s.map(|x| CefString::from_str(x).cast())
+                .unwrap_or_else(|| unsafe { zeroed() })
         }
         ffi::cef_settings_t {
             size: size_of::<ffi::cef_settings_t>() as libc::size_t,
@@ -330,7 +341,7 @@ impl<'a> Settings<'a> {
             uncaught_exception_stack_size: self.uncaught_exception_stack_size.unwrap_or(0),
             context_safety_implementation: self.context_safety_implementation as libc::c_int,
             ignore_certificate_errors: self.ignore_certificate_errors as libc::c_int,
-            background_color: self.background_color
+            background_color: self.background_color,
         }
     }
 }
@@ -354,7 +365,7 @@ impl<'a> Default for WindowInfo<'a> {
             width: 0,
             height: 0,
             windowless_rendering_enabled: false,
-            transparent_painting_enabled: false
+            transparent_painting_enabled: false,
         }
     }
 }
@@ -409,50 +420,54 @@ impl<'a> WindowInfo<'a> {
 }
 
 #[cfg(not(target_os="windows"))]
-fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
+fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ffi::CString;
     let args: Vec<CString> = std::env::args().map(|x| CString::new(x).unwrap()).collect();
     println!("{:?}", args);
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_ptr() as *mut _).collect();
     let args = &args;
-    let args_ = ffi::cef_main_args_t { argc: args.len() as libc::c_int, argv: args.as_ptr() as *mut _ };
+    let args_ = ffi::cef_main_args_t {
+        argc: args.len() as libc::c_int,
+        argv: args.as_ptr() as *mut _,
+    };
     let result = f(args_);
     drop(args);
     result
 }
 
 #[cfg(target_os="windows")]
-fn with_args<T, F : FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
+fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ptr::null;
     let args_ = ffi::cef_main_args_t {
-        instance: unsafe { kernel32::GetModuleHandleW(null()) } as ffi::HINSTANCE
+        instance: unsafe { kernel32::GetModuleHandleW(null()) } as ffi::HINSTANCE,
     };
     f(args_)
 }
 
 /// TODO: Investigate issue #36887 <https://github.com/rust-lang/rust/issues/36887>
-pub fn execute_process<T : App>(app: Option<T>) -> isize {
+pub fn execute_process<T: App>(app: Option<T>) -> isize {
     with_args(move |args| unsafe {
-        ffi::cef_execute_process(
-            &args as *const _,
-            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(|| zeroed()),
-            zeroed()) as isize
-    })
+                  ffi::cef_execute_process(&args as *const _,
+                                           app.map(|x| upcast_ptr(AppWrapper::new(x)))
+                                               .unwrap_or_else(|| zeroed()),
+                                           zeroed()) as isize
+              })
 }
 
 /// TODO: Investigate issue #36887 <https://github.com/rust-lang/rust/issues/36887>
-pub fn initialize<T : App>(settings: &Settings, app: Option<T>) -> bool {
+pub fn initialize<T: App>(settings: &Settings, app: Option<T>) -> bool {
     let settings = settings.to_cef();
-    let result = with_args(move |args| unsafe{
-        ffi::cef_initialize(
-            &args as *const _,
-            &settings as *const _,
-            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(|| zeroed()), zeroed())
-    });
+    let result = with_args(move |args| unsafe {
+                               ffi::cef_initialize(&args as *const _,
+                                                   &settings as *const _,
+                                                   app.map(|x| upcast_ptr(AppWrapper::new(x)))
+                                                       .unwrap_or_else(|| zeroed()),
+                                                   zeroed())
+                           });
     drop(settings);
     match result {
         0 => false,
-        _ => true
+        _ => true,
     }
 }
 
@@ -466,9 +481,8 @@ pub fn do_message_loop_work() {
 
 impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
     fn drop(&mut self) {
-        unsafe{
-            if self.inner != std::ptr::null_mut()
-            {
+        unsafe {
+            if self.inner != std::ptr::null_mut() {
                 (*self.inner).release();
                 self.inner = std::ptr::null_mut();
             }
@@ -478,7 +492,7 @@ impl<T: Is<ffi::cef_base_t>> Drop for CefRc<T> {
 
 impl<T: Is<ffi::cef_base_t>> Clone for CefRc<T> {
     fn clone(&self) -> CefRc<T> {
-        unsafe{ (*self.inner).add_ref() };
+        unsafe { (*self.inner).add_ref() };
         CefRc { inner: self.inner }
     }
 }
