@@ -9,12 +9,10 @@ bitflags = "0.1"
 num = "0.1"
 num-macros = "0.1"
 libc = "0.2.23"
+extern_attrib = "0.1"
 
 [dependencies.cef-sys]
 path = "cef-sys"
-
-[dependencies.extern_attrib]
-git = "https://github.com/anderejd/extern_attrib"
 
 [target.x86_64-pc-windows-gnu.dependencies]
 kernel32-sys = "*"
