@@ -15,7 +15,7 @@ extern_attrib = "0.2"
 #path = "cef-sys"
 
 [dependencies.cef_ffi]
-path = "../cef_ffi"
+git = "https://github.com/anderejd/cef_ffi"
 
 [target.x86_64-pc-windows-gnu.dependencies]
 kernel32-sys = "*"
