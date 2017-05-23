@@ -1,4 +1,5 @@
-//! Macro to choose ABI based on target_os.
+//! Macro to choose ABI based on target_os. Thanks to
+//! https://github.com/zoomulator for the original macro!
 //!
 //! Consider replacing this with crate extern_attrib when proc_macro_attribute
 //! lands in stable.
