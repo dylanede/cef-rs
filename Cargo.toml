@@ -5,10 +5,10 @@ version = "0.0.1"
 authors = ["Dylan Ede <dylanede@googlemail.com>"]
 
 [dependencies]
-bitflags = "0.1"
-num = "0.1"
-num-macros = "0.1"
-libc = "0.2.23"
+bitflags = "0.8"
+#num = "*"
+#num-macros = "0.1" requires nightly
+libc = "0.2"
 
 # Consider using this when proc_macro_attribute lands in stable.
 # extern_attrib = "0.2"

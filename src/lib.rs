@@ -1,3 +1,4 @@
+/*
 #![feature(box_syntax,
 //libc,
            alloc,
@@ -8,6 +9,7 @@
            associated_type_defaults,
            proc_macro,
 )]
+*/
 
 //#![plugin(num_macros)]
 
@@ -18,7 +20,7 @@ extern crate cef_ffi as ffi;
 //extern crate extern_attrib;
 //#[macro_use]
 //extern crate bitflags;
-extern crate num;
+//extern crate num; requires nightly
 extern crate libc;
 extern crate alloc;
 
@@ -107,15 +109,11 @@ trait CefBase: Is<ffi::cef_base_ref_counted_t> {
 impl<T: Is<ffi::cef_base_ref_counted_t>> CefBase for T {
     fn add_ref(&mut self) {
         let base: &mut ffi::cef_base_ref_counted_t = upcast_mut(self);
-        unsafe {
-            base.add_ref.unwrap()(base as *mut _)
-        }
+        unsafe { base.add_ref.unwrap()(base as *mut _) }
     }
     fn release(&mut self) -> libc::c_int {
         let base: &mut ffi::cef_base_ref_counted_t = upcast_mut(self);
-        unsafe {
-            base.release.unwrap()(base as *mut _)
-        }
+        unsafe { base.release.unwrap()(base as *mut _) }
     }
 }
 
@@ -166,7 +164,7 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
 
         CefRc {
             inner: unsafe {
-                transmute(box RefCounted {
+                transmute(Box::new(RefCounted {
                                   v: f(ffi::cef_base_ref_counted_t {
                                            size: size_of::<RefCounted<T>>() as libc::size_t,
                                            add_ref: Some(add_ref::<T>),
@@ -174,7 +172,7 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
                                            has_one_ref: Some(has_one_ref::<T>),
                                        }),
                                   count: AtomicUsize::new(1),
-                              })
+                              }))
             },
         }
     }
