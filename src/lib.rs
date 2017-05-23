@@ -15,7 +15,7 @@
 
 //extern crate cef_sys as ffi;
 extern crate cef_ffi as ffi;
-extern crate extern_attrib;
+//extern crate extern_attrib;
 //#[macro_use]
 //extern crate bitflags;
 extern crate num;
@@ -32,7 +32,10 @@ use std::mem::{transmute, drop, size_of, zeroed};
 use std::ops::{Deref, DerefMut};
 use std::default::Default;
 
-use extern_attrib::extern_auto;
+//use extern_attrib::extern_auto;
+#[macro_use]
+mod extern_macro;
+
 
 //use std::ptr::null_mut;
 
@@ -131,14 +134,14 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
         }
         unsafe impl<T> Is<ffi::cef_base_ref_counted_t> for RefCounted<T> {}
 
-        #[extern_auto]
-        fn add_ref<T>(_self: *mut ffi::cef_base_ref_counted_t) {
+        //#[extern_auto]
+        extern_auto_fn!(add_ref<T>(_self: *mut ffi::cef_base_ref_counted_t) {
             //println!("add {:?}", size_of::<T>());
             let cell: &mut RefCounted<T> = unsafe { unsafe_downcast_mut(&mut *_self) };
             cell.count.fetch_add(1, Ordering::Relaxed);
-        }
-        #[extern_auto]
-        fn release<T>(_self: *mut ffi::cef_base_ref_counted_t) -> libc::c_int {
+        });
+        //#[extern_auto]
+        extern_auto_fn!(release<T>(_self: *mut ffi::cef_base_ref_counted_t) -> libc::c_int {
             //println!("release {:?}", size_of::<T>());
             unsafe {
                 let cell: *mut RefCounted<T> = transmute(_self);
@@ -151,7 +154,7 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
                 }
                 if old_count == 1 { 1 } else { 0 }
             }
-        }
+        });
         #[extern_auto]
         fn has_one_ref<T>(_self: *mut ffi::cef_base_ref_counted_t) -> libc::c_int {
             let cell: &mut RefCounted<T> = unsafe { unsafe_downcast_mut(&mut *_self) };

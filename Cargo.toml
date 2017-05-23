@@ -9,10 +9,10 @@ bitflags = "0.1"
 num = "0.1"
 num-macros = "0.1"
 libc = "0.2.23"
-extern_attrib = "0.2"
 
-#[dependencies.cef-sys]
-#path = "cef-sys"
+# Consider using this when proc_macro_attribute lands in stable.
+# extern_attrib = "0.2"
+# Using macros 1.1 version in module src/extern_macro/ for now.
 
 [dependencies.cef_ffi]
 git = "https://github.com/anderejd/cef_ffi"
