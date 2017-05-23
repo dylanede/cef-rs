@@ -6,7 +6,6 @@ use CefRc;
 use unsafe_downcast_mut;
 use std::mem::zeroed;
 use std::ops::{Deref, DerefMut};
-use extern_attrib::extern_auto;
 
 trait ResourceBundleHandler {}
 //impl ResourceBundleHandler for Void {}
@@ -67,50 +66,46 @@ unsafe impl<T: App> Is<ffi::_cef_app_t> for AppWrapper<T> {}
 ///       normal rust String instances.
 impl<T: App> AppWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<AppWrapper<T>> {
-        #[allow(unused_variables)]
-        #[extern_auto]
-        fn obclp<T: App>(_self: *mut ffi::_cef_app_t,
+        extern_auto_fn!(obclp<T: App>(_self: *mut ffi::_cef_app_t,
                          process_type: *const ffi::cef_string_t,
                          command_line: *mut ffi::_cef_command_line_t) {
             unsafe {
+                let _ = process_type;
+                let _ = command_line;
                 let this: &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 //this.callback.on_before_command_line_processing(&*process_type, &mut *command_line);
                 this.callback.on_before_command_line_processing();
             }
-        }
-        #[allow(unused_variables)]
-        #[extern_auto]
-        fn orcs<T: App>(_self: *mut ffi::_cef_app_t, registrar: *mut ffi::_cef_scheme_registrar_t) {
+        });
+        extern_auto_fn!(orcs<T: App>(_self: *mut ffi::_cef_app_t, registrar: *mut ffi::_cef_scheme_registrar_t) {
+            let _ = registrar;
             unsafe {
                 let this: &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 //this.callback.on_register_custom_schemes(&mut *registrar);
                 this.callback.on_register_custom_schemes();
             }
-        }
-        #[extern_auto]
-        fn grbh<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_resource_bundle_handler_t {
+        });
+        extern_auto_fn!(grbh<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_resource_bundle_handler_t {
             unsafe {
                 zeroed()
                 //let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 //this.callback.get_resource_bundle_handler().map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed())
             }
-        }
-        #[extern_auto]
-        fn gbph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_browser_process_handler_t {
+        });
+        extern_auto_fn!(gbph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_browser_process_handler_t {
             unsafe {
                 zeroed()
                 //let this : &mut App<T> = transmute_mut_ref(&mut *_self);
                 //this.callback.get_browser_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
-        }
-        #[extern_auto]
-        fn grph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_render_process_handler_t {
+        });
+        extern_auto_fn!(grph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_render_process_handler_t {
             unsafe {
                 zeroed()
                 //let this : &mut App<T> = transmute_mut_ref(&mut *_self);
                 //this.callback.get_render_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
-        }
+        });
         CefRc::make(move |base| {
             AppWrapper {
                 vtable: ffi::_cef_app_t {

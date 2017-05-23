@@ -6,7 +6,6 @@ use alloc::heap::{allocate, deallocate};
 use std::ptr::null_mut;
 use libc;
 use std::ops::{Deref, DerefMut};
-use extern_attrib::extern_auto;
 
 pub trait UTF16Ext {
     fn units<'a>(&'a self) -> &'a [u16];
@@ -172,8 +171,7 @@ impl CefString {
         }
         let ptr = ptr as *mut u16;
         unsafe { copy_nonoverlapping(data.as_ptr(), ptr, data.len()) };
-        #[extern_auto]
-        fn release(str: *mut u16) {
+        extern_auto_fn!(release(str: *mut u16) {
             if str == null_mut() {
                 return;
             }
@@ -183,7 +181,7 @@ impl CefString {
                 let size = *ptr;
                 deallocate(ptr as *mut u8, size, mem::align_of::<usize>());
             }
-        }
+        });
 
         OwnedString {
             v: ffi::cef_string_utf16_t {
