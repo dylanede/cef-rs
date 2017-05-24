@@ -1,0 +1,8 @@
+[package]
+name = "hello_cef"
+version = "0.1.0"
+authors = ["anderejd <rajder@gmail.com>"]
+
+[dependencies]
+cef_ffi = { path = "../.." }
+
