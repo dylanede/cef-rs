@@ -20,9 +20,6 @@ memalloc = "0.1.0"
 [dependencies.cef_ffi]
 path = "cef_ffi"
 
-[target.x86_64-pc-windows-gnu.dependencies]
-kernel32-sys = "*"
-
-[target.x86-pc-windows-gnu.dependencies]
+[target.'cfg(windows)'.dependencies]
 kernel32-sys = "*"
 
