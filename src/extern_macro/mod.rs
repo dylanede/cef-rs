@@ -4,7 +4,7 @@
 //! Consider replacing this with crate extern_attrib when proc_macro_attribute
 //! lands in stable.
 
-#![macro_export]
+//#![macro_export]
 
 #[cfg(not(target_os="windows"))]
 macro_rules! extern_auto_fn(

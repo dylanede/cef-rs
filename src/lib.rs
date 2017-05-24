@@ -22,7 +22,8 @@ extern crate cef_ffi as ffi;
 //extern crate bitflags;
 //extern crate num; requires nightly
 extern crate libc;
-extern crate alloc;
+//extern crate alloc;
+extern crate memalloc;
 
 #[cfg(target_os="windows")]
 extern crate kernel32;
@@ -165,14 +166,14 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
         CefRc {
             inner: unsafe {
                 transmute(Box::new(RefCounted {
-                                  v: f(ffi::cef_base_ref_counted_t {
-                                           size: size_of::<RefCounted<T>>() as libc::size_t,
-                                           add_ref: Some(add_ref::<T>),
-                                           release: Some(release::<T>),
-                                           has_one_ref: Some(has_one_ref::<T>),
-                                       }),
-                                  count: AtomicUsize::new(1),
-                              }))
+                                       v: f(ffi::cef_base_ref_counted_t {
+                                                size: size_of::<RefCounted<T>>() as libc::size_t,
+                                                add_ref: Some(add_ref::<T>),
+                                                release: Some(release::<T>),
+                                                has_one_ref: Some(has_one_ref::<T>),
+                                            }),
+                                       count: AtomicUsize::new(1),
+                                   }))
             },
         }
     }

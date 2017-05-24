@@ -2,7 +2,8 @@ use ffi;
 use std::slice;
 use std::mem::{transmute, replace, forget};
 use std::mem;
-use alloc::heap::{allocate, deallocate};
+//use alloc::heap::{allocate, deallocate};
+use memalloc::{allocate, deallocate};
 use std::ptr::null_mut;
 use libc;
 use std::ops::{Deref, DerefMut};
@@ -158,10 +159,17 @@ impl CefString {
                 .checked_mul(mem::size_of::<u16>())
                 .and_then(|x| x.checked_add(mem::size_of::<usize>()))
                 .expect("capacity overflow");
-            let ptr = unsafe { allocate(size, mem::align_of::<usize>()) };
+            /*
+             * Investigate alignment later, memalloc could be handle this by
+             * being made generic..?
+             * let ptr = unsafe { allocate(size, mem::align_of::<usize>()) };
+             */
+            let ptr = unsafe { allocate(size) };
+            /* memalloc does not allow us to handle OOM.
             if ptr.is_null() {
                 ::alloc::oom()
             }
+            */
             (ptr as *mut u16, size)
         };
         let mut ptr = ptr as *mut usize;
@@ -179,7 +187,12 @@ impl CefString {
                 let mut ptr = str as *mut usize;
                 ptr = ptr.offset(-1);
                 let size = *ptr;
-                deallocate(ptr as *mut u8, size, mem::align_of::<usize>());
+                /*
+                * Investigate alignment later, memalloc could be handle this by
+                * being made generic..?
+                * deallocate(ptr as *mut u8, size, mem::align_of::<usize>());
+                */
+                deallocate(ptr as *mut u8, size);
             }
         });
 

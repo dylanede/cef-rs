@@ -10,6 +10,9 @@ bitflags = "0.8"
 #num-macros = "0.1" requires nightly
 libc = "0.2"
 
+# drop-in replacement for alloc but using stable Rust.
+memalloc = "0.1.0"
+
 # Consider using this when proc_macro_attribute lands in stable.
 # extern_attrib = "0.2"
 # Using macros 1.1 version in module src/extern_macro/ for now.
