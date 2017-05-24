@@ -1,7 +1,8 @@
 #![deny(warnings)]
 
-//! This build script was shamelessly borrowed from
-//! https://github.com/dylanede/cef-rs/blob/master/cef-sys/build.rs. (Thanks dylanede!)
+//! This build script was based on the original cef-rs/cef-sys crate.
+//! This crate is quite different from the original and as such a new name
+//! cef_ffi instead of cef-sys seemed appropriate.
 //!
 //! The build script has since been modified to run bindgen as part of this
 //! pre-build script, as recommended by the bindgen manual.
