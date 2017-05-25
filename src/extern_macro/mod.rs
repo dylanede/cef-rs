@@ -6,7 +6,7 @@
 
 //#![macro_export]
 
-//#[cfg(not(target_os="windows"))]
+#[cfg(not(all(target_family="windows", target_pointer_width="32")))]
 macro_rules! extern_auto_fn(
     ($name:ident <$($gen:ident : $traitbound:ident),*> ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
         extern "C" fn $name <$($gen : $traitbound),*>($($argn : $argt),*) -> $ret $block
@@ -28,6 +28,31 @@ macro_rules! extern_auto_fn(
     );
     ($name:ident ($($argn:ident : $argt:ty),*) $block:block) => (
         extern "C" fn $name($($argn : $argt),*) $block
+    );
+);
+
+#[cfg(all(target_family="windows", target_pointer_width="32"))]
+macro_rules! extern_auto_fn(
+    ($name:ident <$($gen:ident : $traitbound:ident),*> ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
+        extern "stdcall" fn $name <$($gen : $traitbound),*>($($argn : $argt),*) -> $ret $block
+    );
+    ($name:ident <$($gen:ident : $traitbound:ident),*> ($($argn:ident : $argt:ty),*) $block:block) => (
+        extern "stdcall" fn $name <$($gen : $traitbound),*>($($argn : $argt),*) $block
+    );
+    (($($argn:ident : $argt:ty),*) -> $ret:ty) => (
+        extern "stdcall" fn($($argn : $argt),*) -> $ret
+    );
+    ($name:ident <$($gen:ident),*> ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
+        extern "stdcall" fn $name <$($gen),*>($($argn : $argt),*) -> $ret $block
+    );
+    ($name:ident <$($gen:ident),*> ($($argn:ident : $argt:ty),*) $block:block) => (
+        extern "stdcall" fn $name <$($gen),*>($($argn : $argt),*) $block
+    );
+    ($name:ident ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
+        extern "stdcall" fn $name($($argn : $argt),*) -> $ret $block
+    );
+    ($name:ident ($($argn:ident : $argt:ty),*) $block:block) => (
+        extern "stdcall" fn $name($($argn : $argt),*) $block
     );
 );
 

@@ -40,7 +40,7 @@ use std::default::Default;
 mod extern_macro;
 
 
-//use std::ptr::null_mut;
+use std::ptr::null_mut;
 
 mod app;
 pub mod string;
@@ -65,7 +65,7 @@ pub use browser_client::{BrowserClient, BrowserClientWrapper};
                                          CustomCursorInfo};*/
 pub use browser::Browser;
 pub use browser_host::BrowserHost;
-pub use browser_host::BrowserSettings;/*
+pub use browser_host::BrowserSettings; /*
 pub use browser_host::{event_flags, MouseEvent, MouseButtonType};
 pub use browser_host::Modifiers;
 pub use browser_host::event_flags::EventFlags;
@@ -414,14 +414,12 @@ impl<'a> WindowInfo<'a> {
             windowless_rendering_enabled: CBool::new(self.windowless_rendering_enabled).to_cef(),
             transparent_painting_enabled: CBool::new(self.transparent_painting_enabled).to_cef(),
             window_name: match self.window_name {
-                Some(name) => {
-                    CefString::from_str(name).cast()
-                }
-                _ => CefString::from_str("").cast()
+                Some(name) => CefString::from_str(name).cast(),
+                _ => CefString::from_str("").cast(),
             },
             hidden: 0,
             parent_view: null_mut(),
-            view: null_mut()
+            view: null_mut(),
         }
     }
     #[cfg(target_os="windows")]
