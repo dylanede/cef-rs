@@ -6,7 +6,7 @@
 
 //#![macro_export]
 
-#[cfg(not(target_os="windows"))]
+//#[cfg(not(target_os="windows"))]
 macro_rules! extern_auto_fn(
     ($name:ident <$($gen:ident : $traitbound:ident),*> ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
         extern "C" fn $name <$($gen : $traitbound),*>($($argn : $argt),*) -> $ret $block

@@ -12,7 +12,7 @@ use std::mem::transmute;
 
 use std::ops::{Deref, DerefMut};
 
-use extern_attrib::extern_auto;
+use extern_macro;
 use std::os::raw;
 
 pub type Rect = ffi::cef_rect_t;
