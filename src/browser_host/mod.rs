@@ -1,7 +1,7 @@
 /*
     Many build errors here, the code looks overcomplicated and I will not
     deal with this now. TODO: Investigate later.
-
+*/
 use ffi;
 use libc;
 use BrowserClientWrapper;
@@ -15,12 +15,12 @@ use upcast_ptr;
 use std::mem::{transmute, zeroed};
 use string;
 use cast_to_interface;
-use upcast;
+//use upcast;
 
 use Interface;
 use Is;
 
-use std::ptr::null_mut;
+use std::ptr::null_mut;/*
 use std::default::Default;
 
 mod keys;
@@ -96,19 +96,19 @@ pub enum MouseButtonType {
     Middle,
     Right,
 }
-
+*/
 #[allow(missing_copy_implementations)]
 pub struct BrowserHost {
-    vtable: ffi::cef_browser_host_t,
+    //vtable: ffi::cef_browser_host_t,
 }
 
 unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
 unsafe impl Is<ffi::cef_base_ref_counted_t> for BrowserHost {}
-
+/*
 /// TODO: Investigate and implement.
 pub enum RequestContext {}
-
-impl BrowserHost {
+*/
+impl BrowserHost {/*
     #[cfg(target_os="windows")]
     fn call0<'a, T>(&'a self,
                     f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t) -> T>)
@@ -254,18 +254,18 @@ impl BrowserHost {
         self.call1(&self.vtable.send_key_event, &event as *const _)
     }
 
-    /// TODO: Review and implement request_context handling.
+    /// TODO: Review and implement request_context handling.*/
     #[allow(unused_variables)]
     pub fn create_browser_sync<T: BrowserClient>(window_info: &WindowInfo,
                                                  client: T,
                                                  url: &str,
-                                                 settings: &BrowserSettings,
-                                                 request_context: Option<RequestContext>)
+                                                 settings: &BrowserSettings/*,
+                                                 request_context: Option<RequestContext>*/)
                                                  -> CefRc<Browser> {
         let info = window_info.to_cef();
         let url = CefString::from_str(url);
         unsafe {
-            assert!(ffi::cef_currently_on(ffi::TID_UI) == 1);
+            assert!(ffi::cef_currently_on(ffi::cef_thread_id_t::TID_UI) == 1);
             let ptr = ffi::cef_browser_host_create_browser_sync(
                 &info as *const _,
                 upcast_ptr(BrowserClientWrapper::new(client)),
@@ -280,7 +280,7 @@ impl BrowserHost {
             cast_to_interface(ptr)
         }
     }
-
+/*
     /// TODO: Review and implement request_context handling.
     #[allow(unused_variables)]
     pub fn create_browser<T: BrowserClient + Send>(window_info: &WindowInfo,
@@ -301,8 +301,9 @@ impl BrowserHost {
         drop(url);
         drop(info);
         result
-    }
+    }*/
 }
+
 
 #[repr(C)]
 pub struct BrowserSettings {
@@ -360,4 +361,3 @@ fn check_browser_settings_size() {
     assert!(size_of::<BrowserSettings>() == size_of::<ffi::cef_browser_settings_t>());
 }
 
-*/

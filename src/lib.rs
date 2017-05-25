@@ -50,9 +50,8 @@ mod browser_host;
 
 pub use app::App;
 pub use app::AppWrapper;
-/*
 pub use browser_client::{BrowserClient, BrowserClientWrapper};
-pub use browser_client::render_handler::{Rect,
+/*pub use browser_client::render_handler::{Rect,
                                          Point,
                                          Size,
                                          //CursorHandle,
@@ -63,10 +62,10 @@ pub use browser_client::render_handler::{Rect,
                                          CursorDirection,
                                          CursorBidirection,
                                          Cursor,
-                                         CustomCursorInfo};
+                                         CustomCursorInfo};*/
 pub use browser::Browser;
 pub use browser_host::BrowserHost;
-pub use browser_host::BrowserSettings;
+pub use browser_host::BrowserSettings;/*
 pub use browser_host::{event_flags, MouseEvent, MouseButtonType};
 pub use browser_host::Modifiers;
 pub use browser_host::event_flags::EventFlags;
@@ -223,7 +222,7 @@ unsafe fn unsafe_downcast_ptr<T1, T2 : Is<T1>>(x: *mut T1) -> CefRc<T2> where T2
 fn cast_ref<'a, T1, T2 : Interface<T1>>(x: &'a T1) -> &'a T2 {
     unsafe{ transmute(x) }
 }
-
+*/
 fn cast_mut_ref<'a, T1, T2: Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
     unsafe { transmute(x) }
 }
@@ -233,7 +232,7 @@ fn cast_to_interface<T1, T2: Interface<T1>>(x: *mut T1) -> CefRc<T2>
 {
     unsafe { transmute(x) }
 }
-
+/*
 fn cast_from_interface<T1, T2: Interface<T1>>(x: CefRc<T2>) -> *mut T1
     where T2: Is<ffi::cef_base_ref_counted_t>
 {
@@ -404,7 +403,6 @@ impl<'a> WindowInfo<'a> {
         info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
         info
     }
-    /*
     #[cfg(target_os="macos")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
         //use std::default::Default;
@@ -426,10 +424,25 @@ impl<'a> WindowInfo<'a> {
             view: null_mut()
         }
     }
-    */
     #[cfg(target_os="windows")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
-        use std::default::Default;
+        //use std::default::Default;
+        use std::ptr::null_mut;
+        ffi::cef_window_info_t {
+            ex_style: 0x00000000,
+            window_name: CefString::from_str("CEF").cast(),
+            style: 0x16CF0000,
+            x: self.x,
+            y: self.y,
+            width: self.width,
+            height: self.height,
+            parent_window: null_mut(),
+            menu: null_mut(),
+            windowless_rendering_enabled: CBool::new(self.windowless_rendering_enabled).to_cef(),
+            transparent_painting_enabled: CBool::new(self.transparent_painting_enabled).to_cef(),
+            window: null_mut(),
+        }
+        /* TODO: cef_window_info_t does not implement Default, is it supposed to?
         let mut info: ffi::cef_window_info_t = Default::default();
         info.x = self.x;
         info.y = self.y;
@@ -444,7 +457,7 @@ impl<'a> WindowInfo<'a> {
         if let Some(name) = self.window_name {
             info.window_name = CefString::from_str(name).cast()
         }
-        info
+        info*/
     }
 }
 

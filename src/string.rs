@@ -152,6 +152,18 @@ impl CefString {
 
         let data: Vec<u16> = s.encode_utf16().collect();
 
+        // TODO: Can we use a null pointer for representing a zero length string?
+        // Added this block to avoid writing to a null pointer in code below.
+        if data.len() == 0 {
+            return OwnedString {
+                v: ffi::cef_string_utf16_t {
+                    str: null_mut(),
+                    length: 0 as libc::size_t,
+                    dtor: None,
+                },
+            };
+        }
+
         let (ptr, size) = if data.len() == 0 {
             (null_mut(), 0)
         } else {

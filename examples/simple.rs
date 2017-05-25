@@ -1,4 +1,4 @@
-#![feature(default_type_parameter_fallback)]
+//#![feature(default_type_parameter_fallback)]
 
 extern crate cef;
 
@@ -33,9 +33,10 @@ fn main() {
     cef::BrowserHost::create_browser_sync(&window_info,
                                           (),
                                           "http://www.cnn.com",
-                                          &cef::BrowserSettings::new(),
-                                          None);
+                                          &cef::BrowserSettings::new()/*,
+                                          None*/);
 
+    // TODO: Closing the window does not exit the message loop
     cef::run_message_loop();
 
     // This is important for cleanup and stopping helper processes

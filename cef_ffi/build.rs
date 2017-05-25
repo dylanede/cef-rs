@@ -92,6 +92,7 @@ fn main() {
     }
     let bindings = bindgen::Builder::default()
         .no_unstable_rust()
+        .derive_debug(false)
         .clang_arg(format!("-I{}", cef_root.to_str().unwrap()))
         .header("wrapper.h")
         .generate()
