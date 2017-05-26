@@ -12,7 +12,7 @@ use libc;
 */
 use Browser;
 use ProcessID;
-use ProcessMessage;/*
+use ProcessMessage; /*
 
 //use upcast_ptr;
 
@@ -108,6 +108,7 @@ pub trait BrowserClient: 'static {
     fn get_request_handler(&mut self) -> Option<RequestHandler> {
         None
     }*/
+
     fn on_process_message_received(&mut self,
                                    browser: &mut Browser,
                                    source_process: ProcessID,
@@ -195,6 +196,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         }
         */
 
+
         extern_auto_fn!(_14<T: BrowserClient>(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_request_handler_t {
             unsafe { zeroed() }
         });
@@ -242,4 +244,3 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         })
     }
 }
-

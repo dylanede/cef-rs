@@ -20,7 +20,7 @@ use cast_to_interface;
 use Interface;
 use Is;
 
-use std::ptr::null_mut;/*
+use std::ptr::null_mut; /*
 use std::default::Default;
 
 mod keys;
@@ -108,7 +108,8 @@ unsafe impl Is<ffi::cef_base_ref_counted_t> for BrowserHost {}
 /// TODO: Investigate and implement.
 pub enum RequestContext {}
 */
-impl BrowserHost {/*
+impl BrowserHost {
+    /*
     #[cfg(target_os="windows")]
     fn call0<'a, T>(&'a self,
                     f: &'a Option<extern "stdcall" fn(*mut ffi::cef_browser_host_t) -> T>)
@@ -259,7 +260,7 @@ impl BrowserHost {/*
     pub fn create_browser_sync<T: BrowserClient>(window_info: &WindowInfo,
                                                  client: T,
                                                  url: &str,
-                                                 settings: &BrowserSettings/*,
+                                                 settings: &BrowserSettings /*,
                                                  request_context: Option<RequestContext>*/)
                                                  -> CefRc<Browser> {
         let info = window_info.to_cef();
@@ -280,7 +281,7 @@ impl BrowserHost {/*
             cast_to_interface(ptr)
         }
     }
-/*
+    /*
     /// TODO: Review and implement request_context handling.
     #[allow(unused_variables)]
     pub fn create_browser<T: BrowserClient + Send>(window_info: &WindowInfo,
@@ -360,4 +361,3 @@ fn check_browser_settings_size() {
     use std::mem::size_of;
     assert!(size_of::<BrowserSettings>() == size_of::<ffi::cef_browser_settings_t>());
 }
-

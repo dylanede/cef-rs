@@ -156,12 +156,12 @@ impl CefString {
         // Added this block to avoid writing to a null pointer in code below.
         if data.len() == 0 {
             return OwnedString {
-                v: ffi::cef_string_utf16_t {
-                    str: null_mut(),
-                    length: 0 as libc::size_t,
-                    dtor: None,
-                },
-            };
+                       v: ffi::cef_string_utf16_t {
+                           str: null_mut(),
+                           length: 0 as libc::size_t,
+                           dtor: None,
+                       },
+                   };
         }
 
         let (ptr, size) = if data.len() == 0 {
