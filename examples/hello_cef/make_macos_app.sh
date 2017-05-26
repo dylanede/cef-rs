@@ -19,6 +19,10 @@ cp target/release/hello_cef output/hello_cef.app/Contents/MacOS/
 pushd output/hello_cef.app/Contents/MacOS
 install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework hello_cef
 popd
+cp target/release/hello_cef output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/MacOS/hello_cef\ Helper
+pushd output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/MacOS
+install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../../../Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework hello_cef\ Helper
+popd
 
-#open ./output
-./output/hello_cef.app/Contents/MacOS/hello_cef
+open ./output
+#./output/hello_cef.app/Contents/MacOS/hello_cef
