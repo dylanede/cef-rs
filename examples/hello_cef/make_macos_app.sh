@@ -24,5 +24,5 @@ pushd output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/Ma
 install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../../../Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework hello_cef\ Helper
 popd
 
-open ./output
+#open ./output
 #./output/hello_cef.app/Contents/MacOS/hello_cef

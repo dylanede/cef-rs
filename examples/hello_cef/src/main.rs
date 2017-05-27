@@ -6,6 +6,12 @@ use std::default::Default;
 
 /// TODO: Remove all(?) generics from cef::* and provide structs with builders.
 fn main() {
+    /*
+    unsafe {
+        cef::EnableHighDpiSupport();
+    }
+    */
+
     let app: Option<()> = None;
     let result_code = cef::execute_process(app);
     if result_code >= 0 {
@@ -14,7 +20,8 @@ fn main() {
     }
 
     let settings = cef::Settings {
-        log_file: Some("log.log"),
+        log_file: Some("hello_cef.log"),
+        log_severity: cef::LogSeverity::LOGSEVERITY_VERBOSE,
         locale: Some("en_GB"), // This improves CEF's grammar ;-)
         ..Default::default()
     };
@@ -29,11 +36,12 @@ fn main() {
         height: 768,
         ..Default::default()
     };
+
     // Any valid URL will do.
     cef::BrowserHost::create_browser_sync(&window_info,
                                           (),
-                                          "http://www.cnn.com",
-                                          &cef::BrowserSettings::new()/*,
+                                          "http://www.google.com",
+                                          &cef::BrowserSettings::new() /*,
                                           None*/);
 
     // TODO: Closing the window does not exit the message loop

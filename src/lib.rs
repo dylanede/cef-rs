@@ -72,6 +72,11 @@ pub use browser_host::event_flags::EventFlags;
 */
 pub use string::CefString;
 
+/// TODO: Review this, should the enum constructor names be rustified too?
+pub use ffi::cef_log_severity_t as LogSeverity;
+
+pub use ffi::cef_enable_highdpi_support as enable_highdpi_support;
+
 pub enum ProcessID {
     Browser,
     Renderer,
