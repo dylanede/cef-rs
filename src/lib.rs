@@ -1,28 +1,7 @@
-/*
-#![feature(box_syntax,
-//libc,
-           alloc,
-           plugin,
-           heap_api,
-           oom,
-           custom_derive,
-           associated_type_defaults,
-           proc_macro,
-)]
-*/
-
-//#![plugin(num_macros)]
-
 #![deny(warnings)]
 
-//extern crate cef_sys as ffi;
 extern crate cef_ffi as ffi;
-//extern crate extern_attrib;
-//#[macro_use]
-//extern crate bitflags;
-//extern crate num; requires nightly
 extern crate libc;
-//extern crate alloc;
 extern crate memalloc;
 
 #[cfg(target_os="windows")]
@@ -38,7 +17,6 @@ use std::default::Default;
 //use extern_attrib::extern_auto;
 #[macro_use]
 mod extern_macro;
-
 
 use std::ptr::null_mut;
 
@@ -75,8 +53,6 @@ pub use string::CefString;
 /// TODO: Review this, should the enum constructor names be rustified too?
 pub use ffi::cef_log_severity_t as LogSeverity;
 
-pub use ffi::cef_enable_highdpi_support as enable_highdpi_support;
-
 pub enum ProcessID {
     Browser,
     Renderer,
@@ -93,6 +69,12 @@ pub enum State {
     Disabled,
 }
 
+/// TODO: Review, is this violating the contract for safe functions?
+pub fn enable_highdpi_support() {
+    unsafe { ffi::cef_enable_highdpi_support() }
+}
+
+/// TODO: Review, is this violating the contract for safe functions?
 pub fn shutdown() {
     unsafe { ffi::cef_shutdown() }
 }

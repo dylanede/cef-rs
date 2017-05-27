@@ -1,27 +1,22 @@
-//#![feature(default_type_parameter_fallback)]
-
 extern crate cef;
 
 use std::default::Default;
 
-/// TODO: Remove all(?) generics from cef::* and provide structs with builders.
 fn main() {
     /*
-    unsafe {
-        cef::EnableHighDpiSupport();
-    }
+    cef::EnableHighDpiSupport();
     */
 
     let app: Option<()> = None;
     let result_code = cef::execute_process(app);
-    if result_code >= 0 {
+    if result_code != -1 {
         // The process was a helper process, so end now.
         std::process::exit(result_code as i32);
     }
 
     let settings = cef::Settings {
         log_file: Some("hello_cef.log"),
-        log_severity: cef::LogSeverity::LOGSEVERITY_VERBOSE,
+        log_severity: cef::LogSeverity::LOGSEVERITY_DEFAULT,
         locale: Some("en_GB"), // This improves CEF's grammar ;-)
         ..Default::default()
     };
