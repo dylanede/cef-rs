@@ -7,7 +7,7 @@ rm -rf output/hello_cef.app
 mkdir -p output/hello_cef.app/Contents/Frameworks
 mkdir -p output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/MacOS
 # need to provide a helper executable, can it be the same?
-touch    output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/Info.plist
+cp resources/Info.plist output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/Info.plist
 touch    output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/Pkginfo
 mkdir -p output/hello_cef.app/Contents/MacOS
 mkdir -p output/hello_cef.app/Contents/Resources
