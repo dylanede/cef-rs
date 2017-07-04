@@ -5,13 +5,14 @@ This crate does NOT provide a high-level Rust API, but should be a good layer to
 
 The environment variable CEF_DIST_ROOT is required to point to an extracted CEF
 distribution archive, at the time of writing the expected structure is something like:
-    Release/
-    cmake/
-    include/
-    libcef_dll/
-    CMakeLists.txt
-    LICENSE.txt
-    README.txt
+
+	Release/
+	cmake/
+	include/
+	libcef_dll/
+	CMakeLists.txt
+	LICENSE.txt
+	README.txt
 
 The example in examples/hello_cef contains a helper script make_macos_app.sh
 that helps create the reqired app sctructure and an example of the required
