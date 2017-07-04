@@ -13,7 +13,3 @@ distribution archive, at the time of writing the expected structure is something
 	CMakeLists.txt
 	LICENSE.txt
 	README.txt
-
-The example in examples/hello_cef contains a helper script make_macos_app.sh
-that helps create the reqired app sctructure and an example of the required
-install_name_tool usage.
