@@ -7,7 +7,7 @@ extern crate memalloc;
 #[cfg(target_os="windows")]
 extern crate kernel32;
 
-/// TODO: Investigate if this was special older versions of Rust.
+/// TODO: Investigate if this was special in older versions of Rust.
 //pub enum Void {}
 
 use std::mem::{transmute, drop, size_of, zeroed};
@@ -111,7 +111,6 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
         use std::sync::atomic::Ordering;
         use std::sync::atomic;
 
-        //println!("making {:?}", size_of::<T>());
         #[repr(C)]
         struct RefCounted<T> {
             v: T,
@@ -120,18 +119,15 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
         unsafe impl<T> Is<ffi::cef_base_ref_counted_t> for RefCounted<T> {}
 
         extern_auto_fn!(add_ref<T>(_self: *mut ffi::cef_base_ref_counted_t) {
-            //println!("add {:?}", size_of::<T>());
             let cell: &mut RefCounted<T> = unsafe { unsafe_downcast_mut(&mut *_self) };
             cell.count.fetch_add(1, Ordering::Relaxed);
         });
 
         extern_auto_fn!(release<T>(_self: *mut ffi::cef_base_ref_counted_t) -> libc::c_int {
-            //println!("release {:?}", size_of::<T>());
             unsafe {
                 let cell: *mut RefCounted<T> = transmute(_self);
                 let old_count = (*cell).count.fetch_sub(1, Ordering::Release);
                 if old_count == 1 {
-                    //println!("dropping {:?}", size_of::<T>());
                     atomic::fence(Ordering::Acquire);
                     let cell: Box<RefCounted<T>> = transmute(cell);
                     drop(cell);
@@ -279,7 +275,6 @@ pub struct Settings<'a> {
     pub pack_loading_disabled: bool,
     pub remote_debugging_port: Option<i32>,
     pub uncaught_exception_stack_size: Option<i32>,
-    pub context_safety_implementation: bool,
     pub ignore_certificate_errors: bool,
     pub background_color: ffi::cef_color_t,
 }
@@ -306,7 +301,6 @@ impl<'a> Default for Settings<'a> {
             pack_loading_disabled: false,
             remote_debugging_port: None,
             uncaught_exception_stack_size: None,
-            context_safety_implementation: false,
             ignore_certificate_errors: false,
             background_color: Default::default(),
         }
@@ -340,7 +334,6 @@ impl<'a> Settings<'a> {
             pack_loading_disabled: self.pack_loading_disabled as libc::c_int,
             remote_debugging_port: self.remote_debugging_port.unwrap_or(0),
             uncaught_exception_stack_size: self.uncaught_exception_stack_size.unwrap_or(0),
-            context_safety_implementation: self.context_safety_implementation as libc::c_int,
             ignore_certificate_errors: self.ignore_certificate_errors as libc::c_int,
             background_color: self.background_color,
             accept_language_list: CefString::from_str("").cast(),
@@ -360,7 +353,6 @@ pub struct WindowInfo<'a> {
     pub width: i32,
     pub height: i32,
     pub windowless_rendering_enabled: bool,
-    pub transparent_painting_enabled: bool,
 }
 
 impl<'a> Default for WindowInfo<'a> {
@@ -372,7 +364,6 @@ impl<'a> Default for WindowInfo<'a> {
             width: 0,
             height: 0,
             windowless_rendering_enabled: false,
-            transparent_painting_enabled: false,
         }
     }
 }
@@ -387,7 +378,6 @@ impl<'a> WindowInfo<'a> {
         info.width = self.width as u32;
         info.height = self.height as u32;
         info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
-        info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
         info
     }
     #[cfg(target_os="macos")]
@@ -399,7 +389,6 @@ impl<'a> WindowInfo<'a> {
             width: self.width,
             height: self.height,
             windowless_rendering_enabled: CBool::new(self.windowless_rendering_enabled).to_cef(),
-            transparent_painting_enabled: CBool::new(self.transparent_painting_enabled).to_cef(),
             window_name: match self.window_name {
                 Some(name) => CefString::from_str(name).cast(),
                 _ => CefString::from_str("").cast(),
@@ -424,7 +413,6 @@ impl<'a> WindowInfo<'a> {
             parent_window: null_mut(),
             menu: null_mut(),
             windowless_rendering_enabled: CBool::new(self.windowless_rendering_enabled).to_cef(),
-            transparent_painting_enabled: CBool::new(self.transparent_painting_enabled).to_cef(),
             window: null_mut(),
         }
         /* TODO: cef_window_info_t does not implement Default, is it supposed to?
@@ -434,7 +422,6 @@ impl<'a> WindowInfo<'a> {
         info.width = self.width;
         info.height = self.height;
         info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
-        info.transparent_painting_enabled = CBool::new(self.transparent_painting_enabled).to_cef();
         if !self.windowless_rendering_enabled {
             // WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE
             info.style = 0x16CF0000;
@@ -450,7 +437,6 @@ impl<'a> WindowInfo<'a> {
 fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ffi::CString;
     let args: Vec<CString> = std::env::args().map(|x| CString::new(x).unwrap()).collect();
-    println!("{:?}", args);
     let args: Vec<*mut libc::c_char> = args.iter().map(|x| x.as_ptr() as *mut _).collect();
     let args = &args;
     let args_ = ffi::cef_main_args_t {
