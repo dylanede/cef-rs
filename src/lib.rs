@@ -4,7 +4,7 @@ extern crate cef_ffi as ffi;
 extern crate libc;
 extern crate memalloc;
 
-#[cfg(target_os="windows")]
+#[cfg(target_os = "windows")]
 extern crate kernel32;
 
 /// TODO: Investigate if this was special in older versions of Rust.
@@ -148,14 +148,14 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> CefRc<T> {
         CefRc {
             inner: unsafe {
                 transmute(Box::new(RefCounted {
-                                       v: f(ffi::cef_base_ref_counted_t {
-                                                size: size_of::<RefCounted<T>>() as libc::size_t,
-                                                add_ref: Some(add_ref::<T>),
-                                                release: Some(release::<T>),
-                                                has_one_ref: Some(has_one_ref::<T>),
-                                            }),
-                                       count: AtomicUsize::new(1),
-                                   }))
+                    v: f(ffi::cef_base_ref_counted_t {
+                        size: size_of::<RefCounted<T>>() as libc::size_t,
+                        add_ref: Some(add_ref::<T>),
+                        release: Some(release::<T>),
+                        has_one_ref: Some(has_one_ref::<T>),
+                    }),
+                    count: AtomicUsize::new(1),
+                }))
             },
         }
     }
@@ -181,6 +181,7 @@ impl<T: Is<ffi::cef_base_ref_counted_t>> DerefMut for CefRc<T> {
 unsafe fn unsafe_downcast_mut<'a, T1, T2: Is<T1>>(x: &'a mut T1) -> &'a mut T2 {
     transmute(x)
 }
+
 fn upcast_mut<'a, T1: Is<T2>, T2>(x: &'a mut T1) -> &'a mut T2 {
     unsafe { transmute(x) }
 }
@@ -192,7 +193,8 @@ fn upcast<'a, T1: Is<T2>, T2>(x: &'a T1) -> &'a T2 {
 */
 
 fn upcast_ptr<T1: Is<T2>, T2>(x: CefRc<T1>) -> *mut T2
-    where T1: Is<ffi::cef_base_ref_counted_t>
+where
+    T1: Is<ffi::cef_base_ref_counted_t>,
 {
     unsafe { transmute(x) }
 }
@@ -211,7 +213,8 @@ fn cast_mut_ref<'a, T1, T2: Interface<T1>>(x: &'a mut T1) -> &'a mut T2 {
 }
 
 fn cast_to_interface<T1, T2: Interface<T1>>(x: *mut T1) -> CefRc<T2>
-    where T2: Is<ffi::cef_base_ref_counted_t>
+where
+    T2: Is<ffi::cef_base_ref_counted_t>,
 {
     unsafe { transmute(x) }
 }
@@ -310,8 +313,11 @@ impl<'a> Default for Settings<'a> {
 impl<'a> Settings<'a> {
     fn to_cef(&self) -> ffi::cef_settings_t {
         fn to_cef_str<'a>(s: Option<&'a str>) -> ffi::cef_string_t {
-            s.map(|x| CefString::from_str(x).cast())
-                .unwrap_or_else(|| unsafe { zeroed() })
+            s.map(|x| CefString::from_str(x).cast()).unwrap_or_else(
+                || unsafe {
+                    zeroed()
+                },
+            )
         }
         ffi::cef_settings_t {
             size: size_of::<ffi::cef_settings_t>() as libc::size_t,
@@ -369,7 +375,7 @@ impl<'a> Default for WindowInfo<'a> {
 }
 
 impl<'a> WindowInfo<'a> {
-    #[cfg(target_os="linux")]
+    #[cfg(target_os = "linux")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
         use std::default::Default;
         let mut info: ffi::cef_window_info_t = Default::default();
@@ -380,7 +386,7 @@ impl<'a> WindowInfo<'a> {
         info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
         info
     }
-    #[cfg(target_os="macos")]
+    #[cfg(target_os = "macos")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
         //use std::default::Default;
         ffi::cef_window_info_t {
@@ -398,7 +404,7 @@ impl<'a> WindowInfo<'a> {
             view: null_mut(),
         }
     }
-    #[cfg(target_os="windows")]
+    #[cfg(target_os = "windows")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
         //use std::default::Default;
         use std::ptr::null_mut;
@@ -433,7 +439,7 @@ impl<'a> WindowInfo<'a> {
     }
 }
 
-#[cfg(not(target_os="windows"))]
+#[cfg(not(target_os = "windows"))]
 fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ffi::CString;
     let args: Vec<CString> = std::env::args().map(|x| CString::new(x).unwrap()).collect();
@@ -448,7 +454,7 @@ fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     result
 }
 
-#[cfg(target_os="windows")]
+#[cfg(target_os = "windows")]
 fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
     use std::ptr::null;
     let args_ = ffi::cef_main_args_t {
@@ -460,23 +466,29 @@ fn with_args<T, F: FnOnce(ffi::cef_main_args_t) -> T>(f: F) -> T {
 /// TODO: Investigate issue #36887 <https://github.com/rust-lang/rust/issues/36887>
 pub fn execute_process<T: App>(app: Option<T>) -> isize {
     with_args(move |args| unsafe {
-                  ffi::cef_execute_process(&args as *const _,
-                                           app.map(|x| upcast_ptr(AppWrapper::new(x)))
-                                               .unwrap_or_else(|| zeroed()),
-                                           zeroed()) as isize
-              })
+        ffi::cef_execute_process(
+            &args as *const _,
+            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(
+                || zeroed(),
+            ),
+            zeroed(),
+        ) as isize
+    })
 }
 
 /// TODO: Investigate issue #36887 <https://github.com/rust-lang/rust/issues/36887>
 pub fn initialize<T: App>(settings: &Settings, app: Option<T>) -> bool {
     let settings = settings.to_cef();
     let result = with_args(move |args| unsafe {
-                               ffi::cef_initialize(&args as *const _,
-                                                   &settings as *const _,
-                                                   app.map(|x| upcast_ptr(AppWrapper::new(x)))
-                                                       .unwrap_or_else(|| zeroed()),
-                                                   zeroed())
-                           });
+        ffi::cef_initialize(
+            &args as *const _,
+            &settings as *const _,
+            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(
+                || zeroed(),
+            ),
+            zeroed(),
+        )
+    });
     drop(settings);
     match result {
         0 => false,

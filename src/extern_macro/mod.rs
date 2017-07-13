@@ -6,7 +6,7 @@
 
 //#![macro_export]
 
-#[cfg(not(all(target_family="windows", target_pointer_width="32")))]
+#[cfg(not(all(target_family = "windows", target_pointer_width = "32")))]
 macro_rules! extern_auto_fn(
     ($name:ident <$($gen:ident : $traitbound:ident),*> ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
         extern "C" fn $name <$($gen : $traitbound),*>($($argn : $argt),*) -> $ret $block
@@ -31,7 +31,7 @@ macro_rules! extern_auto_fn(
     );
 );
 
-#[cfg(all(target_family="windows", target_pointer_width="32"))]
+#[cfg(all(target_family = "windows", target_pointer_width = "32"))]
 macro_rules! extern_auto_fn(
     ($name:ident <$($gen:ident : $traitbound:ident),*> ($($argn:ident : $argt:ty),*) -> $ret:ty $block:block) => (
         extern "stdcall" fn $name <$($gen : $traitbound),*>($($argn : $argt),*) -> $ret $block

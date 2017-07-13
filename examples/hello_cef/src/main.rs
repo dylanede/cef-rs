@@ -33,11 +33,13 @@ fn main() {
     };
 
     // Any valid URL will do.
-    cef::BrowserHost::create_browser_sync(&window_info,
-                                          (),
-                                          "http://www.google.com",
-                                          &cef::BrowserSettings::new() /*,
-                                          None*/);
+    cef::BrowserHost::create_browser_sync(
+        &window_info,
+        (),
+        "http://www.google.com",
+        &cef::BrowserSettings::new(), /*,
+                                          None*/
+    );
 
     // TODO: Closing the window does not exit the message loop
     cef::run_message_loop();

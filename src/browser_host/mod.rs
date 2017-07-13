@@ -257,12 +257,13 @@ impl BrowserHost {
 
     /// TODO: Review and implement request_context handling.*/
     #[allow(unused_variables)]
-    pub fn create_browser_sync<T: BrowserClient>(window_info: &WindowInfo,
-                                                 client: T,
-                                                 url: &str,
-                                                 settings: &BrowserSettings /*,
-                                                 request_context: Option<RequestContext>*/)
-                                                 -> CefRc<Browser> {
+    pub fn create_browser_sync<T: BrowserClient>(
+        window_info: &WindowInfo,
+        client: T,
+        url: &str,
+        settings: &BrowserSettings, /*,
+                                                 request_context: Option<RequestContext>*/
+    ) -> CefRc<Browser> {
         let info = window_info.to_cef();
         let url = CefString::from_str(url);
         unsafe {
@@ -272,7 +273,8 @@ impl BrowserHost {
                 upcast_ptr(BrowserClientWrapper::new(client)),
                 string::cast_to_ptr(&url as *const _),
                 settings.settings() as *const _,
-                zeroed());
+                zeroed(),
+            );
             drop(info);
             drop(url);
             if ptr == null_mut() {

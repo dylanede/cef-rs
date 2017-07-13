@@ -90,14 +90,14 @@ fn main() {
             println!("cargo:rustc-link-search={}", release.to_str().unwrap());
         }
     }
-    let bindings = bindgen::Builder::default()
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    bindgen::Builder::default()
+        .generate_comments(true)
         .derive_debug(false)
         .clang_arg(format!("-I{}", cef_root.to_str().unwrap()))
         .header("wrapper.h")
         .generate()
-        .expect("Unable to generate bindings");
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    bindings
+        .expect("Unable to generate bindings")
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 }

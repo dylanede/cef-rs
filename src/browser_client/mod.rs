@@ -12,8 +12,9 @@ use libc;
 */
 use Browser;
 use ProcessID;
-use ProcessMessage; /*
+use ProcessMessage;
 
+/*
 //use upcast_ptr;
 
 use extern_macro;
@@ -51,6 +52,7 @@ pub struct LoadHandler {}
 pub struct RequestHandler {}
 //impl RequestHandler for Void {}
 */
+
 #[allow(unused_variables)]
 pub trait BrowserClient: 'static {
     //type OutContextMenuHandler : ContextMenuHandler;
@@ -109,11 +111,12 @@ pub trait BrowserClient: 'static {
         None
     }*/
 
-    fn on_process_message_received(&mut self,
-                                   browser: &mut Browser,
-                                   source_process: ProcessID,
-                                   message: &mut ProcessMessage)
-                                   -> bool {
+    fn on_process_message_received(
+        &mut self,
+        browser: &mut Browser,
+        source_process: ProcessID,
+        message: &mut ProcessMessage,
+    ) -> bool {
         false
     }
 }
@@ -129,64 +132,101 @@ pub struct BrowserClientWrapper<T: BrowserClient> {
 unsafe impl<T: BrowserClient> Is<ffi::cef_base_ref_counted_t> for BrowserClientWrapper<T> {}
 unsafe impl<T: BrowserClient> Is<ffi::_cef_client_t> for BrowserClientWrapper<T> {}
 
+/// The *_ffi functions are required to use different calling convensions
+/// than normal rust functions, the calling convension is resolved by a macro.
 impl<T: BrowserClient> BrowserClientWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<BrowserClientWrapper<T>> {
         use std::mem::zeroed;
         use unsafe_downcast_mut;
         use cast_mut_ref;
-        extern_auto_fn!(_1(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_context_menu_handler_t {
-            //println!("context menu");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_2(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_dialog_handler_t {
-            //println!("dialog");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_3(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_display_handler_t {
-            //println!("display");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_4(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_download_handler_t {
-            //println!("download");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_5(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_drag_handler_t {
-            //println!("drag");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_6(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_find_handler_t {
-            //println!("find");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_7(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_focus_handler_t {
-            //println!("focus");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_8(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_geolocation_handler_t {
-            //println!("geo");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_9(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_jsdialog_handler_t {
-            //println!("js");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_10(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_keyboard_handler_t {
-            //println!("keyboard");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_11(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_life_span_handler_t {
-            //println!("lifespan");
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_12(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_load_handler_t {
-            //println!("load");
-            unsafe { zeroed() }
-        });
+        extern_auto_fn!(
+            get_context_menu_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_context_menu_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_dialog_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_dialog_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_display_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_display_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_download_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_download_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_drag_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_drag_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_find_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_find_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_focus_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_focus_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_geolocation_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_geolocation_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_jsdialog_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_jsdialog_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_keyboard_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_keyboard_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_life_span_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_life_span_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
+        extern_auto_fn!(
+            get_load_handler_ffi(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_load_handler_t
+            {
+                unsafe { zeroed() }
+            }
+        );
         // TODO: Fix build errors by removing generics?
         /*
         #[extern_auto]
         fn _13<T : BrowserClient>(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_render_handler_t {
-            //println!("render");
             unsafe {
                 let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 this.callback.get_render_handler()
@@ -195,49 +235,54 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
             }
         }
         */
-
-
-        extern_auto_fn!(_14<T: BrowserClient>(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_request_handler_t {
-            unsafe { zeroed() }
-        });
-        extern_auto_fn!(_15<T: BrowserClient>(_self: *mut ffi::_cef_client_t,
-                                 browser: *mut ffi::cef_browser_t,
-                                 source_process: ffi::cef_process_id_t,
-                                 message: *mut ffi::cef_process_message_t)
-                                 -> libc::c_int {
-            //println!("message");
-            unsafe {
-                let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                this.callback.on_process_message_received(
-                    cast_mut_ref(&mut *browser),
-                    match source_process {
-                        ffi::cef_process_id_t::PID_BROWSER => ProcessID::Browser,
-                        ffi::cef_process_id_t::PID_RENDERER => ProcessID::Renderer,
-                        //_ => panic!("Invalid source process ID passed to on_process_message_received by CEF!")
-                    },
-                    cast_mut_ref(&mut *message)) as libc::c_int
+        extern_auto_fn!(
+            get_request_handler_ffi<T: BrowserClient>(_self: *mut ffi::_cef_client_t)
+                -> *mut ffi::cef_request_handler_t
+            {
+                unsafe { zeroed() }
             }
-        });
+        );
+        extern_auto_fn!(
+            on_process_message_received_ffi<T: BrowserClient>(
+                _self:          *mut ffi::_cef_client_t,
+                browser:        *mut ffi::cef_browser_t,
+                source_process: ffi::cef_process_id_t,
+                message:        *mut ffi::cef_process_message_t)
+                -> libc::c_int
+            {
+                unsafe {
+                    let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
+                    this.callback.on_process_message_received(
+                        cast_mut_ref(&mut *browser),
+                        match source_process {
+                            ffi::cef_process_id_t::PID_BROWSER => ProcessID::Browser,
+                            ffi::cef_process_id_t::PID_RENDERER => ProcessID::Renderer,
+                            //_ => panic!("Invalid source process ID passed to on_process_message_received by CEF!")
+                        },
+                        cast_mut_ref(&mut *message)) as libc::c_int
+                }
+            }
+        );
         CefRc::make(move |base| {
             BrowserClientWrapper {
                 vtable: ffi::_cef_client_t {
                     base: base,
-                    get_context_menu_handler: Some(_1),
-                    get_dialog_handler: Some(_2),
-                    get_display_handler: Some(_3),
-                    get_download_handler: Some(_4),
-                    get_drag_handler: Some(_5),
-                    get_find_handler: Some(_6),
-                    get_focus_handler: Some(_7),
-                    get_geolocation_handler: Some(_8),
-                    get_jsdialog_handler: Some(_9),
-                    get_keyboard_handler: Some(_10),
-                    get_life_span_handler: Some(_11),
-                    get_load_handler: Some(_12),
+                    get_context_menu_handler: Some(get_context_menu_handler_ffi),
+                    get_dialog_handler: Some(get_dialog_handler_ffi),
+                    get_display_handler: Some(get_display_handler_ffi),
+                    get_download_handler: Some(get_download_handler_ffi),
+                    get_drag_handler: Some(get_drag_handler_ffi),
+                    get_find_handler: Some(get_find_handler_ffi),
+                    get_focus_handler: Some(get_focus_handler_ffi),
+                    get_geolocation_handler: Some(get_geolocation_handler_ffi),
+                    get_jsdialog_handler: Some(get_jsdialog_handler_ffi),
+                    get_keyboard_handler: Some(get_keyboard_handler_ffi),
+                    get_life_span_handler: Some(get_life_span_handler_ffi),
+                    get_load_handler: Some(get_load_handler_ffi),
                     get_render_handler: None,
                     //get_render_handler: Some(_13::<T>),
-                    get_request_handler: Some(_14::<T>),
-                    on_process_message_received: Some(_15::<T>),
+                    get_request_handler: Some(get_request_handler_ffi::<T>),
+                    on_process_message_received: Some(on_process_message_received_ffi::<T>),
                 },
                 callback: wrapped,
             }
