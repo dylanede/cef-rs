@@ -2,7 +2,11 @@
     Many build errors here and the code below seems to use definitions from
     cef-dist/include/internal, TODO: Investigate later.
 */
-use ffi;
+use ffi::{_cef_client_t, cef_base_ref_counted_t, cef_context_menu_handler_t, cef_dialog_handler_t,
+          cef_display_handler_t, cef_download_handler_t, cef_drag_handler_t, cef_find_handler_t,
+          cef_focus_handler_t, cef_geolocation_handler_t, cef_jsdialog_handler_t,
+          cef_keyboard_handler_t, cef_life_span_handler_t, cef_load_handler_t,
+          cef_request_handler_t, cef_browser_t, cef_process_id_t, cef_process_message_t};
 use Is;
 use CefRc;
 use libc;
@@ -125,12 +129,12 @@ impl BrowserClient for () {}
 
 #[repr(C)]
 pub struct BrowserClientWrapper<T: BrowserClient> {
-    vtable: ffi::_cef_client_t,
+    vtable: _cef_client_t,
     callback: T,
 }
 
-unsafe impl<T: BrowserClient> Is<ffi::cef_base_ref_counted_t> for BrowserClientWrapper<T> {}
-unsafe impl<T: BrowserClient> Is<ffi::_cef_client_t> for BrowserClientWrapper<T> {}
+unsafe impl<T: BrowserClient> Is<cef_base_ref_counted_t> for BrowserClientWrapper<T> {}
+unsafe impl<T: BrowserClient> Is<_cef_client_t> for BrowserClientWrapper<T> {}
 
 /// The *_ffi functions are required to use different calling convensions
 /// than normal rust functions, the calling convension is resolved by a macro.
@@ -140,85 +144,85 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         use unsafe_downcast_mut;
         use cast_mut_ref;
         extern_auto_fn!(
-            get_context_menu_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_context_menu_handler_t
+            get_context_menu_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_context_menu_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_dialog_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_dialog_handler_t
+            get_dialog_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_dialog_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_display_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_display_handler_t
+            get_display_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_display_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_download_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_download_handler_t
+            get_download_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_download_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_drag_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_drag_handler_t
+            get_drag_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_drag_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_find_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_find_handler_t
+            get_find_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_find_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_focus_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_focus_handler_t
+            get_focus_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_focus_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_geolocation_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_geolocation_handler_t
+            get_geolocation_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_geolocation_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_jsdialog_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_jsdialog_handler_t
+            get_jsdialog_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_jsdialog_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_keyboard_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_keyboard_handler_t
+            get_keyboard_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_keyboard_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_life_span_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_life_span_handler_t
+            get_life_span_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_life_span_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
-            get_load_handler_ffi(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_load_handler_t
+            get_load_handler_ffi(_self: *mut _cef_client_t)
+                -> *mut cef_load_handler_t
             {
                 unsafe { zeroed() }
             }
@@ -226,7 +230,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         // TODO: Fix build errors by removing generics?
         /*
         #[extern_auto]
-        fn _13<T : BrowserClient>(_self: *mut ffi::_cef_client_t) -> *mut ffi::cef_render_handler_t {
+        fn _13<T : BrowserClient>(_self: *mut _cef_client_t) -> *mut cef_render_handler_t {
             unsafe {
                 let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 this.callback.get_render_handler()
@@ -236,18 +240,18 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         }
         */
         extern_auto_fn!(
-            get_request_handler_ffi<T: BrowserClient>(_self: *mut ffi::_cef_client_t)
-                -> *mut ffi::cef_request_handler_t
+            get_request_handler_ffi<T: BrowserClient>(_self: *mut _cef_client_t)
+                -> *mut cef_request_handler_t
             {
                 unsafe { zeroed() }
             }
         );
         extern_auto_fn!(
             on_process_message_received_ffi<T: BrowserClient>(
-                _self:          *mut ffi::_cef_client_t,
-                browser:        *mut ffi::cef_browser_t,
-                source_process: ffi::cef_process_id_t,
-                message:        *mut ffi::cef_process_message_t)
+                _self:          *mut _cef_client_t,
+                browser:        *mut cef_browser_t,
+                source_process: cef_process_id_t,
+                message:        *mut cef_process_message_t)
                 -> libc::c_int
             {
                 unsafe {
@@ -255,8 +259,8 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
                     this.callback.on_process_message_received(
                         cast_mut_ref(&mut *browser),
                         match source_process {
-                            ffi::cef_process_id_t::PID_BROWSER => ProcessID::Browser,
-                            ffi::cef_process_id_t::PID_RENDERER => ProcessID::Renderer,
+                            cef_process_id_t::PID_BROWSER => ProcessID::Browser,
+                            cef_process_id_t::PID_RENDERER => ProcessID::Renderer,
                             //_ => panic!("Invalid source process ID passed to on_process_message_received by CEF!")
                         },
                         cast_mut_ref(&mut *message)) as libc::c_int
@@ -265,7 +269,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
         );
         CefRc::make(move |base| {
             BrowserClientWrapper {
-                vtable: ffi::_cef_client_t {
+                vtable: _cef_client_t {
                     base: base,
                     get_context_menu_handler: Some(get_context_menu_handler_ffi),
                     get_dialog_handler: Some(get_dialog_handler_ffi),
