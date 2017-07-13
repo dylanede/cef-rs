@@ -7,5 +7,6 @@ build = "build.rs"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.25"
+# TODO: Specify dependency versions when cef-rs is stable.
+bindgen = "*"
 
