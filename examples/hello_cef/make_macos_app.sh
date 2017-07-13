@@ -2,27 +2,28 @@
 
 cargo build --release
 
-set name=hello_cef
-rm -rf output/hello_cef.app
-mkdir -p output/hello_cef.app/Contents/Frameworks
-mkdir -p output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/MacOS
+name=hello_cef
+rm -rf output/${name}.app
+mkdir -p output/${name}.app/Contents/Frameworks
+mkdir -p output/${name}.app/Contents/Frameworks/${name}\ Helper.app/Contents/MacOS
 # need to provide a helper executable, can it be the same?
-cp resources/Info.plist output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/Info.plist
-touch    output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/Pkginfo
-mkdir -p output/hello_cef.app/Contents/MacOS
-mkdir -p output/hello_cef.app/Contents/Resources
-cp resources/Info.plist output/hello_cef.app/Contents/Info.plist
-cp resources/grump.icns output/hello_cef.app/Contents/Resources/
-touch    output/hello_cef.app/Contents/Pkginfo
-cp -R $CEF_DIST_ROOT/Release/* output/hello_cef.app/Contents/Frameworks/
-cp target/release/hello_cef output/hello_cef.app/Contents/MacOS/
-pushd output/hello_cef.app/Contents/MacOS
-install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework hello_cef
+cp resources/Info.plist output/${name}.app/Contents/Frameworks/${name}\ Helper.app/Contents/Info.plist
+touch    output/${name}.app/Contents/Frameworks/${name}\ Helper.app/Contents/Pkginfo
+mkdir -p output/${name}.app/Contents/MacOS
+mkdir -p output/${name}.app/Contents/Resources
+cp resources/Info.plist output/${name}.app/Contents/Info.plist
+cp resources/grump.icns output/${name}.app/Contents/Resources/
+touch    output/${name}.app/Contents/Pkginfo
+cp -R $CEF_DIST_ROOT/Release/* output/${name}.app/Contents/Frameworks/
+cp target/release/${name} output/${name}.app/Contents/MacOS/
+pushd output/${name}.app/Contents/MacOS
+install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework ${name}
 popd
-cp target/release/hello_cef output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/MacOS/hello_cef\ Helper
-pushd output/hello_cef.app/Contents/Frameworks/hello_cef\ Helper.app/Contents/MacOS
-install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../../../Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework hello_cef\ Helper
+cp target/release/${name} output/${name}.app/Contents/Frameworks/${name}\ Helper.app/Contents/MacOS/${name}\ Helper
+pushd output/${name}.app/Contents/Frameworks/${name}\ Helper.app/Contents/MacOS
+install_name_tool -change @rpath/Frameworks/Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework @executable_path/../../../Chromium\ Embedded\ Framework.framework/Chromium\ Embedded\ Framework ${name}\ Helper
 popd
 
 #open ./output
-#./output/hello_cef.app/Contents/MacOS/hello_cef
+#./output/${name}.app/Contents/MacOS/${name}
+
