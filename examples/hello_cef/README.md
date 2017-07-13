@@ -8,12 +8,8 @@ Building for macOS:
 A script outside cargo is needed to package the application in the required
 structure.
 
-
-Building for Windows:
-TODO: Implement and write docs.
-
-
-Building for Linux:
-TODO: Implement and write docs.
-
+TODO:
+ - Investigate https://crates.io/crates/cargo-make for hello_cef.
+ - Instructions for building on Windows
+ - Instructions for building on Linux
 
