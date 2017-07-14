@@ -7,7 +7,7 @@ fn main() {
     cef::EnableHighDpiSupport();
     */
 
-    let app: Option<()> = None;
+    let app: Option<()> = None; // TODO: Investigate this [1]unit business.
     let result_code = cef::execute_process(app);
     if result_code != -1 {
         // The process was a helper process, so end now.
@@ -35,7 +35,7 @@ fn main() {
     // Any valid URL will do.
     cef::BrowserHost::create_browser_sync(
         &window_info,
-        (),
+        (), // TODO: Investigate this [1]unit busines.
         "http://www.google.com",
         &cef::BrowserSettings::new(), /*,
                                           None*/
@@ -46,4 +46,10 @@ fn main() {
 
     // This is important for cleanup and stopping helper processes
     cef::shutdown();
+
+    // [1] The unit business.
+    //     Look into replacing the unit usage with womthing less weird.
+    //     Builder pattern or DefaultBrowserClient::new() ?
+    //                        DefaultCefApp::new()        ?
+    //     
 }

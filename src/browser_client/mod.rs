@@ -22,25 +22,27 @@ use ffi::{
     cef_load_handler_t,
     cef_process_id_t,
     cef_process_message_t,
+    //cef_render_handler_t,
     cef_request_handler_t,
 };
 use Is;
 use ProcessID;
 use ProcessMessage;
 use libc;
+//use upcast_ptr;
+
+//pub mod render_handler;
+//pub use self::render_handler::{RenderHandler, RenderHandlerWrapper};
+//use self::render_handler::{RenderHandler, RenderHandlerWrapper};
 /*
 //use Interface;
 //use Void;
 */
 
 /*
-//use upcast_ptr;
 
 use extern_macro;
 
-pub mod render_handler;
-//pub use self::render_handler::{RenderHandler, RenderHandlerWrapper};
-//use self::render_handler::{RenderHandler, RenderHandlerWrapper};
 
 pub struct ContextMenuHandler {}
 //impl ContextMenuHandler for Void {}
@@ -66,8 +68,8 @@ pub struct LifeSpanHandler {}
 //impl LifeSpanHandler for Void {}
 pub struct LoadHandler {}
 //impl LoadHandler for Void {}
-//pub struct RenderHandler {}
-//impl RenderHandler for Void {}
+pub struct RenderHandler {}
+impl RenderHandler for Void {}
 pub struct RequestHandler {}
 //impl RequestHandler for Void {}
 */
@@ -125,10 +127,13 @@ pub trait BrowserClient: 'static {
     fn get_load_handler(&mut self) -> Option<LoadHandler> {
         None
     }
-    //fn get_render_handler(&mut self) -> Option<RenderHandler> { None }
+*/
+    //fn get_render_handler(&mut self) -> Option<OutRenderHandler> { None }
+/*
     fn get_request_handler(&mut self) -> Option<RequestHandler> {
         None
-    }*/
+    }
+*/
 
     fn on_process_message_received(
         &mut self,
@@ -140,6 +145,7 @@ pub trait BrowserClient: 'static {
     }
 }
 
+// TODO: Investigate later.
 impl BrowserClient for () {}
 
 #[repr(C)]
@@ -154,6 +160,7 @@ unsafe impl<T: BrowserClient> Is<_cef_client_t> for BrowserClientWrapper<T> {}
 /// The *_ffi functions are required to use different calling convensions
 /// than normal rust functions, the specific calling convension differs
 /// depending on platform and is resolved by the extern_auto_fn macro.
+/// TODO: Investigate why "extern fn" is not enough in this case.
 impl<T: BrowserClient> BrowserClientWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<BrowserClientWrapper<T>> {
         use unsafe_downcast_mut;
@@ -243,18 +250,20 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
                 null_mut()
             }
         );
-        // TODO: Fix build errors by removing generics?
-        /*
-        #[extern_auto]
-        fn _13<T : BrowserClient>(_self: *mut _cef_client_t) -> *mut cef_render_handler_t {
-            unsafe {
-                let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
-                this.callback.get_render_handler()
-                    .map(|x| upcast_ptr(RenderHandlerWrapper::new(x)))
-                    .unwrap_or_else(|| null_mut())
+	/*
+        extern_auto_fn!(
+            get_render_handler_ffi<T: BrowserClient>(_self: *mut _cef_client_t)
+                -> *mut cef_render_handler_t
+            {
+                unsafe {
+                    let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
+                    this.callback.get_render_handler()
+                        .map(|x| upcast_ptr(RenderHandlerWrapper::new(x)))
+                        .unwrap_or_else(|| null_mut())
+                }
             }
-        }
-        */
+        );
+	*/
         extern_auto_fn!(
             get_request_handler_ffi<T: BrowserClient>(_self: *mut _cef_client_t)
                 -> *mut cef_request_handler_t
@@ -300,7 +309,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
                     get_life_span_handler: Some(get_life_span_handler_ffi),
                     get_load_handler: Some(get_load_handler_ffi),
                     get_render_handler: None,
-                    //get_render_handler: Some(_13::<T>),
+                    //get_render_handler: Some(get_render_handler_ffi::<T>),
                     get_request_handler: Some(get_request_handler_ffi::<T>),
                     on_process_message_received: Some(on_process_message_received_ffi::<T>),
                 },
