@@ -2,21 +2,36 @@
     Many build errors here and the code below seems to use definitions from
     cef-dist/include/internal, TODO: Investigate later.
 */
-use ffi::{_cef_client_t, cef_base_ref_counted_t, cef_context_menu_handler_t, cef_dialog_handler_t,
-          cef_display_handler_t, cef_download_handler_t, cef_drag_handler_t, cef_find_handler_t,
-          cef_focus_handler_t, cef_geolocation_handler_t, cef_jsdialog_handler_t,
-          cef_keyboard_handler_t, cef_life_span_handler_t, cef_load_handler_t,
-          cef_request_handler_t, cef_browser_t, cef_process_id_t, cef_process_message_t};
-use Is;
+use Browser;
 use CefRc;
+use ffi::{
+    _cef_client_t,
+    cef_base_ref_counted_t,
+    cef_browser_t,
+    cef_context_menu_handler_t,
+    cef_dialog_handler_t,
+    cef_display_handler_t,
+    cef_download_handler_t,
+    cef_drag_handler_t,
+    cef_find_handler_t,
+    cef_focus_handler_t,
+    cef_geolocation_handler_t,
+    cef_jsdialog_handler_t,
+    cef_keyboard_handler_t,
+    cef_life_span_handler_t,
+    cef_load_handler_t,
+    cef_process_id_t,
+    cef_process_message_t,
+    cef_request_handler_t,
+};
+use Is;
+use ProcessID;
+use ProcessMessage;
 use libc;
 /*
 //use Interface;
 //use Void;
 */
-use Browser;
-use ProcessID;
-use ProcessMessage;
 
 /*
 //use upcast_ptr;
