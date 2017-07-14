@@ -140,91 +140,91 @@ unsafe impl<T: BrowserClient> Is<_cef_client_t> for BrowserClientWrapper<T> {}
 /// than normal rust functions, the calling convension is resolved by a macro.
 impl<T: BrowserClient> BrowserClientWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<BrowserClientWrapper<T>> {
-        use std::mem::zeroed;
         use unsafe_downcast_mut;
         use cast_mut_ref;
+        use std::ptr::null_mut;
         extern_auto_fn!(
             get_context_menu_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_context_menu_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_dialog_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_dialog_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_display_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_display_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_download_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_download_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_drag_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_drag_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_find_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_find_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_focus_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_focus_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_geolocation_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_geolocation_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_jsdialog_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_jsdialog_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_keyboard_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_keyboard_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_life_span_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_life_span_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
             get_load_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_load_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         // TODO: Fix build errors by removing generics?
@@ -235,7 +235,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
                 let this: &mut BrowserClientWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 this.callback.get_render_handler()
                     .map(|x| upcast_ptr(RenderHandlerWrapper::new(x)))
-                    .unwrap_or_else(|| zeroed())
+                    .unwrap_or_else(|| null_mut())
             }
         }
         */
@@ -243,7 +243,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
             get_request_handler_ffi<T: BrowserClient>(_self: *mut _cef_client_t)
                 -> *mut cef_request_handler_t
             {
-                unsafe { zeroed() }
+                null_mut()
             }
         );
         extern_auto_fn!(
