@@ -152,7 +152,8 @@ unsafe impl<T: BrowserClient> Is<cef_base_ref_counted_t> for BrowserClientWrappe
 unsafe impl<T: BrowserClient> Is<_cef_client_t> for BrowserClientWrapper<T> {}
 
 /// The *_ffi functions are required to use different calling convensions
-/// than normal rust functions, the calling convension is resolved by a macro.
+/// than normal rust functions, the specific calling convension differs
+/// depending on platform and is resolved by the extern_auto_fn macro.
 impl<T: BrowserClient> BrowserClientWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<BrowserClientWrapper<T>> {
         use unsafe_downcast_mut;
