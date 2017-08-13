@@ -1,15 +1,17 @@
 This is an experiment and not ready for any kind of serious use! Keep away or pitch in ;)
 
-
-Building for macOS:
-
-./make_macos_app.sh
-
 A script outside cargo is needed to package the application in the required
 structure.
+
+Linux:
+./linux_build.sh
+./linux_run.sh
+
+macOS:
+./macos_build.sh
+./macos_run.sh
 
 TODO:
  - Investigate https://crates.io/crates/cargo-make for hello_cef.
  - Instructions for building on Windows
- - Instructions for building on Linux
 
