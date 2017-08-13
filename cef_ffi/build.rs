@@ -65,10 +65,12 @@ fn main() {
     use std::path::Path;
     let var_name = "CEF_DIST_ROOT";
     let cef_root = std::env::var(var_name)
+        // Space is needed after the URL to avoid mixing with other error text.
+        // This allows clicking the URL in terminals.
         .expect(format!("{} needs to point to the folder containing \
                         an extracted CEF distribution archive.  \
                         You can get one here: \
-                        http://opensource.spotify.com/cefbuilds/index.html",
+                        http://opensource.spotify.com/cefbuilds/index.html ",
                         var_name)
                         .as_str());
     let cef_root = Path::new(&cef_root);

@@ -18,6 +18,7 @@ use std::default::Default;
 #[macro_use]
 mod extern_macro;
 
+#[cfg(not(target_os = "linux"))] // Temporary fix to allow clean build.
 use std::ptr::null_mut;
 
 mod app;
@@ -377,14 +378,15 @@ impl<'a> Default for WindowInfo<'a> {
 impl<'a> WindowInfo<'a> {
     #[cfg(target_os = "linux")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
-        use std::default::Default;
-        let mut info: ffi::cef_window_info_t = Default::default();
-        info.x = self.x as u32;
-        info.y = self.y as u32;
-        info.width = self.width as u32;
-        info.height = self.height as u32;
-        info.windowless_rendering_enabled = CBool::new(self.windowless_rendering_enabled).to_cef();
-        info
+        ffi::cef_window_info_t {
+            x: self.x as u32,
+            y: self.y as u32,
+            width: self.width as u32,
+            height: self.height as u32,
+            windowless_rendering_enabled: CBool::new(self.windowless_rendering_enabled).to_cef(),
+            parent_window: 0, // TODO: Review this.
+            window: 0,        // TODO: Review this.
+        }
     }
     #[cfg(target_os = "macos")]
     fn to_cef(&self) -> ffi::cef_window_info_t {
