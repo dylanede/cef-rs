@@ -17,8 +17,8 @@ macOS:
 
 Windows:
 ```
-./windows_build.sh
-./windows_run.sh
+./windows_build.bat
+./windows_run.bat
 ```
 
 TODO:
