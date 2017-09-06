@@ -18,7 +18,7 @@ use std::default::Default;
 #[macro_use]
 mod extern_macro;
 
-#[cfg(not(target_os = "linux"))] // Temporary fix to allow clean build.
+#[cfg(not(any(target_os = "windows", target_os = "linux")))] // Temporary fix to allow clean build.
 use std::ptr::null_mut;
 
 mod app;
