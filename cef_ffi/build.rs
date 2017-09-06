@@ -54,29 +54,33 @@ fn get_platform() -> Platform {
     }
 }
 
-/// Check if path exists, crash on failure. Implement as trait :)
-fn assert_path(p: &Path) {
+/// Check if path exists, print error and crash on failure.
+fn assert_path(p: &Path, help_text: &str) {
     if !p.exists() {
-        panic!("Unable to find path: {}", p.to_str().unwrap());
+        let s = format!("Unable to find path: {}\n{}",
+                        p.to_str().unwrap(),
+                        help_text);
+        panic!(s);
     }
 }
 
 fn main() {
     use std::path::Path;
     let var_name = "CEF_DIST_ROOT";
-    let cef_root = std::env::var(var_name)
-        // Space is needed after the URL to avoid mixing with other error text.
-        // This allows clicking the URL in terminals.
-        .expect(format!("{} needs to point to the folder containing \
-                        an extracted CEF distribution archive.  \
-                        You can get one here: \
-                        http://opensource.spotify.com/cefbuilds/index.html ",
-                        var_name)
-                        .as_str());
+
+    // Space is needed after the URL to avoid mixing with other error text.
+    // This allows clicking the URL in terminals.
+    let help_text = format!("{} needs to point to the folder containing \
+                            an extracted CEF distribution archive, \
+                            you can get one here: \
+                            http://opensource.spotify.com/cefbuilds/index.html ",
+                            var_name);
+    let help_text = help_text.as_str();
+    let cef_root = std::env::var(var_name).expect(help_text);
     let cef_root = Path::new(&cef_root);
     let release = cef_root.join("Release");
-    assert_path(&cef_root);
-    assert_path(&release);
+    assert_path(&cef_root, help_text);
+    assert_path(&release, help_text);
     match get_platform() {
         Platform::Mac => {
             println!("cargo:rustc-link-lib=framework=Chromium Embedded Framework"); // seems to be ignored, file bug report.
