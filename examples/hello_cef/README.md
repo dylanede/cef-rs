@@ -4,14 +4,23 @@ A script outside cargo is needed to package the application in the required
 structure.
 
 Linux:
+```
 ./linux_build.sh
 ./linux_run.sh
+```
 
 macOS:
+```
 ./macos_build.sh
 ./macos_run.sh
+```
+
+Windows:
+```
+./windows_build.sh
+./windows_run.sh
+```
 
 TODO:
  - Investigate https://crates.io/crates/cargo-make for hello_cef.
- - Instructions for building on Windows
 
