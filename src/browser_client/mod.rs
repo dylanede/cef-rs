@@ -4,27 +4,25 @@
 */
 use Browser;
 use CefRc;
-use ffi::{
-    _cef_client_t,
-    cef_base_ref_counted_t,
-    cef_browser_t,
-    cef_context_menu_handler_t,
-    cef_dialog_handler_t,
-    cef_display_handler_t,
-    cef_download_handler_t,
-    cef_drag_handler_t,
-    cef_find_handler_t,
-    cef_focus_handler_t,
-    cef_geolocation_handler_t,
-    cef_jsdialog_handler_t,
-    cef_keyboard_handler_t,
-    cef_life_span_handler_t,
-    cef_load_handler_t,
-    cef_process_id_t,
-    cef_process_message_t,
-    //cef_render_handler_t,
-    cef_request_handler_t,
-};
+use ffi::{_cef_client_t,
+          cef_base_ref_counted_t,
+          cef_browser_t,
+          cef_context_menu_handler_t,
+          cef_dialog_handler_t,
+          cef_display_handler_t,
+          cef_download_handler_t,
+          cef_drag_handler_t,
+          cef_find_handler_t,
+          cef_focus_handler_t,
+          cef_geolocation_handler_t,
+          cef_jsdialog_handler_t,
+          cef_keyboard_handler_t,
+          cef_life_span_handler_t,
+          cef_load_handler_t,
+          cef_process_id_t,
+          cef_process_message_t,
+          //cef_render_handler_t,
+          cef_request_handler_t};
 use Is;
 use ProcessID;
 use ProcessMessage;
@@ -250,7 +248,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
                 null_mut()
             }
         );
-	/*
+        /*
         extern_auto_fn!(
             get_render_handler_ffi<T: BrowserClient>(_self: *mut _cef_client_t)
                 -> *mut cef_render_handler_t

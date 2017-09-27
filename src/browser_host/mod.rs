@@ -348,7 +348,7 @@ pub struct BrowserSettings {
 
 impl BrowserSettings {
     pub fn new() -> BrowserSettings {
-        use std::mem::{zeroed, size_of};
+        use std::mem::{size_of, zeroed};
         let mut x: BrowserSettings = unsafe { zeroed() };
         x.size = size_of::<BrowserSettings>() as libc::size_t;
         x

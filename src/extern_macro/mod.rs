@@ -68,13 +68,13 @@ fn extern_auto_fn_expands_as_expected() {
     */
 
     /// Should cause build error if extern_auto_fn is incorrect.
-    #[cfg(all(target_family="windows", target_pointer_width="32"))]
+    #[cfg(all(target_family = "windows", target_pointer_width = "32"))]
     let f1: extern "stdcall" fn(i: i32) -> i32 = modified_by_attrib;
     //#[cfg(all(target_family="windows", target_pointer_width="32"))]
     //let f2: extern "stdcall" fn(i: i32) -> i32 = modified_by_attrib2::<i32>;
 
     /// Should cause build error if extern_auto_fn is incorrect.
-    #[cfg(not(all(target_family="windows", target_pointer_width="32")))]
+    #[cfg(not(all(target_family = "windows", target_pointer_width = "32")))]
     let f1: extern "C" fn(i: i32) -> i32 = modified_by_attrib;
     //#[cfg(not(all(target_family="windows", target_pointer_width="32")))]
     //let f2: extern "C" fn(i: i32) -> i32 = modified_by_attrib2::<i32>;

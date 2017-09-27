@@ -1,6 +1,6 @@
 use ffi;
 use std::slice;
-use std::mem::{transmute, replace, forget};
+use std::mem::{forget, replace, transmute};
 use std::mem;
 //use alloc::heap::{allocate, deallocate};
 use memalloc::{allocate, deallocate};

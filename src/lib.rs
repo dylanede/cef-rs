@@ -10,7 +10,7 @@ extern crate kernel32;
 /// TODO: Investigate if this was special in older versions of Rust.
 //pub enum Void {}
 
-use std::mem::{transmute, drop, size_of, zeroed};
+use std::mem::{drop, size_of, transmute, zeroed};
 use std::ops::{Deref, DerefMut};
 use std::default::Default;
 
@@ -314,11 +314,8 @@ impl<'a> Default for Settings<'a> {
 impl<'a> Settings<'a> {
     fn to_cef(&self) -> ffi::cef_settings_t {
         fn to_cef_str<'a>(s: Option<&'a str>) -> ffi::cef_string_t {
-            s.map(|x| CefString::from_str(x).cast()).unwrap_or_else(
-                || unsafe {
-                    zeroed()
-                },
-            )
+            s.map(|x| CefString::from_str(x).cast())
+                .unwrap_or_else(|| unsafe { zeroed() })
         }
         ffi::cef_settings_t {
             size: size_of::<ffi::cef_settings_t>() as libc::size_t,
@@ -470,9 +467,8 @@ pub fn execute_process<T: App>(app: Option<T>) -> isize {
     with_args(move |args| unsafe {
         ffi::cef_execute_process(
             &args as *const _,
-            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(
-                || zeroed(),
-            ),
+            app.map(|x| upcast_ptr(AppWrapper::new(x)))
+                .unwrap_or_else(|| zeroed()),
             zeroed(),
         ) as isize
     })
@@ -485,9 +481,8 @@ pub fn initialize<T: App>(settings: &Settings, app: Option<T>) -> bool {
         ffi::cef_initialize(
             &args as *const _,
             &settings as *const _,
-            app.map(|x| upcast_ptr(AppWrapper::new(x))).unwrap_or_else(
-                || zeroed(),
-            ),
+            app.map(|x| upcast_ptr(AppWrapper::new(x)))
+                .unwrap_or_else(|| zeroed()),
             zeroed(),
         )
     });
