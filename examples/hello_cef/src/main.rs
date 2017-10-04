@@ -48,7 +48,7 @@ fn main() {
     cef::shutdown();
 
     // [1] The unit business.
-    //     Look into replacing the unit usage with womthing less weird.
+    //     Look into replacing the unit usage with somthing less weird.
     //     Builder pattern or DefaultBrowserClient::new() ?
     //                        DefaultCefApp::new()        ?
     //     
