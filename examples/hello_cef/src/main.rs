@@ -7,7 +7,7 @@ fn main() {
     cef::EnableHighDpiSupport();
     */
 
-    let app: Option<()> = None; // TODO: Investigate this [1]unit business.
+    let app: Option<()> = Some(()); // TODO: Investigate this [1]unit business.
     let result_code = cef::execute_process(app);
     if result_code != -1 {
         // The process was a helper process, so end now.
