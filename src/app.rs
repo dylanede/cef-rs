@@ -69,6 +69,7 @@ impl<T: App> AppWrapper<T> {
         extern_auto_fn!(obclp<T: App>(_self: *mut ffi::_cef_app_t,
                          process_type: *const ffi::cef_string_t,
                          command_line: *mut ffi::_cef_command_line_t) {
+            println!("on_before_command_line_processing :D");
             unsafe {
                 let _ = process_type;
                 let _ = command_line;
@@ -78,6 +79,7 @@ impl<T: App> AppWrapper<T> {
             }
         });
         extern_auto_fn!(orcs<T: App>(_self: *mut ffi::_cef_app_t, registrar: *mut ffi::_cef_scheme_registrar_t) {
+            println!("on_register_custom_schemes");
             let _ = registrar;
             unsafe {
                 let this: &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
@@ -86,22 +88,25 @@ impl<T: App> AppWrapper<T> {
             }
         });
         extern_auto_fn!(grbh<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_resource_bundle_handler_t {
+            println!("get_resource_bundle_handler :D");
             unsafe {
-                zeroed()
+                zeroed() // FIXME
                 //let this : &mut AppWrapper<T> = unsafe_downcast_mut(&mut *_self);
                 //this.callback.get_resource_bundle_handler().map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed())
             }
         });
         extern_auto_fn!(gbph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_browser_process_handler_t {
+            println!("get_browser_process_handler :D");
             unsafe {
-                zeroed()
+                zeroed() // FIXME
                 //let this : &mut App<T> = transmute_mut_ref(&mut *_self);
                 //this.callback.get_browser_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
         });
         extern_auto_fn!(grph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_render_process_handler_t {
+            println!("get_render_process_handler :D");
             unsafe {
-                zeroed()
+                zeroed() // FIXME
                 //let this : &mut App<T> = transmute_mut_ref(&mut *_self);
                 //this.callback.get_render_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
