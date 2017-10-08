@@ -33,6 +33,7 @@ fn main() {
     };
 
     // Any valid URL will do.
+    println!("create_browser_sync");    
     cef::BrowserHost::create_browser_sync(
         &window_info,
         (), // TODO: Investigate this [1]unit busines.
@@ -42,9 +43,11 @@ fn main() {
     );
 
     // TODO: Closing the window does not exit the message loop
+    println!("run_message_loop");
     cef::run_message_loop();
 
     // This is important for cleanup and stopping helper processes
+    println!("shutdown");
     cef::shutdown();
 
     // [1] The unit business.

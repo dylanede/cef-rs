@@ -239,7 +239,7 @@ impl<T: BrowserClient> BrowserClientWrapper<T> {
             get_life_span_handler_ffi(_self: *mut _cef_client_t)
                 -> *mut cef_life_span_handler_t
             {
-                println!("get_life_span_handler :D");
+                println!("get_life_span_handler");
                 upcast_ptr(LifeSpanHandlerWrapper::new(()))
             }
         );

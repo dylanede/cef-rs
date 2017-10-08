@@ -202,6 +202,7 @@ use ffi::{//cef_render_handler_t,
           cef_frame_t,
           cef_life_span_handler_t,
           cef_popup_features_t,
+          cef_quit_message_loop,
           cef_string_t,
           cef_window_info_t,
           cef_window_open_disposition_t};
@@ -248,28 +249,30 @@ impl<T: LifeSpanHandler> LifeSpanHandlerWrapper<T> {
                 no_javascript_access: *mut ::std::os::raw::c_int
             ) -> ::std::os::raw::c_int
             {
-                println!("on_before_popup :D");
+                println!("on_before_popup");
                 1
             }
         );
 
         extern_auto_fn!(
             on_after_created_ffi(self_: *mut cef_life_span_handler_t, browser: *mut cef_browser_t) {
-                println!("on_after_created :D");
+                println!("on_after_created");
             }
         );
 
         extern_auto_fn!(
             do_close_ffi(self_: *mut cef_life_span_handler_t, browser: *mut cef_browser_t)
                 -> ::std::os::raw::c_int {
-                println!("do_close :D");
+                // TODO: Investigate if cef_quit_message_loop is expected here, it seems to avoid hanging on cef_run_message_loop when closing the main window.
+		        unsafe { cef_quit_message_loop(); }
+                println!("do_close");
                 0
             }
          );
 
         extern_auto_fn!(
             on_before_close_ffi(self_: *mut cef_life_span_handler_t, browser: *mut cef_browser_t) {
-                println!("on_before_close :D");
+                println!("on_before_close");
             }
         );
 
