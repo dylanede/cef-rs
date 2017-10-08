@@ -1,7 +1,14 @@
 use Modifiers;
 
-#[allow(non_camel_case_types)]
-#[derive(NumFromPrimitive, Debug, Copy, Clone)]
+#[allow(
+    non_camel_case_types,
+    dead_code)]
+// TODO: Reevaluate later, just trying to compile for now.
+#[derive(
+    //NumFromPrimitive,
+    Debug,
+    Copy,
+    Clone)]
 #[repr(u32)]
 pub enum WIN_VK {
     LBUTTON = 0x01,
@@ -220,11 +227,28 @@ pub fn win_vk_for_scan_code(code: u8) -> WIN_VK {
     use num::FromPrimitive;
     FromPrimitive::from_u32(unsafe { MapVirtualKeyA(code as u32, 3) }).unwrap()
 }
+
+/// TODO: Implement me.
+#[allow(unused_variables)]
+#[cfg(not(target_os="windows"))]
+pub fn win_vk_for_scan_code(code: u8) -> WIN_VK {
+    eprintln!("win_vk_for_scan_code not implemented!");
+    WIN_VK::R
+}
+
 #[cfg(target_os="windows")]
 pub fn char_for_scan_code(code: u8) -> u8 {
     let vk = unsafe { MapVirtualKeyA(code as u32, 1) };
     let c = unsafe { MapVirtualKeyA(vk, 2) };
     (c & 0xFF) as u8
+}
+
+/// TODO: Implement me.
+#[allow(unused_variables)]
+#[cfg(not(target_os="windows"))]
+pub fn char_for_scan_code(code: u8) -> u8 {
+    eprintln!("char_for_scan_code not implemented!");
+    0
 }
 
 #[cfg(target_os="windows")]
@@ -240,13 +264,33 @@ pub fn scan_code_for_char(c: char) -> u8 {
     (scan_code & 0xFF) as u8
 }
 
+/// TODO: Implement me.
+#[allow(unused_variables)]
+#[cfg(not(target_os="windows"))]
+pub fn scan_code_for_char(c: char) -> u8 {
+    eprintln!("scan_code_for_char not implemented!");
+    0
+}
+
 #[cfg(target_os="windows")]
 pub fn modifiers_for_char(c: char) -> Modifiers {
     let mods = (unsafe { VkKeyScanA(c as u8) } >> 8) & 0xFF;
     Modifiers {
         shift: (mods & 1) != 0,
         control: (mods & 2) != 0,
-        alt: (mods & 4) != 0
+        alt: (mods & 4) != 0,
+    }
+}
+
+/// TODO: Implement me.
+#[allow(unused_variables)]
+#[cfg(not(target_os="windows"))]
+pub fn modifiers_for_char(c: char) -> Modifiers {
+    eprintln!("modifiers_for_char not implemented!");
+    Modifiers {
+        alt: false,
+        control: false,
+        shift: false,
     }
 }
 

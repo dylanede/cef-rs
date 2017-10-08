@@ -5,18 +5,18 @@ version = "0.0.1"
 authors = ["Dylan Ede <dylanede@googlemail.com>"]
 
 [dependencies]
-bitflags = "0.1"
-num = "0.1"
-num-macros = "0.1"
+# TODO: Specify dependency versions when cef-rs is stable.
+bitflags = "*"
+libc = "*"
+memalloc = "*" # drop-in replacement for alloc but using stable Rust.
 
-[dependencies.cef-sys]
-path = "cef-sys"
+# Consider using this when proc_macro_attribute lands in stable.
+# Using macros 1.1 version in module src/extern_macro/ for now.
+# extern_attrib = "*"
 
-[dependencies.callc]
-git = "https://github.com/dylanede/callc.git"
+[dependencies.cef_ffi]
+path = "cef_ffi"
 
-[target.x86_64-pc-windows-gnu.dependencies]
+[target.'cfg(windows)'.dependencies]
 kernel32-sys = "*"
 
-[target.x86-pc-windows-gnu.dependencies]
-kernel32-sys = "*"
