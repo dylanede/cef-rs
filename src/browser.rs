@@ -10,14 +10,16 @@ use browser_host::BrowserHost;
 use cast_to_interface;
 use cast_from_interface;
 */
-#[allow(missing_copy_implementations)]
+//#[allow(missing_copy_implementations)]
+#[allow(dead_code)]
 pub struct Browser {
-    //vtable: ffi::cef_browser_t,
+    vtable: ffi::cef_browser_t,
 }
 
 unsafe impl Interface<ffi::cef_browser_t> for Browser {}
-unsafe impl Is<ffi::cef_base_ref_counted_t> for Browser {} /*
+unsafe impl Is<ffi::cef_base_ref_counted_t> for Browser {}
 
+/*
 impl Browser {
     #[cfg(target_os="windows")]
     fn call0<'a, T>(&'a self,
