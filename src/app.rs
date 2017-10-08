@@ -66,7 +66,7 @@ unsafe impl<T: App> Is<ffi::_cef_app_t> for AppWrapper<T> {}
 ///       normal rust String instances.
 impl<T: App> AppWrapper<T> {
     pub fn new(wrapped: T) -> CefRc<AppWrapper<T>> {
-        extern_auto_fn!(obclp<T: App>(_self: *mut ffi::_cef_app_t,
+        extern_auto_fn!(on_before_command_line_processing_ffi<T: App>(_self: *mut ffi::_cef_app_t,
                          process_type: *const ffi::cef_string_t,
                          command_line: *mut ffi::_cef_command_line_t) {
             println!("on_before_command_line_processing :D");
@@ -78,7 +78,7 @@ impl<T: App> AppWrapper<T> {
                 this.callback.on_before_command_line_processing();
             }
         });
-        extern_auto_fn!(orcs<T: App>(_self: *mut ffi::_cef_app_t, registrar: *mut ffi::_cef_scheme_registrar_t) {
+        extern_auto_fn!(on_register_custom_schemes_ffi<T: App>(_self: *mut ffi::_cef_app_t, registrar: *mut ffi::_cef_scheme_registrar_t) {
             println!("on_register_custom_schemes");
             let _ = registrar;
             unsafe {
@@ -87,7 +87,7 @@ impl<T: App> AppWrapper<T> {
                 this.callback.on_register_custom_schemes();
             }
         });
-        extern_auto_fn!(grbh<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_resource_bundle_handler_t {
+        extern_auto_fn!(get_resource_bundle_handler_ffi<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_resource_bundle_handler_t {
             println!("get_resource_bundle_handler :D");
             unsafe {
                 zeroed() // FIXME
@@ -95,7 +95,7 @@ impl<T: App> AppWrapper<T> {
                 //this.callback.get_resource_bundle_handler().map(|x| upcast_ptr(x)).unwrap_or_else(|| zeroed())
             }
         });
-        extern_auto_fn!(gbph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_browser_process_handler_t {
+        extern_auto_fn!(get_browser_process_handler_ffi<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_browser_process_handler_t {
             println!("get_browser_process_handler :D");
             unsafe {
                 zeroed() // FIXME
@@ -103,7 +103,7 @@ impl<T: App> AppWrapper<T> {
                 //this.callback.get_browser_process_handler().map(|x| transmute(x)).unwrap_or_else(|| zeroed())
             }
         });
-        extern_auto_fn!(grph<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_render_process_handler_t {
+        extern_auto_fn!(get_render_process_handler_ffi<T: App>(_self: *mut ffi::_cef_app_t) -> *mut ffi::_cef_render_process_handler_t {
             println!("get_render_process_handler :D");
             unsafe {
                 zeroed() // FIXME
@@ -115,11 +115,11 @@ impl<T: App> AppWrapper<T> {
             AppWrapper {
                 vtable: ffi::_cef_app_t {
                     base: base,
-                    on_before_command_line_processing: Some(obclp::<T>),
-                    on_register_custom_schemes: Some(orcs::<T>),
-                    get_resource_bundle_handler: Some(grbh::<T>),
-                    get_browser_process_handler: Some(gbph::<T>),
-                    get_render_process_handler: Some(grph::<T>),
+                    on_before_command_line_processing: Some(on_before_command_line_processing_ffi::<T>),
+                    on_register_custom_schemes: Some(on_register_custom_schemes_ffi::<T>),
+                    get_resource_bundle_handler: Some(get_resource_bundle_handler_ffi::<T>),
+                    get_browser_process_handler: Some(get_browser_process_handler_ffi::<T>),
+                    get_render_process_handler: Some(get_render_process_handler_ffi::<T>),
                 },
                 callback: wrapped,
             }
