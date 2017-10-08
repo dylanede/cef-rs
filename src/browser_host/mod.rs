@@ -97,9 +97,10 @@ pub enum MouseButtonType {
     Right,
 }
 */
-#[allow(missing_copy_implementations)]
+//#[allow(missing_copy_implementations)]
+#[allow(dead_code)]
 pub struct BrowserHost {
-    //vtable: ffi::cef_browser_host_t,
+    vtable: ffi::cef_browser_host_t,
 }
 
 unsafe impl Interface<ffi::cef_browser_host_t> for BrowserHost {}
